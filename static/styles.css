@@ -1,44 +1,38 @@
 html, body {
     height: 100%;
+    width: 100%;
 }
 
 body {
-    /* чтобы #main расширился до конца страницы */
     display: flex;
     flex-direction: column;
 }
 
-#main {
-    /* чтобы #main расширился до конца страницы */
+#main-container {
+    display: grid;
+    grid-template-rows: 40% 20% 40%;
+    grid-template-columns: 50% 50%;
+    height: 700px;
     flex-grow: 1;
-    /* чтобы #left и #right разделили #main на два столбца */
-    display: flex;
 }
 
-#left {
-    /* чтобы #left и #right разделили #main на два столбика */
-    flex: 0 1 50%;
+#tasksCurrent {
+    grid-row: 1;
+    grid-column: 1;
     overflow-y: auto;
-    /* чтобы #currentOrders и #historyOrders разделили #left на две строчки */
-    display: flex;
-    flex-direction: column;
-
 }
 
-#right {
-    /* чтобы #left и #right разделили #main на два столбика */
-    flex: 0 1 50%;
+#formUpload {
+    grid-row: 2;
+    grid-column: 1;
 }
 
-#currentOrders, #historyOrders {
-    /* чтобы #currentOrders и #historyOrders разделили #left на две строчки */
-    flex-grow: 1;
+#tasksHistory {
+    grid-row: 3;
+    grid-column: 1;
 }
 
-.area {
-    margin: 10px;
-}
-
-select {
-    height: auto;
+#printPreview {
+    grid-row: 1 / 4;
+    grid-column: 2;
 }
