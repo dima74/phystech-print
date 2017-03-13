@@ -1,4 +1,5 @@
 import requests
+import base64
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -57,6 +58,26 @@ class User:
         self.tasks_current = get_tasks('/query/tasks/current?num=10')
         self.tasks_history = get_tasks('/query/tasks/history?num=10')
 
+    def send_file_to_print_mipt_ru(self, info):
+        data = {
+            'Filename': info['filename'],
+            'nick': 'ZGltYTc0',
+            'mulpages': info['number_pages_on_list'],
+            'longedge': info['longedge'],
+            'land': info['land'],
+            'color': info['color'],
+            'duplex': info['duplex'],
+            'folder': '/upload/uploads',
+            'Upload': 'Submit Query'
+        }
+        files = {key: (None, value) for key, value in data.items()}
+        files['uploadfile'] = (info['filename'], info['file'], 'application/octet-stream')
+        request = self.session.post('http://print.mipt.ru/printfile.php', files=files)
+        if request.status_code != 200:
+            raise Exception()
+        request_info = request.text.split(';')
+        return 'OK' if request_info[0] == 'OK' else base64.b64decode(request_info[1]).decode('UTF-8')
+
 
 @app.route('/')
 def main():
@@ -78,9 +99,18 @@ def upload_file():
     if file.filename == '':
         return 'Некорректный запрос: пустое имя файла'
 
-    data = file.read()
-    print(len(data))
-    return 'ОК'
+    def normalize(x, default='false'):
+        return 'true' if x == 'on' else default
+
+    info = {'file': file.read(),
+            'filename': file.filename,
+            'color': normalize(request.form.get('color')),
+            'land': normalize(request.form.get('land')),
+            'duplex': normalize(request.form.get('duplex')),
+            'longedge': normalize(request.form.get('longedge'), 'true'),
+            'number_pages_on_list': request.form.get('number_pages_on_list')}
+    user = User()
+    return user.send_file_to_print_mipt_ru(info)
 
 
 if __name__ == '__main__':

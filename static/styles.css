@@ -54,12 +54,12 @@ select {
     justify-items: center;
 }
 
-#left {
+#form_upload_input_file {
     grid-row: 1;
     grid-column: 1;
 }
 
-#right {
+#form_upload_options {
     grid-row: 1;
     grid-column: 2;
 }

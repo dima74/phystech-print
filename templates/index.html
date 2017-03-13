@@ -71,29 +71,33 @@
             <div class="card-content" style="height: 100%;">
 
                 <form method="POST" id="form_upload" style="height: 100%;">
-                    <div class="file-field" id="left">
+                    <div class="file-field" id="form_upload_input_file">
                         <div class="btn">
                             <span>Выберите файл</span>
-                            <input type="file">
+                            <input type="file" name="file">
                         </div>
                     </div>
 
-                    <div id="right">
-                    <span>
-                        <input type="checkbox" id="test5" class="filled-in"/>
-                        <label for="test5">Цветная печать</label>
-                    </span>
+                    <div id="form_upload_options">
                         <span>
-                        <input type="checkbox" id="test6" class="filled-in"/>
-                        <label for="test6">Альбомная ориентация</label>
-                    </span>
+                            <input type="checkbox" id="form_upload_checkbox_color" name="color" class="filled-in">
+                            <label for="form_upload_checkbox_color">Цветная печать</label>
+                        </span>
                         <span>
-                        <input type="checkbox" id="test7" class="filled-in"/>
-                        <label for="test7">Двусторонняя печать</label>
-                    </span>
+                            <input type="checkbox" id="form_upload_checkbox_land" name="land" class="filled-in">
+                            <label for="form_upload_checkbox_land">Альбомная ориентация</label>
+                        </span>
+                        <span>
+                            <input type="checkbox" id="form_upload_checkbox_duplex" name="duplex" class="filled-in">
+                            <label for="form_upload_checkbox_duplex">Двусторонняя печать</label>
+                        </span>
+                        <span>
+                            <input type="checkbox" id="form_upload_checkbox_longedge" name="longedge" class="filled-in" checked="checked" disabled="disabled">
+                            <label for="form_upload_checkbox_longedge">Длинная сторона</label>
+                        </span>
 
                         <p>Страниц на один лист:
-                            <select class="browser-default" style="display: inline-block;">
+                            <select class="browser-default" style="display: inline-block;" name="number_pages_on_list">
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="4">4</option>
@@ -116,9 +120,17 @@
 <script>
     $(function () {
         $('select').material_select();
+        $('#form_upload_checkbox_duplex').click(function () {
+            let $formUploadCheckboxLongedge = $('#form_upload_checkbox_longedge');
+            $formUploadCheckboxLongedge.prop('disabled', !this.checked);
+            if (!this.checked) {
+                $formUploadCheckboxLongedge.prop('checked', true);
+            }
+        });
 
-        $('#form_upload').submit(function () {
-            var formData = new FormData(this);
+        $('#form_upload_input_file').change(function () {
+            let $formUpload = $('#form_upload')[0];
+            let formData = new FormData($formUpload);
             $.ajax({
                 type: "POST",
                 url: "/upload",
@@ -130,6 +142,8 @@
                     console.log(data);
                 }
             });
+            $formUpload.reset();
+            $('#form_upload_checkbox_longedge').prop('disabled', true);
             return false;
         });
     });
