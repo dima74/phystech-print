@@ -25,8 +25,8 @@
     </div>
 </nav>
 
-<div id="main-container" class="cyan">
-    <div id="tasksCurrent" class="blue">
+<div id="main_container" class="cyan">
+    <div id="tasks_current" class="blue">
         <table>
             <thead>
             <tr>
@@ -66,40 +66,11 @@
         </table>
     </div>
 
-    {#<div id="formUpload" #}{#class="cyan"#}{#>
-        <form method="POST" id="form_upload">
-            <div class="file-field input-field">
-                <div class="btn">
-                    <span>Выберите файл</span>
-                    <input type="file">
-                </div>
-                <div class="file-path-wrapper">
-                    <input class="file-path validate" type="text">
-                </div>
-            </div>
-
-            <span>
-                <input type="checkbox" id="test5" class="filled-in"/>
-                <label for="test5">Цветная печать</label>
-            </span>
-            <span>
-                <input type="checkbox" id="test6" class="filled-in"/>
-                <label for="test6">Альбомная ориентация</label>
-            </span>
-            <span>
-                <input type="checkbox" id="test7" class="filled-in"/>
-                <label for="test7">Двусторонняя печать</label>
-            </span>
-
-            <button class="waves-effect waves-light btn">Отправить</button>
-        </form>
-    </div>#}
-
-    <div id="form_upload_card" class="red">
-        <div class="card yellow" style="height: 100%; margin: 0;">
+    <div id="form_upload_card">
+        <div class="card" style="height: 100%; margin: 0;">
             <div class="card-content" style="height: 100%;">
 
-                <form method="POST" id="form_upload" style="height: 100%;" class="cyan">
+                <form method="POST" id="form_upload" style="height: 100%;">
                     <div class="file-field" id="left">
                         <div class="btn">
                             <span>Выберите файл</span>
@@ -107,7 +78,7 @@
                         </div>
                     </div>
 
-                    <div id="right" class="green">
+                    <div id="right">
                     <span>
                         <input type="checkbox" id="test5" class="filled-in"/>
                         <label for="test5">Цветная печать</label>
@@ -135,9 +106,9 @@
         </div>
     </div>
 
-    <div id="tasksHistory" class="green">История заказов</div>
+    <div id="tasks_history" class="green">История заказов</div>
 
-    <div id="printPreview" class="magenta">[Имя файла]</div>
+    <div id="print_preview" class="magenta">[Имя файла]</div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.1.1.js"></script>

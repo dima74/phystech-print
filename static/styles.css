@@ -8,15 +8,15 @@ body {
     flex-direction: column;
 }
 
-#main-container {
+#main_container {
     display: grid;
     grid-template-rows: 35% 30% 35%;
     grid-template-columns: 50% 50%;
-    height: 700px;
-    flex-grow: 1;
+    height: 800px;
+    /*flex-grow: 1;*/
 }
 
-#tasksCurrent {
+#tasks_current {
     grid-row: 1;
     grid-column: 1;
     overflow-y: auto;
@@ -30,13 +30,13 @@ body {
     height: 100%;
 }
 
-#tasksHistory {
+#tasks_history {
     grid-row: 3;
     grid-column: 1;
     padding: 10px;
 }
 
-#printPreview {
+#print_preview {
     grid-row: 1 / 4;
     grid-column: 2;
     padding: 10px;
