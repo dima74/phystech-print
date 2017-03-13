@@ -1,0 +1,44 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    /* чтобы #main расширился до конца страницы */
+    display: flex;
+    flex-direction: column;
+}
+
+#main {
+    /* чтобы #main расширился до конца страницы */
+    flex-grow: 1;
+    /* чтобы #left и #right разделили #main на два столбца */
+    display: flex;
+}
+
+#left {
+    /* чтобы #left и #right разделили #main на два столбика */
+    flex: 0 1 50%;
+    overflow-y: auto;
+    /* чтобы #currentOrders и #historyOrders разделили #left на две строчки */
+    display: flex;
+    flex-direction: column;
+
+}
+
+#right {
+    /* чтобы #left и #right разделили #main на два столбика */
+    flex: 0 1 50%;
+}
+
+#currentOrders, #historyOrders {
+    /* чтобы #currentOrders и #historyOrders разделили #left на две строчки */
+    flex-grow: 1;
+}
+
+.area {
+    margin: 10px;
+}
+
+select {
+    height: auto;
+}

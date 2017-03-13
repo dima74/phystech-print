@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Физтех.Печать</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.css">
+    <link rel="stylesheet" href="/static/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+
+<nav>
+    <div class="nav-wrapper">
+        {#        <a href="/" class="brand-logo right">Физтех.Печать</a>#}
+        <ul id="nav-mobile" class="left hide-on-med-and-down">
+            <li><a href="/">Новости</a></li>
+            <li class="active"><a href="/">Очередь печати</a></li>
+            <li><a href="/">Принтеры</a></li>
+            <li><a href="/">Пополнить счёт</a></li>
+            <li><a href="/">Форум</a></li>
+            <li><a href="/">Как печатать?</a></li>
+        </ul>
+        <span class="brand-logo right">{{ user.login }}, {{ user.first_name }} {{ user.last_name }} — {{ user.account }} рублей</span>
+    </div>
+</nav>
+
+
+<div id="main" {#style="background: orange;"#}>
+    <div id="left" {#style="background: green;"#}>
+        <div id="currentOrders" class="area" {#style="background: red;"#}>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Принтер</th>
+                    <th>Файл</th>
+                    <th>Страниц</th>
+                    <th>Цена</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for task in user.tasks_current %}
+                    <tr>
+                        {#<td>{{ task['printer'] }}
+                            <span data-activates='dropdown1' style="cursor: pointer;">▼</span>
+                            <ul id='dropdown1' class='dropdown-content'>
+                                <li><a href="#!">one</a></li>
+                                <li><a href="#!">two</a></li>
+                                <li><a href="#!">three</a></li>
+                            </ul>
+                        </td>#}
+
+                        <td>
+                            <select class="browser-default">
+                                <option>2</option>
+                                <option>2b</option>
+                                <option>3</option>
+                            </select>
+                        </td>
+
+                        <td>{{ task['file'] }}</td>
+                        <td>{{ task['number_pages'] }}</td>
+                        <td>{{ task['cost'] }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+        <div id="historyOrders" class="area" {#style="background: yellow;"#}>История заказов</div>
+    </div>
+    <div id="right" class="area" {#style="background: cyan;"#}>[Имя файла]</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.js"></script>
+<script>
+    $(function () {
+        $('select').material_select();
+
+        $('#form_upload').submit(function () {
+            var formData = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: "/upload",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+</body>
+</html>
