@@ -60,8 +60,8 @@ class User:
 
 @app.route('/')
 def main():
-    # user = {'login': 'dima74'}
-    user = User()
+    user = {'login': 'dima74'}
+    # user = User()
     return render_template('index.html', user=user)
 
 

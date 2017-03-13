@@ -96,43 +96,39 @@
     </div>#}
 
     <div id="form_upload_card" class="red">
-        <div class="card yellow {#blue-grey darken-1#}" style="height: 100%; margin: 0;">
-            <div class="card-content {#white-text#}">
+        <div class="card yellow" style="height: 100%; margin: 0;">
+            <div class="card-content" style="height: 100%;">
 
-                <form method="POST" id="form_upload">
-                    <div class="file-field input-field">
+                <form method="POST" id="form_upload" style="height: 100%;" class="cyan">
+                    <div class="file-field" id="left">
                         <div class="btn">
                             <span>Выберите файл</span>
                             <input type="file">
                         </div>
-{#                        <div class="file-path-wrapper">#}
-{#                            <input class="file-path validate" type="text">#}
-{#                        </div>#}
                     </div>
 
+                    <div id="right" class="green">
                     <span>
                         <input type="checkbox" id="test5" class="filled-in"/>
                         <label for="test5">Цветная печать</label>
                     </span>
-                    <span>
+                        <span>
                         <input type="checkbox" id="test6" class="filled-in"/>
                         <label for="test6">Альбомная ориентация</label>
                     </span>
-                    <span>
+                        <span>
                         <input type="checkbox" id="test7" class="filled-in"/>
                         <label for="test7">Двусторонняя печать</label>
                     </span>
 
-                    <p>Страниц на один лист:
-                        <select class="browser-default" style="display: inline-block;">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="4">4</option>
-                            <option value="16">16</option>
-                        </select></p>
-
-
-                    <button class="waves-effect waves-light btn">Отправить</button>
+                        <p>Страниц на один лист:
+                            <select class="browser-default" style="display: inline-block;">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="4">4</option>
+                                <option value="16">16</option>
+                            </select></p>
+                    </div>
                 </form>
 
             </div>

@@ -20,7 +20,6 @@ body {
     grid-row: 1;
     grid-column: 1;
     overflow-y: auto;
-    /*padding: 10px;*/
     margin: 10px;
 }
 
@@ -29,7 +28,6 @@ body {
     grid-column: 1;
     padding: 10px;
     height: 100%;
-    /*margin: 30px;*/
 }
 
 #tasksHistory {
@@ -47,4 +45,21 @@ body {
 select {
     height: auto;
     width: auto;
+}
+
+#form_upload {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    align-items: center;
+    justify-items: center;
+}
+
+#left {
+    grid-row: 1;
+    grid-column: 1;
+}
+
+#right {
+    grid-row: 1;
+    grid-column: 2;
 }
