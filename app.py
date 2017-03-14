@@ -50,9 +50,6 @@ class User:
                       'status': task['Status'],
                       'number_pages': task['NumberOfPages']
                       } for task in tasks0]
-            for task in tasks:
-                if len(task['printer']) == 1:
-                    task['printer'] += 'a'
             return tasks
 
         self.tasks_current = get_tasks('/query/tasks/current?num=10')
@@ -81,9 +78,11 @@ class User:
 
 @app.route('/')
 def main():
-    user = {'login': 'dima74'}
-    # user = User()
-    return render_template('index.html', user=user)
+    # user = {'login': 'dima74'}
+    user = User()
+    printers = ['{}{}'.format(i + 1, suffix) for i in range(8) for suffix in ['', 'b']]
+    print(user.tasks_history)
+    return render_template('index.html', user=user, printers=printers)
 
 
 @app.route('/test')

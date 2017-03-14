@@ -26,8 +26,8 @@
     </div>
 </nav>
 
-<div id="main_container" class="cyan">
-    <div id="tasks_current" class="blue">
+<div id="main_container">
+    <div id="tasks_current">
         <table>
             <thead>
             <tr>
@@ -41,20 +41,11 @@
             <tbody>
             {% for task in user.tasks_current %}
                 <tr>
-                    {#<td>{{ task['printer'] }}
-                            <span data-activates='dropdown1' style="cursor: pointer;">▼</span>
-                            <ul id='dropdown1' class='dropdown-content'>
-                                <li><a href="#!">one</a></li>
-                                <li><a href="#!">two</a></li>
-                                <li><a href="#!">three</a></li>
-                            </ul>
-                        </td>#}
-
                     <td>
                         <select class="browser-default">
-                            <option>2</option>
-                            <option>2b</option>
-                            <option>3</option>
+                            {% for printer in printers %}
+                                <option {% if printer == task.printer %}selected{% endif %}>{{ printer }}</option>
+                            {% endfor %}
                         </select>
                     </td>
 
