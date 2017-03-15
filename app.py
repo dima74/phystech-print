@@ -1,3 +1,4 @@
+import re
 import requests
 import base64
 from flask import Flask
@@ -56,8 +57,14 @@ class User:
         self.tasks_history = get_tasks('/query/tasks/history?num=10')
 
     def send_file_to_print_mipt_ru(self, info):
+        def rewrite_request(prepared_request, filename):
+            # http://linuxonly.nl/docs/68/167_Uploading_files_with_non_ASCII_filenames_using_Python_requests.html
+            prepared_request.body = re.sub(b'filename\*=[^\r]*', b'filename="' + filename.encode('UTF-8') + b'"', prepared_request.body)
+            return prepared_request
+
+        filename = info['filename']
         data = {
-            'Filename': info['filename'],
+            'Filename': filename,
             'nick': 'ZGltYTc0',
             'mulpages': info['number_pages_on_list'],
             'longedge': info['longedge'],
@@ -68,12 +75,12 @@ class User:
             'Upload': 'Submit Query'
         }
         files = {key: (None, value) for key, value in data.items()}
-        files['uploadfile'] = (info['filename'], info['file'], 'application/octet-stream')
-        request = self.session.post('http://print.mipt.ru/printfile.php', files=files)
+        files['uploadfile'] = (filename, info['file'], 'application/octet-stream')
+        request = self.session.post('http://print.mipt.ru/printfile.php', files=files, auth=lambda prepared_request: rewrite_request(prepared_request, filename))
         if request.status_code != 200:
             raise Exception()
         request_info = request.text.split(';')
-        return 'OK' if request_info[0] == 'OK' else base64.b64decode(request_info[1]).decode('UTF-8')
+        return 'OK' if request_info[0] == 'OK' else 'print.mipt.ru: ' + base64.b64decode(request_info[1]).decode('UTF-8')
 
 
 @app.route('/')
@@ -81,7 +88,6 @@ def main():
     # user = {'login': 'dima74'}
     user = User()
     printers = ['{}{}'.format(i + 1, suffix) for i in range(8) for suffix in ['', 'b']]
-    print(user.tasks_history)
     return render_template('index.html', user=user, printers=printers)
 
 
