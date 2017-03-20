@@ -20,19 +20,18 @@ socketio = SocketIO(app)
 
 
 @app.route('/')
+@login_required
 def main():
-    status, user = try_login_from_cookies()
-    if status != 'OK':
-        return redirect(url_for('auth.login'))
-
+    user = g.user
     user.tasks_current = {}
     printers = ['{}{}'.format(i + 1, suffix) for i in range(8) for suffix in ['', 'b']]
     return render_template('index.html', user=user, printers=printers)
 
 
 @app.route('/test')
+@login_required
 def test():
-    return render_template('test.html')
+    return render_template('test.html', user=g.user)
 
 
 @app.route('/upload', methods=['POST'])
