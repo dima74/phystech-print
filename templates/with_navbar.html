@@ -51,10 +51,10 @@
                 <li id="nav_howto"><a href="/howto">Как печатать?</a></li>
             </ul>
 
-            {% if user %}
+            {% if g.user %}
                 <div id="right" class="right">
-                    <span id="right_username">{{ user.login }}, {{ user.first_name }} {{ user.last_name }}</span>
-                    <span id="right_account">{{ user.account }} рублей</span>
+                    <span id="right_username">{{ g.user.login }}, {{ g.user.first_name }} {{ g.user.last_name }}</span>
+                    <span id="right_account">{{ g.user.account }} рублей</span>
                     <span id="right_button"><button id="button_logout" class="waves-effect waves-light btn">Выйти</button></span>
                 </div>
             {% else %}

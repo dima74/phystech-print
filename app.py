@@ -22,10 +22,11 @@ socketio = SocketIO(app)
 @app.route('/')
 @login_required
 def main():
-    user = g.user
-    user.tasks_current = {}
-    printers = ['{}{}'.format(i + 1, suffix) for i in range(8) for suffix in ['', 'b']]
-    return render_template('index.html', user=user, printers=printers)
+    # user = g.user
+    # user.tasks_current = {}
+    # printers = ['{}{}'.format(i + 1, suffix) for i in range(8) for suffix in ['', 'b']]
+    # return render_template('index.html', user=user, printers=printers)
+    return render_template('index.html')
 
 
 @app.route('/news')
