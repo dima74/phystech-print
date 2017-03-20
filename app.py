@@ -28,6 +28,32 @@ def main():
     return render_template('index.html', user=user, printers=printers)
 
 
+@app.route('/news')
+def news():
+    return render_template('news.html')
+
+
+@app.route('/pay')
+@login_required
+def pay():
+    return render_template('pay.html')
+
+
+@app.route('/printers')
+def printers():
+    return render_template('printers.html')
+
+
+@app.route('/forum')
+def forum():
+    return render_template('forum.html')
+
+
+@app.route('/howto')
+def howto():
+    return render_template('howto.html')
+
+
 @app.route('/test')
 @login_required
 def test():

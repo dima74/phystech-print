@@ -43,37 +43,36 @@
     <nav>
         <div class="nav-wrapper">
             <ul id="nav-mobile" class="left hide-on-med-and-down">
-                <li><a href="/">Новости</a></li>
-                <li class="active"><a href="/">Очередь печати</a></li>
-                <li><a href="/">Принтеры</a></li>
-                <li><a href="/">Пополнить счёт</a></li>
-                <li><a href="/">Форум</a></li>
-                <li><a href="/">Как печатать?</a></li>
+                <li id="nav_news"><a href="/news">Новости</a></li>
+                <li id="nav_index"><a href="/">Очередь печати</a></li>
+                <li id="nav_pay"><a href="/pay">Пополнить счёт</a></li>
+                <li id="nav_printers"><a href="/printers">Принтеры</a></li>
+                <li id="nav_forum"><a href="/forum">Форум</a></li>
+                <li id="nav_howto"><a href="/howto">Как печатать?</a></li>
             </ul>
-            {#            <div id="right" class="right">#}
-            {#                <p {#class="brand-logo">{{ user.login }}, {{ user.first_name }} {{ user.last_name }} — {{ user.account }} рублей</p>#}
-            {#                <p>Выйти</p>#}
-            {#                <span>Имя</span>#}
-            {#                <br/>#}
-            {#                <span>Выйти</span>#}
-            {#            </div>#}
 
-            <div id="right" class="right">
-                <span id="right_username">{{ user.login }}, {{ user.first_name }} {{ user.last_name }}</span>
-                <span id="right_account">{{ user.account }} рублей</span>
-                <span id="right_button"><button id="button_logout" class="waves-effect waves-light btn">Выйти</button></span>
-            </div>
-
-            {#            {{ user.login }}, {{ user.first_name }} {{ user.last_name }}#}
-            {#            <button id="button_logout" class="waves-effect waves-light btn">Выйти</button>#}
+            {% if user %}
+                <div id="right" class="right">
+                    <span id="right_username">{{ user.login }}, {{ user.first_name }} {{ user.last_name }}</span>
+                    <span id="right_account">{{ user.account }} рублей</span>
+                    <span id="right_button"><button id="button_logout" class="waves-effect waves-light btn">Выйти</button></span>
+                </div>
+            {% else %}
+                <a href="/" class="brand-logo right">Физтех.Печать</a>
+            {% endif %}
         </div>
     </nav>
 {% endblock %}
 
 {% block script %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.3/js.cookie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-url/2.4.1/url.min.js"></script>
     <script>
         $(function () {
+            let path = url(1) || 'index';
+            console.log('#nav_' + path);
+            $('#nav_' + path).addClass('active');
+
             $('#button_logout').click(function () {
                 window.location.replace('/logout');
             });
