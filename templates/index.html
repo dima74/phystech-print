@@ -2,9 +2,16 @@
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/loader.css">
 {% endblock %}
 
 {% block body %}
+    <div id="loader-wrapper">
+        <div id="loader"></div>
+        <div class="loader-section section-left"></div>
+        <div class="loader-section section-right"></div>
+    </div>
+
     {{ super() }}
 
     <div id="main_container">
@@ -144,6 +151,8 @@
                 $('#form_upload_checkbox_longedge').prop('disabled', true);
                 return false;
             });
+
+            $('body').addClass('loaded');
         });
     </script>
 {% endblock %}
