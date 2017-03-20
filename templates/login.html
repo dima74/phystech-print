@@ -21,6 +21,24 @@
             margin-bottom: 0;
         }
 
+        #login_form {
+            margin-bottom: 0;
+        }
+
+        #login_button {
+            margin-bottom: 20px;
+        }
+
+        #login_error, #login_loading {
+            display: none;
+            width: 100%;
+            text-align: center;
+        }
+
+        #login_error {
+            color: red;
+        }
+
         .input-field {
             text-align: left;
         }
@@ -48,18 +66,18 @@
                 <div class="card-content">
                     <span class="card-title">Войдите</span>
 
-                    <form id="login_form" method="POST">
-                        <div class="row">
-                            <div class="input-field col m12">
-                                <input id="login_login" type="text" required>
-                                <label for="login_login">Логин</label>
-                            </div>
-                            <div class="input-field col m12">
-                                <input id="login_password" type="password" required>
-                                <label for="login_password">Пароль</label>
-                            </div>
-                            <button class="waves-effect waves-light btn" type="submit">Войти</button>
+                    <form id="login_form" method="POST" class="row">
+                        <div class="input-field col m12">
+                            <input id="login_login" name="login_login" type="text" required>
+                            <label for="login_login">Логин</label>
                         </div>
+                        <div class="input-field col m12">
+                            <input id="login_password" name="login_password" type="password" required>
+                            <label for="login_password">Пароль</label>
+                        </div>
+                        <button id="login_button" class="waves-effect waves-light btn" type="submit">Войти</button>
+                        <p id="login_loading">Загрузка...</p>
+                        <p id="login_error">Неправильный логин или пароль</p>
                     </form>
 
                 </div>
@@ -77,22 +95,20 @@
                 <div class="card-content">
                     <span class="card-title">Зарегистрируйтесь</span>
 
-                    <form id="register_form" method="POST" action="/register">
-                        <div class="row">
-                            <div class="input-field col m12">
-                                <input id="register_login" name="register_login" type="text" class="validate" required>
-                                <label for="register_login">Логин</label>
-                            </div>
-                            <div class="input-field col m12">
-                                <input id="register_password" name="register_password" type="password" class="validate" required>
-                                <label for="register_password">Пароль</label>
-                            </div>
-                            <div class="input-field col m12">
-                                <input id="register_password_confirm" name="register_password_confirm" type="password" class="validate">
-                                <label for="register_password_confirm">Повторите пароль</label>
-                            </div>
-                            <button class="waves-effect waves-light btn" type="submit">Зарегистрироваться</button>
+                    <form id="register_form" method="POST" action="/query/register" class="row">
+                        <div class="input-field col m12">
+                            <input id="register_login" name="register_login" type="text" autocomplete="off">
+                            <label for="register_login">Логин</label>
                         </div>
+                        <div class="input-field col m12">
+                            <input id="register_password" name="register_password" type="password">
+                            <label for="register_password">Пароль</label>
+                        </div>
+                        <div class="input-field col m12">
+                            <input id="register_password_confirm" name="register_password_confirm" type="password">
+                            <label for="register_password_confirm">Повторите пароль</label>
+                        </div>
+                        <button class="waves-effect waves-light btn" type="submit">Зарегистрироваться</button>
                     </form>
 
                 </div>
@@ -105,14 +121,40 @@
 
 {% block script %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.0/jquery.form.min.js"></script>
     <script>
         $(function () {
+            $('#login_form').ajaxForm({
+                beforeSubmit: function () {
+                    console.log('before');
+                    $('#login_error').hide();
+                    $('#login_loading').show();
+                },
+                success: function (data) {
+                    console.log('success');
+                    $('#login_loading').hide();
+                    if (data == 'OK') {
+                        window.location.replace('/');
+                    } else {
+                        $('#login_error').text(data);
+                        $('#login_error').show();
+                    }
+                }
+            });
+
             $('#register_form').validate({
                 rules: {
                     register_login: {
-                        remote: '/query/register/login/'
+                        required: true,
+                        remote: {
+                            url: '/query/register/login/'
+                        }
+                    },
+                    register_password: {
+                        required: true,
                     },
                     register_password_confirm: {
+                        required: true,
                         equalTo: '#register_password'
                     }
                 },
@@ -122,7 +164,10 @@
                         remote: 'Логин занят'
                     },
                     register_password: 'Пожалуйста, введите пароль',
-                    register_password_confirm: 'Пароли не совпадают'
+                    register_password_confirm: {
+                        required: 'Пожалуйста, повторите пароль',
+                        equalTo: 'Пароли не совпадают'
+                    }
                 },
                 errorElement: 'div',
                 errorPlacement: function (error, element) {
@@ -131,9 +176,6 @@
                 }
             });
 
-            $('#register_password_confirm').on('keydown', function () {
-                $('#register_password_confirm').valid();
-            });
             $('#register_login').on('keyup', function () {
                 $('#register_login').valid();
             });

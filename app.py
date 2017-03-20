@@ -1,18 +1,13 @@
-import re
-import requests
-import base64
+from base import *
 from flask import Flask
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import url_for
 from flask_socketio import SocketIO
-
 from wrapped import wrapped
+from auth import auth, try_login_from_cookies, User
 
 app = Flask(__name__)
 app.secret_key = '6eg\x18\x03\xd8\xaa@4\xdd/G\xd5fie\xf3\xf8\xb1uy\xf4se'
 app.register_blueprint(wrapped)
+app.register_blueprint(auth)
 socketio = SocketIO(app)
 
 '''
@@ -25,82 +20,10 @@ socketio = SocketIO(app)
 '''
 
 
-class User:
-    login = 'dima74'
-    password = '200898'
-    session = requests.Session()
-
-    def get(self, url):
-        request = self.session.post('http://print.mipt.ru' + url).json()
-        if request['error']:
-            raise Exception()
-        return request['ans']
-
-    def post(self, url, data):
-        request = self.session.post('http://print.mipt.ru' + url, data=data).json()
-        if request['error']:
-            raise Exception()
-        return request['ans']
-
-    def __init__(self):
-        request = self.post('/query/user/', {'login': self.login, 'pass': self.password})
-        self.login = request['Nick']
-        self.account = request['Account']
-        self.first_name = request['FirstName']
-        self.last_name = request['LastName']
-        self.load()
-
-    def load(self):
-        def get_tasks(path):
-            request = self.get(path)
-            tasks0 = request['array']
-            tasks = [{'id': task['Id'],
-                      'file': task['FileName'],
-                      'printer': task['ShortName'],
-                      'cost': task['Cost'],
-                      'status': task['Status'],
-                      'number_pages': task['NumberOfPages']
-                      } for task in tasks0]
-            return tasks
-
-        self.tasks_current = get_tasks('/query/tasks/current?num=10')
-        self.tasks_history = get_tasks('/query/tasks/history?num=10')
-
-    def send_file_to_print_mipt_ru(self, info):
-        def rewrite_request(prepared_request, filename):
-            # http://linuxonly.nl/docs/68/167_Uploading_files_with_non_ASCII_filenames_using_Python_requests.html
-            prepared_request.body = re.sub(b'filename\*=[^\r]*', b'filename="' + filename.encode('UTF-8') + b'"', prepared_request.body)
-            return prepared_request
-
-        filename = info['filename']
-        data = {
-            'Filename': filename,
-            'nick': 'ZGltYTc0',
-            'mulpages': info['number_pages_on_list'],
-            'longedge': info['longedge'],
-            'land': info['land'],
-            'color': info['color'],
-            'duplex': info['duplex'],
-            'folder': '/upload/uploads',
-            'Upload': 'Submit Query'
-        }
-        files = {key: (None, value) for key, value in data.items()}
-        files['uploadfile'] = (filename, info['file'], 'application/octet-stream')
-        request = self.session.post('http://print.mipt.ru/printfile.php', files=files, auth=lambda prepared_request: rewrite_request(prepared_request, filename))
-        if request.status_code != 200:
-            raise Exception()
-        request_info = request.text.split(';')
-        return 'OK' if request_info[0] == 'OK' else 'print.mipt.ru: ' + base64.b64decode(request_info[1]).decode('UTF-8')
-
-
-def try_login():
-    return False
-
-
 @app.route('/')
 def main():
-    if not try_login():
-        return redirect(url_for('login'))
+    if not try_login_from_cookies():
+        return redirect(url_for('auth.login'))
 
     # user = {'login': 'dima74'}
     user = User()
@@ -108,23 +31,9 @@ def main():
     return render_template('index.html', user=user, printers=printers)
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'GET':
-        return render_template('login.html')
-
-    print(request.form)
-    return render_template('login.html')
-
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    return redirect(url_for('login'))
-
-
 @app.route('/test')
 def test():
-    return render_template('test.html')
+    return render_template('test2.html')
 
 
 @app.route('/upload', methods=['POST'])
