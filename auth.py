@@ -1,6 +1,6 @@
 from functools import wraps
-
 from user import *
+from base import *
 
 auth = Blueprint('auth', __name__)
 
@@ -9,8 +9,9 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         status = try_login_from_cookies()
+        print('user: {}, status: {}'.format(g.user, status))
         if g.user is None:
-            return redirect(url_for('auth.login', next=request.url))
+            return redirect(url_for('auth.login', next=None if request.full_path == '/?' else request.url))
         assert status == 'OK'
         return f(*args, **kwargs)
 
@@ -18,8 +19,8 @@ def login_required(f):
 
 
 def try_login_from_cookies():
-    login = request.cookies.get('login', None)
-    password = request.cookies.get('password', None)
+    login = session.get('login', None)
+    password = session.get('password', None)
     if login is None or password is None:
         g.user = None
         return 'No cookies'
@@ -34,8 +35,8 @@ def try_login_from_form():
 
     response = make_response(status)
     if status == 'OK':
-        response.set_cookie('login', login)
-        response.set_cookie('password', password)
+        session['login'] = login
+        session['password'] = password
     return response
 
 
@@ -62,3 +63,9 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
     return try_login_from_form()
+
+
+@auth.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')

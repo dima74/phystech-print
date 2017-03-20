@@ -68,7 +68,7 @@
 
                     <form id="login_form" method="POST" class="row">
                         <div class="input-field col m12">
-                            <input id="login_login" name="login_login" type="text" required>
+                            <input id="login_login" name="login_login" type="text" autofocus required>
                             <label for="login_login">Логин</label>
                         </div>
                         <div class="input-field col m12">
@@ -79,7 +79,6 @@
                         <p id="login_loading">Загрузка...</p>
                         <p id="login_error">Неправильный логин или пароль</p>
                     </form>
-
                 </div>
             </div>
         </div>
@@ -110,7 +109,6 @@
                         </div>
                         <button class="waves-effect waves-light btn" type="submit">Зарегистрироваться</button>
                     </form>
-
                 </div>
             </div>
         </div>
@@ -120,21 +118,23 @@
 {% endblock %}
 
 {% block script %}
+    {{ super() }}
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.0/jquery.form.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-url/2.4.1/url.min.js"></script>
     <script>
         $(function () {
             $('#login_form').ajaxForm({
                 beforeSubmit: function () {
-                    console.log('before');
                     $('#login_error').hide();
                     $('#login_loading').show();
                 },
                 success: function (data) {
-                    console.log('success');
                     $('#login_loading').hide();
                     if (data == 'OK') {
-                        window.location.replace('/');
+                        next_url = url('?next');
+                        window.location.replace(next_url === undefined ? '/' : next_url);
                     } else {
                         $('#login_error').text(data);
                         $('#login_error').show();

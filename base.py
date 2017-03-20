@@ -6,5 +6,6 @@ from flask import url_for
 from flask import redirect
 from flask import make_response
 from flask import g
+from flask import session
 
 HOST = 'http://print.mipt.ru'
