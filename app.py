@@ -22,18 +22,18 @@ socketio = SocketIO(app)
 
 @app.route('/')
 def main():
-    if not try_login_from_cookies():
+    status, user = try_login_from_cookies()
+    if status != 'OK':
         return redirect(url_for('auth.login'))
 
-    # user = {'login': 'dima74'}
-    user = User()
+    user.tasks_current = {}
     printers = ['{}{}'.format(i + 1, suffix) for i in range(8) for suffix in ['', 'b']]
     return render_template('index.html', user=user, printers=printers)
 
 
 @app.route('/test')
 def test():
-    return render_template('test2.html')
+    return render_template('test.html')
 
 
 @app.route('/upload', methods=['POST'])

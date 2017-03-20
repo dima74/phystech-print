@@ -5,7 +5,7 @@ import re
 auth = Blueprint('auth', __name__)
 
 
-class User:
+class User2:
     login = 'dima74'
     password = '200898'
     session = requests.Session()
@@ -73,23 +73,68 @@ class User:
         return 'OK' if request_info[0] == 'OK' else 'print.mipt.ru: ' + base64.b64decode(request_info[1]).decode('UTF-8')
 
 
+class User:
+    def __init__(self, session, user_info):
+        self.login = user_info['Nick']
+        self.account = user_info['Account']
+        self.first_name = user_info['FirstName']
+        self.last_name = user_info['LastName']
+
+        self.password = user_info['password']
+        self.session = session
+
+
+class Users:
+    cache = {}
+
+    def add_user(self, session, user_info):
+        print(user_info)
+        user = User(session, user_info)
+        self.cache[user.login] = user
+        return user
+
+    def get_user(self, login):
+        return self.cache.get(login, None)
+
+
+users = Users()
+
+
 def try_login_from_cookies():
-    print(request.cookies)
-    return False
+    login = request.cookies.get('login', None)
+    password = request.cookies.get('password', None)
+    if login is None or password is None:
+        return 'No cookies', None
+
+    return try_login(login, password)
 
 
 def try_login_from_form():
     login = request.form['login_login']
     password = request.form['login_password']
+    status, user = try_login(login, password)
+
+    response = make_response(status)
+    if status == 'OK':
+        response.set_cookie('login', login)
+        response.set_cookie('password', password)
+    return response
+
+
+def try_login(login, password):
+    user_from_cache = users.get_user(login)
+    if user_from_cache and user_from_cache.password == password:
+        return 'OK', user_from_cache
 
     session = requests.Session()
     r = session.post(HOST + '/query/user/', {'login': login, 'pass': password}).json()
     if r['error']:
-        return r['msg']
-
-
-
-    return 'OK'
+        return r['msg'], None
+    user_info = r['ans']
+    assert login == user_info['Nick']
+    user_info['password'] = password
+    user = users.add_user(session, user_info)
+    return 'OK', user
 
 
 @auth.route('/login', methods=['GET', 'POST'])

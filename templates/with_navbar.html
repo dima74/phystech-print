@@ -1,1 +1,19 @@
 {% extends "base.html" %}
+
+{% block body %}
+    <nav>
+        <div class="nav-wrapper">
+            <ul id="nav-mobile" class="left hide-on-med-and-down">
+                <li><a href="/">Новости</a></li>
+                <li class="active"><a href="/">Очередь печати</a></li>
+                <li><a href="/">Принтеры</a></li>
+                <li><a href="/">Пополнить счёт</a></li>
+                <li><a href="/">Форум</a></li>
+                <li><a href="/">Как печатать?</a></li>
+            </ul>
+            <span class="brand-logo right">{{ user.login }}, {{ user.first_name }} {{ user.last_name }} — {{ user.account }} рублей</span>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+{% endblock %}

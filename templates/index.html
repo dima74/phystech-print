@@ -1,162 +1,147 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Физтех.Печать</title>
+{% extends "with_navbar.html" %}
+{% block head %}
     <link rel="stylesheet" href="/static/styles.css">
-</head>
-<body>
+{% endblock %}
 
-<nav>
-    <div class="nav-wrapper">
-        <ul id="nav-mobile" class="left hide-on-med-and-down">
-            <li><a href="/">Новости</a></li>
-            <li class="active"><a href="/">Очередь печати</a></li>
-            <li><a href="/">Принтеры</a></li>
-            <li><a href="/">Пополнить счёт</a></li>
-            <li><a href="/">Форум</a></li>
-            <li><a href="/">Как печатать?</a></li>
-        </ul>
-        <span class="brand-logo right">{{ user.login }}, {{ user.first_name }} {{ user.last_name }} — {{ user.account }} рублей</span>
-    </div>
-</nav>
-
-<div id="main_container">
-    <div id="tasks_current">
-        <table>
-            <thead>
-            <tr>
-                <th>Принтер</th>
-                <th>Файл</th>
-                <th>Страниц</th>
-                <th>Цена</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            {% for task in user.tasks_current %}
-                <tr data-id="{{ task['id'] }}">
-                    <td>
-                        <select class="browser-default">
-                            {% for printer in printers %}
-                                <option{% if printer == task.printer %} selected{% endif %}>{{ printer }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-
-                    <td><a class="button-show-preview">{{ task['file'] }}</a></td>
-                    <td>{{ task['number_pages'] }}</td>
-                    <td>{{ task['cost'] }}</td>
-                    <td><i class="material-icons waves-effect task-action">done</i></td>
-                    <td><i class="material-icons waves-effect task-action">clear</i></td>
+{% block content %}
+    <div id="main_container">
+        <div id="tasks_current">
+            <table>
+                <thead>
+                <tr>
+                    <th>Принтер</th>
+                    <th>Файл</th>
+                    <th>Страниц</th>
+                    <th>Цена</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                </thead>
 
-    <div id="form_upload_card">
-        <div class="card" style="height: 100%; margin: 0;">
-            <div class="card-content" style="height: 100%;">
+                <tbody>
+                {% for task in user.tasks_current %}
+                    <tr data-id="{{ task['id'] }}">
+                        <td>
+                            <select class="browser-default">
+                                {% for printer in printers %}
+                                    <option{% if printer == task.printer %} selected{% endif %}>{{ printer }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
 
-                <form method="POST" id="form_upload" style="height: 100%;">
-                    <div class="file-field" id="form_upload_input_file">
-                        <div class="btn">
-                            <span>Выберите файл</span>
-                            <input type="file" name="file">
+                        <td><a class="button-show-preview">{{ task['file'] }}</a></td>
+                        <td>{{ task['number_pages'] }}</td>
+                        <td>{{ task['cost'] }}</td>
+                        <td><i class="material-icons waves-effect task-action">done</i></td>
+                        <td><i class="material-icons waves-effect task-action">clear</i></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div id="form_upload_card">
+            <div class="card" style="height: 100%; margin: 0;">
+                <div class="card-content" style="height: 100%;">
+
+                    <form method="POST" id="form_upload" style="height: 100%;">
+                        <div class="file-field" id="form_upload_input_file">
+                            <div class="btn">
+                                <span>Выберите файл</span>
+                                <input type="file" name="file">
+                            </div>
                         </div>
-                    </div>
 
-                    <div id="form_upload_options">
+                        <div id="form_upload_options">
                         <span>
                             <input type="checkbox" id="form_upload_checkbox_color" name="color" class="filled-in">
                             <label for="form_upload_checkbox_color">Цветная печать</label>
                         </span>
-                        <span>
+                            <span>
                             <input type="checkbox" id="form_upload_checkbox_land" name="land" class="filled-in">
                             <label for="form_upload_checkbox_land">Альбомная ориентация</label>
                         </span>
-                        <span>
+                            <span>
                             <input type="checkbox" id="form_upload_checkbox_duplex" name="duplex" class="filled-in">
                             <label for="form_upload_checkbox_duplex">Двусторонняя печать</label>
                         </span>
-                        <span>
+                            <span>
                             <input type="checkbox" id="form_upload_checkbox_longedge" name="longedge" class="filled-in" checked="checked" disabled="disabled">
                             <label for="form_upload_checkbox_longedge">Длинная сторона</label>
                         </span>
 
-                        <p>Страниц на один лист:
-                            <select class="browser-default" style="display: inline-block;" name="number_pages_on_list">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="4">4</option>
-                                <option value="16">16</option>
-                            </select></p>
-                    </div>
-                </form>
+                            <p>Страниц на один лист:
+                                <select class="browser-default" style="display: inline-block;" name="number_pages_on_list">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="4">4</option>
+                                    <option value="16">16</option>
+                                </select></p>
+                        </div>
+                    </form>
 
+                </div>
             </div>
         </div>
+
+        <div id="tasks_history" class="green">История заказов</div>
+
+        <div id="print_preview">
+            {% if user.tasks_current %}
+                <img id="print_preview_image" src="http://print.mipt.ru/png/{{ user.tasks_current[0]['id'] }}/001">
+            {% endif %}
+        </div>
     </div>
+{% endblock %}
 
-    <div id="tasks_history" class="green">История заказов</div>
+{% block script %}
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script>
+        {#    let socket = io.connect('http://' + document.domain + ':' + location.port);#}
+        {#    socket.on('connect', function () {#}
+        {#        socket.emit('my event', {data: 'I\'m connected!'});#}
+        {#    });#}
 
-    <div id="print_preview">
-        <img id="print_preview_image" src="http://print.mipt.ru/png/{{ user.tasks_current[0]['id'] }}/001">
-    </div>
-</div>
+        $(function () {
+            $('select').material_select();
 
-<script src="https://code.jquery.com/jquery-3.1.1.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
-<script>
-    {#    let socket = io.connect('http://' + document.domain + ':' + location.port);#}
-    {#    socket.on('connect', function () {#}
-    {#        socket.emit('my event', {data: 'I\'m connected!'});#}
-    {#    });#}
+            $('.button-show-preview').click(function () {
+                let link = $(this);
+                let cellLink = link.parent();
+                let line = cellLink.parent();
+                let cellNumberPages = cellLink.next();
+                $('#print_preview_image').attr('src', `http://print.mipt.ru/png/${line.data('id')}/001`);
+            });
 
-    $(function () {
-        $('select').material_select();
-
-        $('.button-show-preview').click(function () {
-            let link = $(this);
-            let cellLink = link.parent();
-            let line = cellLink.parent();
-            let cellNumberPages = cellLink.next();
-            $('#print_preview_image').attr('src', `http://print.mipt.ru/png/${line.data('id')}/001`);
-        });
-
-        $('#form_upload_checkbox_duplex').click(function () {
-            let $formUploadCheckboxLongedge = $('#form_upload_checkbox_longedge');
-            $formUploadCheckboxLongedge.prop('disabled', !this.checked);
-            if (!this.checked) {
-                $formUploadCheckboxLongedge.prop('checked', true);
-            }
-        });
-
-        $('#form_upload_input_file').change(function () {
-            let $formUpload = $('#form_upload')[0];
-            let formData = new FormData($formUpload);
-            $.ajax({
-                type: "POST",
-                url: "/upload",
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function (data) {
-                    console.log(data);
-                    if (data != 'OK') {
-                        {#                        alert(data);#}
-                    }
+            $('#form_upload_checkbox_duplex').click(function () {
+                let $formUploadCheckboxLongedge = $('#form_upload_checkbox_longedge');
+                $formUploadCheckboxLongedge.prop('disabled', !this.checked);
+                if (!this.checked) {
+                    $formUploadCheckboxLongedge.prop('checked', true);
                 }
             });
-            $formUpload.reset();
-            $('#form_upload_checkbox_longedge').prop('disabled', true);
-            return false;
-        });
-    });
-</script>
 
-</body>
-</html>
+            $('#form_upload_input_file').change(function () {
+                let $formUpload = $('#form_upload')[0];
+                let formData = new FormData($formUpload);
+                $.ajax({
+                    type: "POST",
+                    url: "/upload",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        console.log(data);
+                        if (data != 'OK') {
+                            {#                        alert(data);#}
+                        }
+                    }
+                });
+                $formUpload.reset();
+                $('#form_upload_checkbox_longedge').prop('disabled', true);
+                return false;
+            });
+        });
+    </script>
+{% endblock %}
