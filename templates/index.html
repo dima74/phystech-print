@@ -3,12 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Физтех.Печать</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="/static/styles.css">
-    <link rel="stylesheet" href="/static/colors.css">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
 
@@ -40,18 +35,20 @@
 
             <tbody>
             {% for task in user.tasks_current %}
-                <tr>
+                <tr data-id="{{ task['id'] }}">
                     <td>
                         <select class="browser-default">
                             {% for printer in printers %}
-                                <option {% if printer == task.printer %}selected{% endif %}>{{ printer }}</option>
+                                <option{% if printer == task.printer %} selected{% endif %}>{{ printer }}</option>
                             {% endfor %}
                         </select>
                     </td>
 
-                    <td>{{ task['file'] }}</td>
+                    <td><a class="button-show-preview">{{ task['file'] }}</a></td>
                     <td>{{ task['number_pages'] }}</td>
                     <td>{{ task['cost'] }}</td>
+                    <td><i class="material-icons waves-effect task-action">done</i></td>
+                    <td><i class="material-icons waves-effect task-action">clear</i></td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -104,14 +101,31 @@
 
     <div id="tasks_history" class="green">История заказов</div>
 
-    <div id="print_preview" class="magenta">[Имя файла]</div>
+    <div id="print_preview">
+        <img id="print_preview_image" src="http://print.mipt.ru/png/{{ user.tasks_current[0]['id'] }}/001">
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
 <script>
+    {#    let socket = io.connect('http://' + document.domain + ':' + location.port);#}
+    {#    socket.on('connect', function () {#}
+    {#        socket.emit('my event', {data: 'I\'m connected!'});#}
+    {#    });#}
+
     $(function () {
         $('select').material_select();
+
+        $('.button-show-preview').click(function () {
+            let link = $(this);
+            let cellLink = link.parent();
+            let line = cellLink.parent();
+            let cellNumberPages = cellLink.next();
+            $('#print_preview_image').attr('src', `http://print.mipt.ru/png/${line.data('id')}/001`);
+        });
+
         $('#form_upload_checkbox_duplex').click(function () {
             let $formUploadCheckboxLongedge = $('#form_upload_checkbox_longedge');
             $formUploadCheckboxLongedge.prop('disabled', !this.checked);
@@ -132,6 +146,9 @@
                 processData: false,
                 success: function (data) {
                     console.log(data);
+                    if (data != 'OK') {
+                        {#                        alert(data);#}
+                    }
                 }
             });
             $formUpload.reset();

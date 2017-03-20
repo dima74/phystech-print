@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <style>
+        html, body, .container, #login_div, .valign-wrapper, #or_div {
+            height: 100%;
+            text-align: center;
+        }
+
+        #title {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+        }
+
+        #title_link {
+            color: #26a69a;
+        }
+
+        #container {
+            margin-bottom: 0;
+        }
+
+        .input-field {
+            text-align: left;
+        }
+
+        #or {
+            width: 100%
+        }
+
+        #footer {
+            position: absolute;
+            bottom: 20px;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+
+
+{% block body %}
+    <h1 id="title"><a href="/" id="title_link">Физтех.Печать</a></h1>
+
+    <div id="container" class="row container">
+        <div id="login_div" class="col m5 valign-wrapper">
+            <div class="card valign">
+                <div class="card-content">
+                    <span class="card-title">Войдите</span>
+
+                    <form id="login_form" method="POST">
+                        <div class="row">
+                            <div class="input-field col m12">
+                                <input id="login_login" type="text" required>
+                                <label for="login_login">Логин</label>
+                            </div>
+                            <div class="input-field col m12">
+                                <input id="login_password" type="password" required>
+                                <label for="login_password">Пароль</label>
+                            </div>
+                            <button class="waves-effect waves-light btn" type="submit">Войти</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="or_div" class="col m2">
+            <div class="valign-wrapper">
+                <div id="or" class="valign">или</div>
+            </div>
+        </div>
+
+        <div class="col m5 valign-wrapper">
+            <div class="card valign">
+                <div class="card-content">
+                    <span class="card-title">Зарегистрируйтесь</span>
+
+                    <form id="register_form" method="POST" action="/register">
+                        <div class="row">
+                            <div class="input-field col m12">
+                                <input id="register_login" name="register_login" type="text" class="validate" required>
+                                <label for="register_login">Логин</label>
+                            </div>
+                            <div class="input-field col m12">
+                                <input id="register_password" name="register_password" type="password" class="validate" required>
+                                <label for="register_password">Пароль</label>
+                            </div>
+                            <div class="input-field col m12">
+                                <input id="register_password_confirm" name="register_password_confirm" type="password" class="validate">
+                                <label for="register_password_confirm">Повторите пароль</label>
+                            </div>
+                            <button class="waves-effect waves-light btn" type="submit">Зарегистрироваться</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer">Сервис печати для студентов МФТИ. 2017</div>
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+    <script>
+        $(function () {
+            $('#register_form').validate({
+                rules: {
+                    register_login: {
+                        remote: '/query/register/login/'
+                    },
+                    register_password_confirm: {
+                        equalTo: '#register_password'
+                    }
+                },
+                messages: {
+                    register_login: {
+                        required: 'Пожалуйста, введите логин',
+                        remote: 'Логин занят'
+                    },
+                    register_password: 'Пожалуйста, введите пароль',
+                    register_password_confirm: 'Пароли не совпадают'
+                },
+                errorElement: 'div',
+                errorPlacement: function (error, element) {
+                    error.insertAfter(element);
+                    error.css('margin-bottom', '20px')
+                }
+            });
+
+            $('#register_password_confirm').on('keydown', function () {
+                $('#register_password_confirm').valid();
+            });
+            $('#register_login').on('keyup', function () {
+                $('#register_login').valid();
+            });
+        });
+    </script>
+{% endblock %}
