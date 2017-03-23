@@ -44,6 +44,17 @@ class User2:
         self.tasks_current = get_tasks('/query/tasks/current?num=10')
         self.tasks_history = get_tasks('/query/tasks/history?num=10')
 
+
+class User:
+    def __init__(self, session, user_info):
+        self.login = user_info['Nick']
+        self.account = user_info['Account']
+        self.first_name = user_info['FirstName']
+        self.last_name = user_info['LastName']
+
+        self.password = user_info['password']
+        self.session = session
+
     def send_file_to_print_mipt_ru(self, info):
         def rewrite_request(prepared_request, filename):
             # http://linuxonly.nl/docs/68/167_Uploading_files_with_non_ASCII_filenames_using_Python_requests.html
@@ -68,18 +79,7 @@ class User2:
         if request.status_code != 200:
             raise Exception()
         request_info = request.text.split(';')
-        return 'OK' if request_info[0] == 'OK' else 'print.mipt.ru: ' + base64.b64decode(request_info[1]).decode('UTF-8')
-
-
-class User:
-    def __init__(self, session, user_info):
-        self.login = user_info['Nick']
-        self.account = user_info['Account']
-        self.first_name = user_info['FirstName']
-        self.last_name = user_info['LastName']
-
-        self.password = user_info['password']
-        self.session = session
+        return 'OK' if request_info[0] == 'SUCCESS' else 'print.mipt.ru: ' + base64.b64decode(request_info[1]).decode('UTF-8')
 
 
 class Users:

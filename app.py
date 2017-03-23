@@ -11,11 +11,14 @@ socketio = SocketIO(app)
 
 '''
 Полезные адреса:
+    /query/register/login/?flogin=<логин для проверки>
     /query/user/
     /query/tasks/current?num=50
     /query/tasks/history?num=50
+    # нужно выполнить перед /png
+    /query/job/preview/100410739
     /png/100408271/001
-    /query/register/login/?flogin=<логин для проверки>
+    /query/job/cancel/100409591
 '''
 
 
@@ -62,6 +65,7 @@ def test():
 
 
 @app.route('/upload', methods=['POST'])
+@login_required_cookies_only
 def upload_file():
     if 'file' not in request.files:
         return 'Некорректный запрос: нет параметра "file"'
@@ -79,8 +83,7 @@ def upload_file():
             'duplex': normalize(request.form.get('duplex')),
             'longedge': normalize(request.form.get('longedge'), 'true'),
             'number_pages_on_list': request.form.get('number_pages_on_list')}
-    user = User()
-    return user.send_file_to_print_mipt_ru(info)
+    return g.user.send_file_to_print_mipt_ru(info)
 
 
 @socketio.on('message')

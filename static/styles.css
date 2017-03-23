@@ -45,6 +45,7 @@ body {
 select {
     height: auto;
     width: auto;
+    padding: 0px;
 }
 
 #form_upload_card {
@@ -93,4 +94,8 @@ select {
 
 .task-action {
     cursor: pointer;
+}
+
+td {
+    padding: 2px 5px;
 }

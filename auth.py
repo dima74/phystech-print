@@ -5,17 +5,26 @@ from base import *
 auth = Blueprint('auth', __name__)
 
 
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        status = try_login_from_cookies()
-        print('user: {}, status: {}'.format(g.user, status))
-        if g.user is None:
-            return redirect(url_for('auth.login', next=None if request.full_path == '/?' else request.url))
-        assert status == 'OK'
-        return f(*args, **kwargs)
+def login_required_decorator(cookies_only):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            status = try_login_from_cookies()
+            print('user: {}, status: {}'.format(g.user, status))
+            if g.user is None:
+                if cookies_only:
+                    abort(400)
+                return redirect(url_for('auth.login', next=None if request.full_path == '/?' else request.url))
+            assert status == 'OK'
+            return f(*args, **kwargs)
 
-    return decorated_function
+        return decorated_function
+
+    return decorator
+
+
+login_required = login_required_decorator(False)
+login_required_cookies_only = login_required_decorator(True)
 
 
 def try_login_from_cookies():
