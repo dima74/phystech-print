@@ -21,17 +21,13 @@ def make_request(path, authorized=True):
 def make_request_json(path, authorized=True):
     json = make_request(path, authorized).json()
     if json['error']:
-        abort(400)
+        abort(400, json['msg'])
     return json['ans']
 
 
 def query_path(path, authorized=True):
-    return make_request(path, authorized).text
+    return jsonify(make_request_json(path, authorized))
 
-
-@wrapped.route('/query/<path:url>')
-def query_route(url):
-    return query_path(request.full_path)
 
 
 @wrapped.route('/query/tasks/<path:url>')

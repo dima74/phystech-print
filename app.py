@@ -1,11 +1,13 @@
 from flask import Flask
 from flask_socketio import SocketIO
 from wrapped import wrapped
+from wrapped_authorized import wrapped_authorized
 from auth import *
 
 app = Flask(__name__)
 app.secret_key = '6eg\x18\x03\xd8\xaa@4\xdd/G\xd5fie\xf3\xf8\xb1uy\xf4se'
 app.register_blueprint(wrapped)
+app.register_blueprint(wrapped_authorized)
 app.register_blueprint(auth)
 socketio = SocketIO(app)
 
@@ -20,6 +22,13 @@ socketio = SocketIO(app)
     /png/100408271/001
     /query/job/cancel/100409591
 '''
+
+
+@app.errorhandler(400)
+def custom400(error):
+    response = jsonify({'message': error.description})
+    response.status_code = 400
+    return response
 
 
 @app.route('/')
