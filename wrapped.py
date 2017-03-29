@@ -29,7 +29,6 @@ def query_path(path, authorized=True):
     return jsonify(make_request_json(path, authorized))
 
 
-
 @wrapped.route('/query/tasks/<path:url>')
 def query_tasks(url):
     print(session)
@@ -59,10 +58,19 @@ def query_register():
                       .replace('register_password_confirm=', 'fpassConfirm='), authorized=False)
 
 
+def make_request_image(path, used_requests):
+    r = used_requests.get(HOST + request.full_path)
+    return send_file(io.BytesIO(r.content), mimetype='image/png')
+
+
 @wrapped.route('/png/<id>/<page>')
 @login_required_cookies_only
 def query_png(id, page):
     make_request_json('/query/job/preview/' + id)
+    return make_request_image(HOST + request.full_path, g.user.session)
 
-    r = g.user.session.get(HOST + request.full_path)
-    return send_file(io.BytesIO(r.content), mimetype='image/png')
+
+@wrapped.route('/pic/paper.png')
+def query_pic():
+    printer_id = request.args.get('pid')
+    return make_request_image('/pic/paper.png' + printer_id, requests)

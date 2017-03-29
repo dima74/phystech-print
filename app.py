@@ -1,15 +1,18 @@
 from flask import Flask
-from flask_socketio import SocketIO
+# from flask_socketio import SocketIO
 from wrapped import wrapped
 from wrapped_authorized import wrapped_authorized
+from wrapped_unauthorized import *
 from auth import *
+import time
 
 app = Flask(__name__)
 app.secret_key = '6eg\x18\x03\xd8\xaa@4\xdd/G\xd5fie\xf3\xf8\xb1uy\xf4se'
 app.register_blueprint(wrapped)
 app.register_blueprint(wrapped_authorized)
+app.register_blueprint(wrapped_unauthorized)
 app.register_blueprint(auth)
-socketio = SocketIO(app)
+# socketio = SocketIO(app)
 
 '''
 Полезные адреса:
@@ -18,9 +21,12 @@ socketio = SocketIO(app)
     /query/tasks/current?num=50
     /query/tasks/history?num=50
     # нужно выполнить перед /png
-    /query/job/preview/100410739
-    /png/100408271/001
-    /query/job/cancel/100409591
+    /query/job/preview/<task_id>
+    /png/<task_id>/<page>
+    /query/job/cancel/<task_id>
+    /pic/paper.png?pid=<printer_id>
+    /pic/activity.png?pid=<printer_id>&y=50&x=683
+    /query/printers/all/
 '''
 
 
@@ -38,7 +44,7 @@ def main():
     # user.tasks_current = {}
     # printers = ['{}{}'.format(i + 1, suffix) for i in range(8) for suffix in ['', 'b']]
     # return render_template('index.html', user=user, printers=printers)
-    return render_template('index.html')
+    return render_template('index.html', current_time=time.time())
 
 
 @app.route('/news')
@@ -54,7 +60,40 @@ def pay():
 
 @app.route('/printers')
 def printers():
-    return render_template('printers.html')
+    printers_ids = {
+        '1': 4,
+        '1b': 23,
+        '2': 7,
+        '2b': 22,
+        '3': 3,
+        '3b': 21,
+        '4': 5,
+        '4b': 25,
+        '6': 1,
+        '6b': 24,
+        '7': 2,
+        '7b': 20,
+        '8': 6,
+        '8b': 19
+    }
+
+    status_colors = {'READY': 'green',
+                     'ADMINSTOP': '#fcd400',
+                     'PAPERFEEDOUT': 'red'}
+
+    printers_names = ['1', '1b', '2', '2b', '3', '3b', '4', '4b', '6', '6b', '7', '7b', '8', '8b']
+    # printers_ids = [4, 23, 7, 22, 3, 21, 5, 25, 1, 24, 2, 20, 6, 19]
+
+    printers_info = make_request_unauthorized('/query/printers/all/')
+    printers = []
+    for printer_name in printers_names:
+        printer_id = printers_ids[printer_name]
+        printer = printers_info[str(printer_id)]
+        printer['name'] = printer_name
+        printer['id'] = printer_id
+        printer['status_color'] = status_colors.get(printer['action'], 'cyan')
+        printers.append(printer)
+    return render_template('printers.html', current_time=time.time(), printers=printers)
 
 
 @app.route('/forum')
@@ -95,17 +134,17 @@ def upload_file():
     return g.user.send_file_to_print_mipt_ru(info)
 
 
-@socketio.on('message')
-def handle_message(message):
-    print('received message: ' + message)
-
-
-@socketio.on('my event')
-def handle_my_custom_event(json):
-    print(json)
-    print('received json: ' + str(json))
+# @socketio.on('message')
+# def handle_message(message):
+#     print('received message: ' + message)
+#
+#
+# @socketio.on('my event')
+# def handle_my_custom_event(json):
+#     print(json)
+#     print('received json: ' + str(json))
 
 
 if __name__ == '__main__':
-    # app.run(debug=True)
-    socketio.run(app, debug=True)
+    app.run(debug=True)
+    # socketio.run(app, debug=True)
