@@ -2,10 +2,44 @@
 
 {% block head %}
     <style>
-        #left {
-            width: 50%;
+        /* Основная разметка */
+        html, body {
+            height: 100%;
         }
 
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #main {
+            flex-grow: 1;
+            /* http://stackoverflow.com/questions/18639129/how-to-make-nested-flexboxes-work */
+            position: relative;
+        }
+
+        #printers_info, #printers_history {
+            height: 100%;
+            width: 50%;
+            position: absolute;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        #printers_history {
+            right: 0;
+        }
+
+        #printers_info_wrapper, #printers_history_wrapper {
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        #printers_history_wrapper {
+            padding: 0 0.75rem;
+        }
+
+        /* Информация о принтерах */
         .printer-info-paper-wrapper {
             position: absolute;
             height: 100%;
@@ -21,38 +55,91 @@
         .printer-status {
             position: absolute;
         }
+
+        /* История заказов */
+        .printers_history_row {
+            display: table-row;
+        }
+
+        .printers_history_span {
+            display: table-cell;
+            vertical-align: middle;
+            width: 2em;
+        }
+
+        .printers_history_img {
+            display: table-cell;
+        }
     </style>
 {% endblock %}
 
 {% block body %}
     {{ super() }}
-    <div id="left">
-        <div class="row">
-            {% for printer in printers %}
-                <div class="col m6">
-                    <div class="card">
-                        <div class="printer-info-paper-wrapper">
-                            <img src="/pic/paper.png?pid={{ printer.id }}&time={{ current_time }}" class="printer-info-paper">
-                        </div>
-                        <div class="card-content">
-                            <svg height="32" width="32" class="printer-status">
-                                <defs>
-                                    <linearGradient id="printer_status_gradient_{{ printer.id }}" {#x1="16" y1="16" x2="0" y2="0"#} gradientTransform="rotate(45)">
-                                        <stop offset="0%" style="stop-color: white;" stop-opacity="0.5"/>
-                                        <stop offset="100%" style="stop-color: {{ printer.status_color }};"/>
-                                    </linearGradient>
-                                </defs>
-                                <circle cx="16" cy="16" r="15" fill="url(#printer_status_gradient_{{ printer.id }})"/>
-                            </svg>
-                            <div class="card-title printer-info-title">
-                                <span>Принтер {{ printer.name }}</span>
+
+    <div id="main">
+        <div id="printers_info">
+            <div id="printers_info_wrapper">
+                <div class="row">
+                    {% for printer in printers %}
+                        <div class="col m6">
+                            <div class="card">
+                                <div class="printer-info-paper-wrapper">
+                                    <img src="http://print.mipt.ru/pic/paper.png?pid={{ printer.id }}&time={{ current_time }}" class="printer-info-paper">
+                                </div>
+                                <div class="card-content">
+                                    <svg height="32" width="32" class="printer-status">
+                                        <defs>
+                                            <linearGradient id="printer_status_gradient_{{ printer.id }}" gradientTransform="rotate(45)">
+                                                <stop offset="0%" style="stop-color: white;" stop-opacity="0.5"/>
+                                                <stop offset="100%" style="stop-color: {{ printer.status_color }};"/>
+                                            </linearGradient>
+                                        </defs>
+                                        <circle cx="16" cy="16" r="15" fill="url(#printer_status_gradient_{{ printer.id }})"/>
+                                    </svg>
+                                    <div class="card-title printer-info-title">
+                                        <span>Принтер {{ printer.name }}</span>
+                                    </div>
+                                    <p>{{ printer.textaction }}</p>
+                                    <p>Осталось страниц: {{ printer.paperremainder }}</p>
+                                </div>
                             </div>
-                            <p>{{ printer.textaction }}</p>
-                            <p>Осталось страниц: {{ printer.paperremainder }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div id="printers_history">
+            <div id="printers_history_wrapper">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title">История за день</span>
+
+                        <div id="printers_history_table">
+                            {% for printer in printers %}
+                                <div class="printers_history_row">
+                                    <span class="printers_history_span">{{ printer.name }}</span>
+                                    <img class="printers_history_img" data-src="http://print.mipt.ru/pic/activity.png?pid={{ printer.id }}&time={{ current_time }}">
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
-            {% endfor %}
+            </div>
         </div>
     </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function resizePrinterHistoryImages() {
+            let width = $('#printers_history_table').width() - $('.printers_history_span').width();
+            $('.printers_history_img').each(function () {
+                this.src = this.dataset.src + `&y=50&x=${width}`;
+            })
+        }
+
+        resizePrinterHistoryImages();
+        window.onresize = resizePrinterHistoryImages;
+    </script>
 {% endblock %}

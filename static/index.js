@@ -198,7 +198,7 @@ $(function () {
             let id = row.data('id');
 
             let printer_name = this.value;
-            let printer_id = printer_ids[printer_name];
+            let printer_id = printers_ids[printer_name];
             setCellContentToLoading(cell);
             $.ajax({
                 url: `/query/job/move/?id=${id}&pid=${printer_id}`,

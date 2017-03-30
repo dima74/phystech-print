@@ -20,7 +20,7 @@ body {
     grid-row: 1;
     grid-column: 1;
     overflow-y: auto;
-    margin: 10px;
+    margin: 10px 10px 0 10px;
 }
 
 #form_upload_div {
