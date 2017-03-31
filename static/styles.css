@@ -8,19 +8,30 @@ body {
     flex-direction: column;
 }
 
+#main_container_wrapper {
+    flex-grow: 1;
+    /* http://stackoverflow.com/questions/18639129/how-to-make-nested-flexboxes-work */
+    position: relative;
+}
+
 #main_container {
     display: grid;
     grid-template-rows: 35% 30% 35%;
     grid-template-columns: 50% 50%;
-    height: 700px;
-    /*flex-grow: 1;*/
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+#tasks_current_wrapper {
+    grid-row: 1;
+    grid-column: 1;
+    padding: 10px 10px 0 10px;
 }
 
 #tasks_current {
-    grid-row: 1;
-    grid-column: 1;
     overflow-y: auto;
-    margin: 10px 10px 0 10px;
+    height: 100%;
 }
 
 #form_upload_div {

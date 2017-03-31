@@ -14,81 +14,85 @@
 
     {{ super() }}
 
-    <div id="main_container">
-        <div id="tasks_current">
-            <table>
-                <thead>
-                <tr>
-                    <th>Файл</th>
-                    <th>Страниц</th>
-                    <th>Цена</th>
-                    <th>Принтер</th>
-                    <th>С1</th>
-                    <th>С2</th>
-                    <th>С3</th>
-                </tr>
-                </thead>
+    <div id="main_container_wrapper">
+        <div id="main_container">
+            <div id="tasks_current_wrapper">
+                <div id="tasks_current">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Файл</th>
+                            <th>Страниц</th>
+                            <th>Цена</th>
+                            <th>Принтер</th>
+                            <th>С1</th>
+                            <th>С2</th>
+                            <th>С3</th>
+                        </tr>
+                        </thead>
 
-                <tbody id="tasks_current_tbody">
-                {#<tr data-id="100411691">
-                    <td><a class="button-show-preview">empty.doc</a></td>
-                    <td>1</td>
-                    <td>1.50</td>
-                    <td><i class="material-icons waves-effect task-action task-action-accept">done</i></td>
-                    <td><i class="material-icons waves-effect task-action task-action-reject">clear</i></td>
-                </tr>#}
-                </tbody>
-            </table>
-        </div>
-
-        <div id="form_upload_div">
-            <div id="form_upload_card" class="card">
-                <div id="form_upload_card_content" class="card-content">
-
-                    <form id="form_upload" method="POST">
-                        <div id="form_upload_input_file" class="file-field">
-                            <div class="btn">
-                                <span>Выберите файл</span>
-                                <input type="file" name="file">
-                            </div>
-                        </div>
-
-                        <div id="form_upload_options">
-                            <p>
-                                <input type="checkbox" id="form_upload_checkbox_color" name="color" class="filled-in">
-                                <label for="form_upload_checkbox_color">Цветная печать</label>
-                            </p>
-                            <p>
-                                <input type="checkbox" id="form_upload_checkbox_land" name="land" class="filled-in">
-                                <label for="form_upload_checkbox_land">Альбомная ориентация</label>
-                            </p>
-                            <p>
-                                <input type="checkbox" id="form_upload_checkbox_duplex" name="duplex" class="filled-in">
-                                <label for="form_upload_checkbox_duplex">Двусторонняя печать</label>
-                            </p>
-                            <p>
-                                <input type="checkbox" id="form_upload_checkbox_longedge" name="longedge" class="filled-in" checked="checked" disabled="disabled">
-                                <label for="form_upload_checkbox_longedge">Длинная сторона</label>
-                            </p>
-
-                            <p>Страниц на один лист:
-                                <select id="form_upload_select_number_pages" class="browser-default" name="number_pages_on_list">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="4">4</option>
-                                    <option value="16">16</option>
-                                </select></p>
-                        </div>
-                    </form>
-
+                        <tbody id="tasks_current_tbody">
+                        {#<tr data-id="100411691">
+                            <td><a class="button-show-preview">empty.doc</a></td>
+                            <td>1</td>
+                            <td>1.50</td>
+                            <td><i class="material-icons waves-effect task-action task-action-accept">done</i></td>
+                            <td><i class="material-icons waves-effect task-action task-action-reject">clear</i></td>
+                        </tr>#}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
 
-        <div id="tasks_history" class="green">История заказов</div>
+            <div id="form_upload_div">
+                <div id="form_upload_card" class="card">
+                    <div id="form_upload_card_content" class="card-content">
 
-        <div id="print_preview">
-            <img id="print_preview_image">
+                        <form id="form_upload" method="POST">
+                            <div id="form_upload_input_file" class="file-field">
+                                <div class="btn">
+                                    <span>Выберите файл</span>
+                                    <input type="file" name="file">
+                                </div>
+                            </div>
+
+                            <div id="form_upload_options">
+                                <p>
+                                    <input type="checkbox" id="form_upload_checkbox_color" name="color" class="filled-in">
+                                    <label for="form_upload_checkbox_color">Цветная печать</label>
+                                </p>
+                                <p>
+                                    <input type="checkbox" id="form_upload_checkbox_land" name="land" class="filled-in">
+                                    <label for="form_upload_checkbox_land">Альбомная ориентация</label>
+                                </p>
+                                <p>
+                                    <input type="checkbox" id="form_upload_checkbox_duplex" name="duplex" class="filled-in">
+                                    <label for="form_upload_checkbox_duplex">Двусторонняя печать</label>
+                                </p>
+                                <p>
+                                    <input type="checkbox" id="form_upload_checkbox_longedge" name="longedge" class="filled-in" checked="checked" disabled="disabled">
+                                    <label for="form_upload_checkbox_longedge">Длинная сторона</label>
+                                </p>
+
+                                <p>Страниц на один лист:
+                                    <select id="form_upload_select_number_pages" class="browser-default" name="number_pages_on_list">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="4">4</option>
+                                        <option value="16">16</option>
+                                    </select></p>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="tasks_history" class="green">История заказов</div>
+
+            <div id="print_preview">
+                <img id="print_preview_image">
+            </div>
         </div>
     </div>
 {% endblock %}
