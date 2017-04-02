@@ -13,8 +13,8 @@ $(function () {
                 </div>
             </div>
         </div>`;
-    let acceptIcon = `<i class="material-icons waves-effect green-text task-action task-action-accept" title="Напечатать">done</i>`;
-    let rejectIcon = `<i class="material-icons waves-effect red-text task-action task-action-reject" title="Отменить">clear</i>`;
+    let acceptIcon = `<i class="material-icons waves-effect green-text icon-as-button task-action-accept" title="Напечатать">done</i>`;
+    let rejectIcon = `<i class="material-icons waves-effect red-text icon-as-button task-action-reject" title="Отменить">clear</i>`;
     let printers_ids = {
         '1': 4,
         '1b': 23,
@@ -106,7 +106,9 @@ $(function () {
                     console.log(data);
                     if (data != 'OK') {
                         showError(data);
+                        throw '';
                     }
+                    setPreviewForLastTask();
                 }
             });
             $formUpload.reset();
@@ -125,7 +127,7 @@ $(function () {
             }
         }
 
-        return `<tr id="${task.id}">
+        return `<tr id="${task.id}" data-state="ready">
                     <td>${task.filename}</td>
                     <td>${task.numberPages}</td>
                     <td>${task.cost}</td>
@@ -150,7 +152,7 @@ $(function () {
                     line = getTaskRow(task);
                     break;
                 case 'Process':
-                    line = `<tr id="${task.id}">
+                    line = `<tr id="${task.id}" data-state="processing">
                                 <td>${task.filename}</td>
                                 <td></td>
                                 <td></td>
@@ -164,16 +166,37 @@ $(function () {
         }
     }
 
-    function setImage(id, page = '001') {
-        $('#print_preview_image').attr('src', `/png/${id}/${page}`);
+    function setPreview(id, page = 1) {
+        let task = $('#' + id);
+        let number_pages = task.children().eq(1).text();
+        page = Math.max(1, Math.min(number_pages, page));
+        let pageUrl = ('000' + page).slice(-3);
+
+        $('.task-with-preview').removeClass('task-with-preview');
+        task.addClass('task-with-preview');
+        $('#print_preview_image').attr('src', `/png/${id}/${pageUrl}`);
+        $('#print_preview_image').data('page', page);
+        $('#print_preview_current_page').text(page + '/' + number_pages);
     }
 
-    function setImageForLastTask() {
-        let lastTask = $('#tasks_current_tbody>:first');
-        if (lastTask.length) {
-            let id = lastTask.attr('id');
-            setImage(id);
-        }
+    function changePreviewPage(delta) {
+        page = $('#print_preview_image').data('page');
+        id = $('.task-with-preview').attr('id');
+        setPreview(id, page + delta);
+    }
+
+    function setPreviewForLastTask() {
+        $('#print_preview').hide();
+
+        $('#tasks_current_tbody').children().each(function () {
+            let task = $(this);
+            if (task.data('state') === 'ready') {
+                let id = task.attr('id');
+                setPreview(id);
+                $('#print_preview').show();
+                return false;
+            }
+        });
     }
 
     async function downloadAllTasks() {
@@ -194,11 +217,7 @@ $(function () {
 
         $('#tasks_current_tbody').on('click', 'tr', function () {
             let row = $(this);
-            // let link = $(this);
-            // let cell = link.parent();
-            // let row = cell.parent();
-            // let cellNumberPages = cell.next();
-            setImage(row.attr('id'));
+            setPreview(row.attr('id'));
         });
 
         function addActionOnClick(actionClass, actionUrl, errorMessage, originalHtml) {
@@ -236,13 +255,16 @@ $(function () {
                 complete: changeElementContent(cell, originalHtml)
             });
         });
+
+        $('#print_preview_navigate_before').click(function () { changePreviewPage(-1); });
+        $('#print_preview_navigate_next').click(function () { changePreviewPage(+1); });
     }
 
     // загружает задания и устанавливает обработчики
     async function updateAllTasks() {
         await downloadAllTasks();
         setListeners();
-        setImageForLastTask();
+        setPreviewForLastTask();
     }
 
     function updateAllTasksSync() {
@@ -280,6 +302,7 @@ $(function () {
 
     async function init() {
         console.log('init');
+        $('#print_preview').hide();
         configureForm();
         await updateAllTasks();
         initSocket();

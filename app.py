@@ -79,8 +79,10 @@ def printers():
     }
 
     status_colors = {'READY': 'green',
-                     'ADMINSTOP': '#fcd400',
-                     'PAPERFEEDOUT': 'red'}
+                     'PAPERJAM': 'red',
+                     'PAPERFEEDOUT': 'red',
+                     'CONNECTIONERROR': 'red',
+                     'ADMINSTOP': 'red'}
 
     printers_names = ['1', '1b', '2', '2b', '3', '3b', '4', '4b', '6', '6b', '7', '7b', '8', '8b']
     # printers_ids = [4, 23, 7, 22, 3, 21, 5, 25, 1, 24, 2, 20, 6, 19]
@@ -92,7 +94,7 @@ def printers():
         printer = printers_info[str(printer_id)]
         printer['name'] = printer_name
         printer['id'] = printer_id
-        printer['status_color'] = status_colors.get(printer['action'], 'cyan')
+        printer['status_color'] = status_colors.get(printer['action'], '#4a148c')
         printers.append(printer)
     return render_template('printers.html', current_time=time.time(), printers=printers)
 

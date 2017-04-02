@@ -51,6 +51,9 @@ body {
     grid-row: 1 / 4;
     grid-column: 2;
     padding: 10px;
+
+    display: flex;
+    flex-direction: column;
 }
 
 select {
@@ -91,24 +94,42 @@ select {
 }
 
 #form_upload_select_number_pages {
-    display: inline-block;
+    display: inline;
+}
+
+#print_preview_image_wrapper {
+    flex-grow: 1;
+    /* http://stackoverflow.com/questions/18639129/how-to-make-nested-flexboxes-work */
+    position: relative;
 }
 
 #print_preview_image {
-    max-width: 100%;
     max-height: 100%;
-    display: block;
+    max-width: 100%;
+    position: absolute;
     margin-left: auto;
     margin-right: auto;
+    left: 0;
+    right: 0;
     border: 1px solid #26a69a;
 }
 
-.task-action {
+#print_preview_navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-as-button {
     cursor: pointer;
 }
 
 table.highlight > tbody > tr:hover {
-    background-color: #e0f2f1;
+    background-color: #b2dfdb;
+}
+
+.task-with-preview {
+    background: #e0f2f1;
 }
 
 td {
@@ -118,4 +139,10 @@ td {
 .size-auto {
     height: 20px;
     width: 20px;
+}
+
+#print_preview_number_pages{
+    display: inline;
+    margin-left: 20px;
+    margin-right: 20px;
 }
