@@ -32,15 +32,7 @@
                         </tr>
                         </thead>
 
-                        <tbody id="tasks_current_tbody">
-                        {#<tr data-id="100411691">
-                            <td><a class="button-show-preview">empty.doc</a></td>
-                            <td>1</td>
-                            <td>1.50</td>
-                            <td><i class="material-icons waves-effect task-action task-action-accept">done</i></td>
-                            <td><i class="material-icons waves-effect task-action task-action-reject">clear</i></td>
-                        </tr>#}
-                        </tbody>
+                        <tbody id="tasks_current_tbody"></tbody>
                     </table>
                 </div>
             </div>
@@ -89,7 +81,25 @@
                 </div>
             </div>
 
-            <div id="tasks_history">История заказов</div>
+            <div id="tasks_history_wrapper">
+                <div id="tasks_history">
+                    <table class="highlight">
+                        <thead>
+                        <tr>
+                            <th>Время</th>
+                            <th>Файл</th>
+                            <th>Страниц</th>
+                            <th>Принтер</th>
+                            <th>Статус</th>
+                            <th>С1</th>
+                            <th>С2</th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="tasks_history_tbody"></tbody>
+                    </table>
+                </div>
+            </div>
 
             <div id="print_preview">
                 <div id="print_preview_image_wrapper">

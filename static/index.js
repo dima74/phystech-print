@@ -15,6 +15,8 @@ $(function () {
         </div>`;
     let acceptIcon = `<i class="material-icons waves-effect green-text task-action-accept" title="Напечатать">done</i>`;
     let rejectIcon = `<i class="material-icons waves-effect red-text task-action-reject" title="Отменить">clear</i>`;
+    let shareIcon = `<i class="material-icons waves-effect teal-text task-action-share" title="Добавить заказ в общий доступ">share</i>`;
+    let replayIcon = `<i class="material-icons waves-effect blue-text task-action-replay" title="Добавить в очередь документов">replay</i>`;
     let printers_ids = {
         '1': 4,
         '1b': 23,
@@ -94,6 +96,8 @@ $(function () {
                         <td></td>
                         <td></td>
                         <td>${loadingAnimation}</td>
+                        <td></td>
+                        <td></td>
                     </tr>`;
             $('#tasks_current_tbody').prepend(line);
 
@@ -118,14 +122,23 @@ $(function () {
         });
     }
 
-    function getTaskRow(task) {
-        let printers = [];
+    function getPrintersHtml(selectedPrinter) {
+        printersHtml = '';
         for (let i = 0; i < 8; ++i) {
             for (let suffix of ['', 'b']) {
                 let printer = (i + 1) + suffix;
-                let selected = printer == task.printer ? ' selected' : '';
-                printers += `<option${selected}>${printer}</option>`;
+                let selected = printer == selectedPrinter ? ' selected' : '';
+                printersHtml += `<option${selected}>${printer}</option>`;
             }
+        }
+        return `<select class="browser-default select-printer hide-on-loading">
+                    ${printersHtml}
+                </select>`;
+    }
+
+    function getTaskRow(task, printersHtml) {
+        if (printersHtml === undefined) {
+            printersHtml = getPrintersHtml(task.printer);
         }
 
         return `<tr id="${task.id}" data-state="ready">
@@ -133,19 +146,15 @@ $(function () {
                     <td>${task.filename}</td>
                     <td>${task.numberPages}</td>
                     <td>${task.cost}</td>
-                    <td>
-                        <select class="browser-default select-printer hide-on-loading">
-                            ${printers}
-                        </select>
-                    </td>
+                    <td>${printersHtml}</td>
                     <td>${acceptIcon}</td>
+                    <td>${shareIcon}</td>
                     <td>${rejectIcon}</td>
                 </tr>`;
     }
 
     // загружает и обновляет задания
     async function downloadTasks(which) {
-        $('#tasks_current_tbody').empty();
         let tasks = await fetchJson(`/query/tasks/${which}?num=50`);
         for (let task of tasks) {
             let line;
@@ -163,9 +172,22 @@ $(function () {
                                 <td colspan="3">обработка...</td>
                             </tr>`;
                     break;
+                case 'Canceled':
+                case 'Success':
+                    cellStatus = task.status == 'Success' ? '<td class="green-text">напечатан</td>' : '<td class="red-text">отменён</td>';
+                    line = `<tr id="${task.id}">
+                                <td>${task.time}</td>
+                                <td>${task.filename}</td>
+                                <td>${task.numberPages}</td>
+                                <td>${task.printer}</td>
+                                ${cellStatus}
+                                <td>${shareIcon}</td>
+                                <td>${replayIcon}</td>
+                            </tr>`;
+                    break;
             }
 
-            $('#tasks_current_tbody').append(line);
+            $(`#tasks_${which}_tbody`).append(line);
         }
     }
 
@@ -211,9 +233,11 @@ $(function () {
 
     async function downloadAllTasks() {
         await downloadTasks('current');
+        await downloadTasks('history');
     }
 
-    function setListeners() {
+    // все обработчки являются делегатами (или как это называется)
+    function setTasksListeners() {
         function slideUpRow(row) {
             return function () {
                 row
@@ -276,7 +300,6 @@ $(function () {
     // загружает задания и устанавливает обработчики
     async function updateAllTasks() {
         await downloadAllTasks();
-        setListeners();
         setPreviewForLastTask();
     }
 
@@ -318,6 +341,7 @@ $(function () {
         $('#print_preview').hide();
         configureForm();
         await updateAllTasks();
+        setTasksListeners();
         initSocket();
         //$('body').addClass('loaded');
     }

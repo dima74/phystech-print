@@ -26,10 +26,10 @@ body {
 #tasks_current_wrapper {
     grid-row: 1;
     grid-column: 1;
-    padding: 10px 10px 0 10px;
+    padding: 10px;
 }
 
-#tasks_current {
+#tasks_current, #tasks_history {
     overflow-y: auto;
     height: 100%;
 }
@@ -37,11 +37,11 @@ body {
 #form_upload_div {
     grid-row: 2;
     grid-column: 1;
-    padding: 10px;
+    padding: 0 10px;
     height: 100%;
 }
 
-#tasks_history {
+#tasks_history_wrapper {
     grid-row: 3;
     grid-column: 1;
     padding: 10px;
