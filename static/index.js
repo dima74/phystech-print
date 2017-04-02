@@ -88,6 +88,7 @@ $(function () {
 
             let filename = $('#form_upload_input_file').find('input')[0].files[0].name;
             line = `<tr>
+                        <td></td>
                         <td>${filename}</td>
                         <td></td>
                         <td></td>
@@ -128,6 +129,7 @@ $(function () {
         }
 
         return `<tr id="${task.id}" data-state="ready">
+                    <td>${task.time}</td>
                     <td>${task.filename}</td>
                     <td>${task.numberPages}</td>
                     <td>${task.cost}</td>
@@ -153,6 +155,7 @@ $(function () {
                     break;
                 case 'Process':
                     line = `<tr id="${task.id}" data-state="processing">
+                                <td></td>
                                 <td>${task.filename}</td>
                                 <td></td>
                                 <td></td>
@@ -299,7 +302,7 @@ $(function () {
                         $($('#tasks_current_tbody').children().get().reverse()).each(function () {
                             let row = $(this);
                             if (row.attr('id') === undefined) {
-                                let task = {id: id, filename: taskInfo.FileName, numberPages: taskInfo.NumberOfPages, cost: taskInfo.Cost, printer: taskInfo.ShortName};
+                                let task = {id: id, time: taskInfo.MDateTime, filename: taskInfo.FileName, numberPages: taskInfo.NumberOfPages, cost: taskInfo.Cost, printer: taskInfo.ShortName};
                                 row.replaceWith(getTaskRow(task));
                                 return false;
                             }

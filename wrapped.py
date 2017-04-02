@@ -35,6 +35,7 @@ def query_tasks(url):
     r = make_request_json(request.full_path)
     tasks0 = r['array']
     tasks = [{'id': task['Id'],
+              'time': task['MDateTime'],
               'filename': task['FileName'],
               'numberPages': task['NumberOfPages'],
               'cost': task['Cost'],
