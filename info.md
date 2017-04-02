@@ -14,6 +14,8 @@
 * /query/job/reprint/<task_id>
 * /query/job/cancel/<task_id>
 * /query/job/print/<task_id>
+* /query/job/share/<task_id>
+* /query/job/unshare/<task_id>
 
 ## картинки 
 * /png/<task_id>/<page>

@@ -40,7 +40,8 @@ def query_tasks(url):
               'numberPages': task['NumberOfPages'],
               'cost': task['Cost'],
               'printer': task['ShortName'],
-              'status': task['Status']
+              'status': task['Status'],
+              'shared': task['Shared']
               } for task in tasks0]
     return jsonify(tasks)
 

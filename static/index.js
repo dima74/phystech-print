@@ -15,7 +15,8 @@ $(function () {
         </div>`;
     let acceptIcon = `<i class="material-icons waves-effect green-text task-action-accept" title="Напечатать">done</i>`;
     let rejectIcon = `<i class="material-icons waves-effect red-text task-action-reject" title="Отменить">clear</i>`;
-    let shareIcon = `<i class="material-icons waves-effect teal-text task-action-share" title="Добавить заказ в общий доступ">share</i>`;
+    let addToSharedIcon = `<i class="material-icons waves-effect teal-text task-action-share-add" title="Добавить заказ в общий доступ">share</i>`;
+    let removeFromSharedIcon = `<i class="material-icons waves-effect pink-text task-action-share-remove" title="Убрать заказ из общего доступа">share</i>`;
     let replayIcon = `<i class="material-icons waves-effect blue-text task-action-replay" title="Добавить в очередь документов">replay</i>`;
     let printers_ids = {
         '1': 4,
@@ -136,6 +137,10 @@ $(function () {
                 </select>`;
     }
 
+    function getSharedIcon(task) {
+        return task.shared === 'NO' ? addToSharedIcon : removeFromSharedIcon;
+    }
+
     function getTaskRow(task, printersHtml) {
         if (printersHtml === undefined) {
             printersHtml = getPrintersHtml(task.printer);
@@ -148,7 +153,7 @@ $(function () {
                     <td>${task.cost}</td>
                     <td>${printersHtml}</td>
                     <td>${acceptIcon}</td>
-                    <td>${shareIcon}</td>
+                    <td>${getSharedIcon(task)}</td>
                     <td>${rejectIcon}</td>
                 </tr>`;
     }
@@ -181,7 +186,7 @@ $(function () {
                                 <td>${task.numberPages}</td>
                                 <td>${task.printer}</td>
                                 ${cellStatus}
-                                <td>${shareIcon}</td>
+                                <td>${getSharedIcon(task)}</td>
                                 <td>${replayIcon}</td>
                             </tr>`;
                     break;
@@ -249,7 +254,7 @@ $(function () {
             }
         }
 
-        $('#tasks_current_tbody, #tasks_history_tbody').on('click', 'tr', function () {
+        $('.tasks_tbody').on('click', 'tr', function () {
             let task = $(this);
             if (task.data('state') === 'processing') {
                 return;
@@ -257,24 +262,32 @@ $(function () {
             setPreview(task.attr('id'));
         });
 
-        function addActionOnClick(actionClass, actionUrl, errorMessage, originalHtml) {
-            $('#tasks_current_tbody').on('click', actionClass, function (event) {
+        function addActionOnClick(actionClass, actionUrl, errorMessage, deleteRow, newHtml) {
+            $('.tasks_tbody').on('click', actionClass, function (event) {
                 event.stopPropagation();
                 let cell = $(this).parent();
                 let row = cell.parent();
                 let id = row.attr('id');
+                let originalHtml = cell.html();
                 cell.html(loadingAnimation);
 
+                successHandlers = [changeElementContent(cell, newHtml)];
+                if (deleteRow) {
+                    successHandlers.push(slideUpRow(row));
+                }
                 $.get({
                     url: `/query/job/${actionUrl}/` + id,
-                    success: [changeElementContent(cell, ''), slideUpRow(row)],
+                    success: successHandlers,
                     error: [ajaxError(errorMessage), changeElementContent(cell, originalHtml)]
                 });
             });
         }
 
-        addActionOnClick('.task-action-reject', 'cancel', 'Отмена заказа', rejectIcon);
-        addActionOnClick('.task-action-accept', 'print', 'Отправка на печать', acceptIcon);
+        addActionOnClick('.task-action-reject', 'cancel', 'Отмена заказа', true, '');
+        addActionOnClick('.task-action-accept', 'print', 'Отправка на печать', true, '');
+        addActionOnClick('.task-action-replay', 'reprint', 'Повторная отправка на печать', false, replayIcon);
+        addActionOnClick('.task-action-share-add', 'share', 'Добавление заказа в общий доступ', false, removeFromSharedIcon);
+        addActionOnClick('.task-action-share-remove', 'unshare', 'Удаление заказа из общего доступа', false, addToSharedIcon);
 
         $('#tasks_current_tbody').on('change', '.select-printer', function (event) {
             event.stopPropagation();
