@@ -1,8 +1,3 @@
-// let socket = io.connect('http://' + document.domain + ':' + location.port);
-// socket.on('connect', function () {
-//     socket.emit('my event', {data: 'I\'m connected!'});
-// });
-
 $(function () {
     let loadingAnimation =
         `<div class="preloader-wrapper active size-auto">
@@ -18,8 +13,8 @@ $(function () {
                 </div>
             </div>
         </div>`;
-    let acceptIcon = `<i class="material-icons waves-effect task-action task-action-accept hide-on-loading">done</i>`;
-    let rejectIcon = `<i class="material-icons waves-effect task-action task-action-reject hide-on-loading">clear</i>`;
+    let acceptIcon = `<i class="material-icons waves-effect task-action task-action-accept" title="Напечатать">done</i>`;
+    let rejectIcon = `<i class="material-icons waves-effect task-action task-action-reject" title="Отменить">clear</i>`;
     let printers_ids = {
         '1': 4,
         '1b': 23,
@@ -90,19 +85,29 @@ $(function () {
         $('#form_upload_input_file').change(function () {
             let $formUpload = $('#form_upload')[0];
             let formData = new FormData($formUpload);
-            $.ajax({
-                type: "POST",
+
+            let filename = $('#form_upload_input_file').find('input')[0].files[0].name;
+            line = `<tr>
+                                <td>${filename}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>${loadingAnimation}</td>
+                            </tr>`;
+            $('#tasks_current_tbody').prepend(line);
+
+            $.post({
                 url: "/upload",
                 data: formData,
                 cache: false,
                 contentType: false,
                 processData: false,
-                success: [function (data) {
+                success: function (data) {
                     console.log(data);
                     if (data != 'OK') {
                         showError(data);
                     }
-                }, updateAllTasksSync]
+                }
             });
             $formUpload.reset();
             $('#form_upload_checkbox_longedge').prop('disabled', true);
@@ -110,38 +115,42 @@ $(function () {
         });
     }
 
+    function getTaskRow(task) {
+        let printers = [];
+        for (let i = 0; i < 8; ++i) {
+            for (let suffix of ['', 'b']) {
+                let printer = (i + 1) + suffix;
+                let selected = printer == task.printer ? ' selected' : '';
+                printers += `<option${selected}>${printer}</option>`;
+            }
+        }
+
+        return `<tr id="${task.id}">
+                    <td><a class="button-show-preview">${task.filename}</a></td>
+                    <td>${task.numberPages}</td>
+                    <td>${task.cost}</td>
+                    <td>
+                        <select class="browser-default select-printer hide-on-loading">
+                            ${printers}
+                        </select>
+                    </td>
+                    <td>${acceptIcon}</td>
+                    <td>${rejectIcon}</td>
+                </tr>`;
+    }
+
     // загружает и обновляет задания
     async function downloadTasks(which) {
         $('#tasks_current_tbody').empty();
         let tasks = await fetchJson(`/query/tasks/${which}?num=50`);
         for (let task of tasks) {
-            let printers = [];
-            for (let i = 0; i < 8; ++i) {
-                for (let suffix of ['', 'b']) {
-                    let printer = (i + 1) + suffix;
-                    let selected = printer == task.printer ? ' selected' : '';
-                    printers += `<option${selected}>${printer}</option>`;
-                }
-            }
-
             let line;
             switch (task.status) {
                 case 'Pending':
-                    line = `<tr data-id="${task.id}">
-                                <td><a class="button-show-preview">${task.file}</a></td>
-                                <td>${task.number_pages}</td>
-                                <td>${task.cost}</td>
-                                <td>
-                                    <select class="browser-default select-printer hide-on-loading">
-                                        ${printers}
-                                    </select>
-                                </td>
-                                <td>${acceptIcon}</td>
-                                <td>${rejectIcon}</td>
-                            </tr>`;
+                    line = getTaskRow(task);
                     break;
                 case 'Process':
-                    line = `<tr data-id="${task.id}">
+                    line = `<tr id="${task.id}">
                                 <td>${task.file}</td>
                                 <td></td>
                                 <td></td>
@@ -162,7 +171,7 @@ $(function () {
     function setImageForLastTask() {
         let lastTask = $('#tasks_current_tbody>:first');
         if (lastTask.length) {
-            let id = lastTask.data('id');
+            let id = lastTask.attr('id');
             setImage(id);
         }
     }
@@ -172,43 +181,61 @@ $(function () {
     }
 
     function setListeners() {
-        $('.button-show-preview').click(function () {
+        function slideUpRow(row) {
+            return function () {
+                row
+                    .children('td')
+                    .animate({paddingTop: 0, paddingBottom: 0})
+                    .wrapInner('<div />')
+                    .children()
+                    .slideUp(function () { row.remove(); });
+            }
+        }
+
+        $('#tasks_current_tbody').on('click', '.button-show-preview', function () {
             let link = $(this);
             let cell = link.parent();
             let row = cell.parent();
             let cellNumberPages = cell.next();
-            setImage(row.data('id'));
+            setImage(row.attr('id'));
         });
 
-        $('.task-action-reject').on('click', function () {
-            let cell = $(this).parent();
-            let row = cell.parent();
-            let id = row.data('id');
-            setCellContentToLoading(cell);
-            $.ajax({
-                url: '/query/job/cancel/' + id,
-                complete: updateAllTasksSync,
-                // error: [ajaxError('Отмена заказа'), changeElementContent(cell, rejectIcon)]
+        function addActionOnClick(actionClass, actionUrl, errorMessage, originalHtml) {
+            $('#tasks_current_tbody').on('click', actionClass, function () {
+                let cell = $(this).parent();
+                let row = cell.parent();
+                let id = row.attr('id');
+                cell.html(loadingAnimation);
+
+                $.get({
+                    url: `/query/job/${actionUrl}/` + id,
+                    success: [changeElementContent(cell, ''), slideUpRow(row)],
+                    error: [ajaxError(errorMessage), changeElementContent(cell, originalHtml)]
+                });
             });
-        });
+        }
 
-        $('.select-printer').change(function () {
+        addActionOnClick('.task-action-reject', 'cancel', 'Отмена заказа', rejectIcon);
+        addActionOnClick('.task-action-accept', 'print', 'Отправка на печать', acceptIcon);
+
+        $('#tasks_current_tbody').on('change', '.select-printer', function () {
             let cell = $(this).parent();
             let row = cell.parent();
-            let id = row.data('id');
+            let id = row.attr('id');
 
             let printer_name = this.value;
             let printer_id = printers_ids[printer_name];
-            setCellContentToLoading(cell);
-            $.ajax({
+            let originalHtml = cell.html();
+            cell.html(loadingAnimation);
+            $.get({
                 url: `/query/job/move/?id=${id}&pid=${printer_id}`,
                 error: ajaxError('Выбор принтера'),
-                complete: removeLoadingFrom(cell)
+                complete: changeElementContent(cell, originalHtml)
             });
         });
     }
 
-    // загружает текущие задания и устанавливает обработчики
+    // загружает задания и устанавливает обработчики
     async function updateAllTasks() {
         await downloadAllTasks();
         setListeners();
@@ -219,10 +246,40 @@ $(function () {
         updateAllTasks();
     }
 
+    function initSocket() {
+        // let socket = io.connect('http://' + document.domain + ':' + location.port);
+        let socket = io.connect('http://print.mipt.ru:8082/');
+        socket.on('connect', function () {
+            socket.emit('register', JSON.stringify({'type': 'register', 'login': 'dima74'}));
+        });
+
+        socket.on('message', function (data) {
+            data = JSON.parse(data).ans;
+            if (data.array !== undefined) {
+                let array = data.array;
+                for (let taskInfo of array) {
+                    if (taskInfo.Cost && taskInfo.Cost !== '0.00') {
+                        let id = taskInfo.Id;
+                        assert($('#' + id).length === 0);
+                        $($('#tasks_current_tbody').children().get().reverse()).each(function () {
+                            let row = $(this);
+                            if (row.attr('id') === undefined) {
+                                let task = {id: id, filename: taskInfo.FileName, numberPages: taskInfo.NumberOfPages, cost: taskInfo.Cost, printer: taskInfo.ShortName};
+                                row.replaceWith(getTaskRow(task));
+                                return false;
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
     async function init() {
         console.log('init');
         configureForm();
         await updateAllTasks();
+        initSocket();
         //$('body').addClass('loaded');
     }
 

@@ -119,15 +119,3 @@ td {
     height: 20px;
     width: 20px;
 }
-
-td > .preloader-wrapper {
-    display: none;
-}
-
-.table-cell-loading > .preloader-wrapper {
-    display: inline-block;
-}
-
-.table-cell-loading > .hide-on-loading {
-    display: none;
-}

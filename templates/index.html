@@ -1,7 +1,7 @@
 {% extends "with_navbar.html" %}
 {% block head %}
     {{ super() }}
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/styles.css?{{ current_time }}">
     <link rel="stylesheet" href="/static/loader.css">
 {% endblock %}
 
@@ -99,6 +99,7 @@
 
 {% block script %}
     {{ super() }}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    {#    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>#}
+    <script src="http://print.mipt.ru:8082/socket.io/socket.io.js"></script>
     <script src="/static/index.js?{{ current_time }}"></script>
 {% endblock %}

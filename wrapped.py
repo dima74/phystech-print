@@ -35,11 +35,11 @@ def query_tasks(url):
     r = make_request_json(request.full_path)
     tasks0 = r['array']
     tasks = [{'id': task['Id'],
-              'file': task['FileName'],
-              'printer': task['ShortName'],
+              'filename': task['FileName'],
+              'numberPages': task['NumberOfPages'],
               'cost': task['Cost'],
-              'status': task['Status'],
-              'number_pages': task['NumberOfPages']
+              'printer': task['ShortName'],
+              'status': task['Status']
               } for task in tasks0]
     return jsonify(tasks)
 

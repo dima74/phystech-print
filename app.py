@@ -1,5 +1,5 @@
 from flask import Flask
-# from flask_socketio import SocketIO
+from flask_socketio import SocketIO
 from wrapped import wrapped
 from wrapped_authorized import wrapped_authorized
 from wrapped_unauthorized import *
@@ -12,7 +12,7 @@ app.register_blueprint(wrapped)
 app.register_blueprint(wrapped_authorized)
 app.register_blueprint(wrapped_unauthorized)
 app.register_blueprint(auth)
-# socketio = SocketIO(app)
+socketio = SocketIO(app)
 
 '''
 Полезные адреса:
@@ -24,6 +24,7 @@ app.register_blueprint(auth)
     /query/job/preview/<task_id>
     /png/<task_id>/<page>
     /query/job/cancel/<task_id>
+    /query/job/print/<task_id>
     /pic/paper.png?pid=<printer_id>
     /pic/activity.png?pid=<printer_id>&y=50&x=683
     /query/printers/all/
@@ -107,9 +108,8 @@ def howto():
 
 
 @app.route('/test')
-@login_required
 def test():
-    return render_template('test.html', user=g.user)
+    return render_template('test.html')
 
 
 @app.route('/upload', methods=['POST'])
@@ -123,6 +123,9 @@ def upload_file():
 
     def normalize(x, default='false'):
         return 'true' if x == 'on' else default
+
+    if 'number_pages_on_list' not in request.form:
+        return 'Некорректный запрос: не указано число страниц на лист'
 
     info = {'file': file.read(),
             'filename': file.filename,
@@ -144,7 +147,22 @@ def upload_file():
 #     print(json)
 #     print('received json: ' + str(json))
 
+@socketio.on('connect')
+def onconnect():
+    print('onconnect')
+
+
+@socketio.on('disconnect')
+def ondisconnect():
+    print('ondisconnect')
+
+
+@socketio.on('aaa')
+def handle_my_custom_event(json):
+    print(json)
+    print('received json: ' + str(json))
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    # socketio.run(app, debug=True)
+    # app.run(debug=True)
+    socketio.run(app, debug=True)
