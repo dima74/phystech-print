@@ -120,10 +120,6 @@ select {
     justify-content: center;
 }
 
-.icon-as-button {
-    cursor: pointer;
-}
-
 table.highlight > tbody > tr:hover {
     background-color: #b2dfdb;
 }
@@ -141,8 +137,12 @@ td {
     width: 20px;
 }
 
-#print_preview_number_pages{
-    display: inline;
+#print_preview_current_page {
     margin-left: 20px;
     margin-right: 20px;
+}
+
+.print-preview-navigate-active {
+    color: #00bcd4;
+    cursor: pointer;
 }

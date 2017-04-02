@@ -13,8 +13,8 @@ $(function () {
                 </div>
             </div>
         </div>`;
-    let acceptIcon = `<i class="material-icons waves-effect green-text icon-as-button task-action-accept" title="Напечатать">done</i>`;
-    let rejectIcon = `<i class="material-icons waves-effect red-text icon-as-button task-action-reject" title="Отменить">clear</i>`;
+    let acceptIcon = `<i class="material-icons waves-effect green-text task-action-accept" title="Напечатать">done</i>`;
+    let rejectIcon = `<i class="material-icons waves-effect red-text task-action-reject" title="Отменить">clear</i>`;
     let printers_ids = {
         '1': 4,
         '1b': 23,
@@ -168,15 +168,22 @@ $(function () {
 
     function setPreview(id, page = 1) {
         let task = $('#' + id);
-        let number_pages = task.children().eq(1).text();
-        page = Math.max(1, Math.min(number_pages, page));
+        let numberPages = task.children().eq(1).text();
+        if (page < 1 || page > numberPages) {
+            return;
+        }
         let pageUrl = ('000' + page).slice(-3);
 
         $('.task-with-preview').removeClass('task-with-preview');
         task.addClass('task-with-preview');
         $('#print_preview_image').attr('src', `/png/${id}/${pageUrl}`);
         $('#print_preview_image').data('page', page);
-        $('#print_preview_current_page').text(page + '/' + number_pages);
+        $('#print_preview_current_page').text(page + '/' + numberPages);
+
+        for (let classToToggle of ['waves-effect', 'print-preview-navigate-active']) {
+            $('#print_preview_navigate_before').toggleClass(classToToggle, page > 1);
+            $('#print_preview_navigate_next').toggleClass(classToToggle, page < numberPages);
+        }
     }
 
     function changePreviewPage(delta) {
@@ -216,8 +223,11 @@ $(function () {
         }
 
         $('#tasks_current_tbody').on('click', 'tr', function () {
-            let row = $(this);
-            setPreview(row.attr('id'));
+            let task = $(this);
+            if (task.data('state') !== 'ready') {
+                return;
+            }
+            setPreview(task.attr('id'));
         });
 
         function addActionOnClick(actionClass, actionUrl, errorMessage, originalHtml) {
