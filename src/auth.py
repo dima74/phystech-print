@@ -1,6 +1,6 @@
 from functools import wraps
-from user import *
-from base import *
+from src.user import *
+from src.base import *
 
 auth = Blueprint('auth', __name__)
 

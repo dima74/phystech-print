@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_socketio import SocketIO
-from wrapped import wrapped
-from wrapped_authorized import wrapped_authorized
-from wrapped_unauthorized import *
-from auth import *
+from src.wrapped import wrapped
+from src.wrapped_authorized import wrapped_authorized
+from src.wrapped_unauthorized import *
+from src.auth import *
 import time
 
 app = Flask(__name__)

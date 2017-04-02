@@ -1,4 +1,4 @@
-from auth import *
+from src.auth import *
 import io
 
 wrapped = Blueprint('wrapped', __name__)

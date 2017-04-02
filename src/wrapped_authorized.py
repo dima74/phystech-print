@@ -1,4 +1,4 @@
-from auth import *
+from src.auth import *
 
 wrapped_authorized = Blueprint('wrapped_authorized', __name__)
 
