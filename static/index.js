@@ -13,8 +13,8 @@ $(function () {
                 </div>
             </div>
         </div>`;
-    let acceptIcon = `<i class="material-icons waves-effect task-action task-action-accept" title="Напечатать">done</i>`;
-    let rejectIcon = `<i class="material-icons waves-effect task-action task-action-reject" title="Отменить">clear</i>`;
+    let acceptIcon = `<i class="material-icons waves-effect green-text task-action task-action-accept" title="Напечатать">done</i>`;
+    let rejectIcon = `<i class="material-icons waves-effect red-text task-action task-action-reject" title="Отменить">clear</i>`;
     let printers_ids = {
         '1': 4,
         '1b': 23,
@@ -88,12 +88,12 @@ $(function () {
 
             let filename = $('#form_upload_input_file').find('input')[0].files[0].name;
             line = `<tr>
-                                <td>${filename}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>${loadingAnimation}</td>
-                            </tr>`;
+                        <td>${filename}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>${loadingAnimation}</td>
+                    </tr>`;
             $('#tasks_current_tbody').prepend(line);
 
             $.post({
@@ -126,7 +126,7 @@ $(function () {
         }
 
         return `<tr id="${task.id}">
-                    <td><a class="button-show-preview">${task.filename}</a></td>
+                    <td>${task.filename}</td>
                     <td>${task.numberPages}</td>
                     <td>${task.cost}</td>
                     <td>
@@ -151,7 +151,7 @@ $(function () {
                     break;
                 case 'Process':
                     line = `<tr id="${task.id}">
-                                <td>${task.file}</td>
+                                <td>${task.filename}</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -192,16 +192,18 @@ $(function () {
             }
         }
 
-        $('#tasks_current_tbody').on('click', '.button-show-preview', function () {
-            let link = $(this);
-            let cell = link.parent();
-            let row = cell.parent();
-            let cellNumberPages = cell.next();
+        $('#tasks_current_tbody').on('click', 'tr', function () {
+            let row = $(this);
+            // let link = $(this);
+            // let cell = link.parent();
+            // let row = cell.parent();
+            // let cellNumberPages = cell.next();
             setImage(row.attr('id'));
         });
 
         function addActionOnClick(actionClass, actionUrl, errorMessage, originalHtml) {
-            $('#tasks_current_tbody').on('click', actionClass, function () {
+            $('#tasks_current_tbody').on('click', actionClass, function (event) {
+                event.stopPropagation();
                 let cell = $(this).parent();
                 let row = cell.parent();
                 let id = row.attr('id');
@@ -218,7 +220,8 @@ $(function () {
         addActionOnClick('.task-action-reject', 'cancel', 'Отмена заказа', rejectIcon);
         addActionOnClick('.task-action-accept', 'print', 'Отправка на печать', acceptIcon);
 
-        $('#tasks_current_tbody').on('change', '.select-printer', function () {
+        $('#tasks_current_tbody').on('change', '.select-printer', function (event) {
+            event.stopPropagation();
             let cell = $(this).parent();
             let row = cell.parent();
             let id = row.attr('id');
