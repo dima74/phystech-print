@@ -14,22 +14,6 @@ app.register_blueprint(wrapped_unauthorized)
 app.register_blueprint(auth)
 socketio = SocketIO(app)
 
-'''
-Полезные адреса:
-    /query/register/login/?flogin=<логин для проверки>
-    /query/user/
-    /query/tasks/current?num=50
-    /query/tasks/history?num=50
-    # нужно выполнить перед /png
-    /query/job/preview/<task_id>
-    /png/<task_id>/<page>
-    /query/job/cancel/<task_id>
-    /query/job/print/<task_id>
-    /pic/paper.png?pid=<printer_id>
-    /pic/activity.png?pid=<printer_id>&y=50&x=683
-    /query/printers/all/
-'''
-
 
 @app.errorhandler(400)
 def custom400(error):

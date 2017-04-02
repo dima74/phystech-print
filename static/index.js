@@ -193,7 +193,7 @@ $(function () {
 
     function setPreview(id, page = 1) {
         let task = $('#' + id);
-        let numberPages = task.children().eq(1).text();
+        let numberPages = task.children().eq(2).text();
         if (page < 1 || page > numberPages) {
             return;
         }
@@ -249,9 +249,9 @@ $(function () {
             }
         }
 
-        $('#tasks_current_tbody').on('click', 'tr', function () {
+        $('#tasks_current_tbody, #tasks_history_tbody').on('click', 'tr', function () {
             let task = $(this);
-            if (task.data('state') !== 'ready') {
+            if (task.data('state') === 'processing') {
                 return;
             }
             setPreview(task.attr('id'));
