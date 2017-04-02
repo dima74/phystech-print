@@ -3,48 +3,6 @@ import base64
 import re
 
 
-class User2:
-    login = 'dima74'
-    password = '200898'
-    session = requests.Session()
-
-    def get(self, url):
-        request = self.session.post('http://print.mipt.ru' + url).json()
-        if request['error']:
-            raise Exception()
-        return request['ans']
-
-    def post(self, url, data):
-        request = self.session.post('http://print.mipt.ru' + url, data=data).json()
-        if request['error']:
-            raise Exception()
-        return request['ans']
-
-    def __init__(self):
-        request = self.post('/query/user/', {'login': self.login, 'pass': self.password})
-        self.login = request['Nick']
-        self.account = request['Account']
-        self.first_name = request['FirstName']
-        self.last_name = request['LastName']
-        self.load()
-
-    def load(self):
-        def get_tasks(path):
-            request = self.get(path)
-            tasks0 = request['array']
-            tasks = [{'id': task['Id'],
-                      'file': task['FileName'],
-                      'printer': task['ShortName'],
-                      'cost': task['Cost'],
-                      'status': task['Status'],
-                      'number_pages': task['NumberOfPages']
-                      } for task in tasks0]
-            return tasks
-
-        self.tasks_current = get_tasks('/query/tasks/current?num=10')
-        self.tasks_history = get_tasks('/query/tasks/history?num=10')
-
-
 class User:
     def __init__(self, session, user_info):
         self.login = user_info['Nick']
