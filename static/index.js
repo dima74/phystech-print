@@ -210,10 +210,8 @@ $(function () {
         $('#print_preview_image').data('page', page);
         $('#print_preview_current_page').text(page + '/' + numberPages);
 
-        for (let classToToggle of ['waves-effect', 'print-preview-navigate-active']) {
-            $('#print_preview_navigate_before').toggleClass(classToToggle, page > 1);
-            $('#print_preview_navigate_next').toggleClass(classToToggle, page < numberPages);
-        }
+        $('#print_preview_navigate_before').toggleClass('print-preview-navigate-active', page > 1);
+        $('#print_preview_navigate_next').toggleClass('print-preview-navigate-active', page < numberPages);
     }
 
     function changePreviewPage(delta) {
@@ -351,7 +349,6 @@ $(function () {
 
     async function init() {
         console.log('init');
-        $('#print_preview').hide();
         configureForm();
         await updateAllTasks();
         setTasksListeners();

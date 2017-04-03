@@ -142,7 +142,8 @@ td {
     margin-right: 20px;
 }
 
-.print-preview-navigate-active {
-    color: #00bcd4;
-    cursor: pointer;
+.print-preview-navigate:not(.print-preview-navigate-active) {
+    opacity: 0;
+    transition: opacity 1000ms;
+    cursor: auto;
 }
