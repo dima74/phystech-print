@@ -18,7 +18,7 @@ $(function () {
     let addToSharedIcon = `<i class="material-icons waves-effect teal-text task-action-share-add" title="Добавить заказ в общий доступ">share</i>`;
     let removeFromSharedIcon = `<i class="material-icons waves-effect pink-text task-action-share-remove" title="Убрать заказ из общего доступа">share</i>`;
     let replayIcon = `<i class="material-icons waves-effect blue-text task-action-replay" title="Добавить в очередь документов">replay</i>`;
-    let printers_ids = {
+    let printersIds = {
         '1': 4,
         '1b': 23,
         '2': 7,
@@ -184,7 +184,7 @@ $(function () {
                                 <td>${task.time}</td>
                                 <td>${task.filename}</td>
                                 <td>${task.numberPages}</td>
-                                <td>${task.printer}</td>
+                                <td class="cell-printer">${task.printer}</td>
                                 ${cellStatus}
                                 <td>${getSharedIcon(task)}</td>
                                 <td>${replayIcon}</td>
@@ -293,12 +293,12 @@ $(function () {
             let row = cell.parent();
             let id = row.attr('id');
 
-            let printer_name = this.value;
-            let printer_id = printers_ids[printer_name];
-            let originalHtml = cell.html();
+            let printerName = this.value;
+            let printerId = printersIds[printerName];
+            let originalHtml = getPrintersHtml(printerName);
             cell.html(loadingAnimation);
             $.get({
-                url: `/query/job/move/?id=${id}&pid=${printer_id}`,
+                url: `/query/job/move/?id=${id}&pid=${printerId}`,
                 error: ajaxError('Выбор принтера'),
                 complete: changeElementContent(cell, originalHtml)
             });
@@ -318,6 +318,34 @@ $(function () {
         updateAllTasks();
     }
 
+    function getLastThreeTimesMostUsedPrinter() {
+        let printers = [];
+        $('#tasks_history_tbody .cell-printer:lt(3)').each(function () {
+            printers.push($(this).text());
+        });
+
+        let frequencies0 = [];
+        let frequencies = [];
+        for (let i = 1; i <= 8; ++i) {
+            frequencies0[i] = 0;
+            frequencies[i] = 0;
+            frequencies[i + 'b'] = 0;
+        }
+        for (let printer of printers) {
+            ++frequencies0[printer[0]];
+            ++frequencies[printer];
+        }
+
+        let imax0 = -1;
+        for (let i = 1; i <= 8; ++i) {
+            if (imax0 == -1 || frequencies0[i] > frequencies0[imax0]) {
+                imax0 = i;
+            }
+        }
+        let imax = frequencies[imax0] > frequencies[imax0 + 'b'] ? imax0 : (imax0 + 'b');
+        return [imax0, imax];
+    }
+
     function initSocket() {
         // let socket = io.connect('http://' + document.domain + ':' + location.port);
         let socket = io.connect('http://print.mipt.ru:8082/');
@@ -332,12 +360,28 @@ $(function () {
                 for (let taskInfo of array) {
                     if (taskInfo.Cost && taskInfo.Cost !== '0.00') {
                         let id = taskInfo.Id;
-                        assert($('#' + id).length === 0);
+                        if ($('#' + id).length !== 0) {
+                            continue;
+                        }
                         $($('#tasks_current_tbody').children().get().reverse()).each(function () {
                             let row = $(this);
                             if (row.attr('id') === undefined) {
                                 let task = {id: id, time: taskInfo.MDateTime, filename: taskInfo.FileName, numberPages: taskInfo.NumberOfPages, cost: taskInfo.Cost, printer: taskInfo.ShortName};
-                                row.replaceWith(getTaskRow(task));
+
+                                let [printer0, printer] = getLastThreeTimesMostUsedPrinter();
+                                row.replaceWith(getTaskRow(task, getPrintersHtml(printer)));
+                                row = $('#' + id);
+
+                                if (printer !== task.printer) {
+                                    let cell = row.find('select').parent();
+                                    let originalHtml = cell.html();
+                                    cell.html(loadingAnimation);
+                                    $.get({
+                                        url: `/query/job/move/?id=${id}&pid=${printersIds[printer]}`,
+                                        error: ajaxError('Выбор принтера'),
+                                        complete: changeElementContent(cell, originalHtml)
+                                    });
+                                }
                                 return false;
                             }
                         });
