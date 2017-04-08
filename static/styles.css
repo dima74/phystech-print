@@ -18,14 +18,14 @@ body {
     display: grid;
     grid-template-rows: 35% 30% 35%;
     grid-template-columns: 50% 50%;
+    grid-template-areas: "tasks_current print_preview" "form_upload print_preview" "tasks_history print_preview";
     position: absolute;
     height: 100%;
     width: 100%;
 }
 
 #tasks_current_wrapper {
-    grid-row: 1;
-    grid-column: 1;
+    grid-area: tasks_current;
     padding: 10px;
 }
 
@@ -35,21 +35,18 @@ body {
 }
 
 #form_upload_div {
-    grid-row: 2;
-    grid-column: 1;
+    grid-area: form_upload;
     padding: 0 10px;
     height: 100%;
 }
 
 #tasks_history_wrapper {
-    grid-row: 3;
-    grid-column: 1;
+    grid-area: tasks_history;
     padding: 10px;
 }
 
 #print_preview {
-    grid-row: 1 / 4;
-    grid-column: 2;
+    grid-area: print_preview;
     padding: 10px;
 
     display: flex;
@@ -79,18 +76,17 @@ select {
     height: 100%;
     display: grid;
     grid-template-columns: 50% 50%;
+    grid-template-areas: "button options";
     align-items: center;
     justify-items: center;
 }
 
 #form_upload_input_file {
-    grid-row: 1;
-    grid-column: 1;
+    grid-area: button;
 }
 
 #form_upload_options {
-    grid-row: 1;
-    grid-column: 2;
+    grid-area: options;
 }
 
 #form_upload_select_number_pages {
