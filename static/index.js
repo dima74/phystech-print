@@ -1,5 +1,5 @@
 $(function () {
-    let loadingAnimation =
+    const loadingAnimation =
         `<div class="preloader-wrapper active size-auto">
             <div class="spinner-layer spinner-green-only">
                 <div class="circle-clipper left">
@@ -13,12 +13,12 @@ $(function () {
                 </div>
             </div>
         </div>`;
-    let acceptIcon = `<i class="material-icons waves-effect green-text task-action-accept" title="Напечатать">done</i>`;
-    let rejectIcon = `<i class="material-icons waves-effect red-text task-action-reject" title="Отменить">clear</i>`;
-    let addToSharedIcon = `<i class="material-icons waves-effect teal-text task-action-share-add" title="Добавить заказ в общий доступ">share</i>`;
-    let removeFromSharedIcon = `<i class="material-icons waves-effect pink-text task-action-share-remove" title="Убрать заказ из общего доступа">share</i>`;
-    let replayIcon = `<i class="material-icons waves-effect blue-text task-action-replay" title="Добавить в очередь документов">replay</i>`;
-    let printersIds = {
+    const acceptIcon = `<i class="material-icons waves-effect green-text task-action-accept" title="Напечатать">done</i>`;
+    const rejectIcon = `<i class="material-icons waves-effect red-text task-action-reject" title="Отменить">clear</i>`;
+    const addToSharedIcon = `<i class="material-icons waves-effect teal-text task-action-share-add" title="Добавить заказ в общий доступ">share</i>`;
+    const removeFromSharedIcon = `<i class="material-icons waves-effect pink-text task-action-share-remove" title="Убрать заказ из общего доступа">share</i>`;
+    const replayIcon = `<i class="material-icons waves-effect blue-text task-action-replay" title="Добавить в очередь документов">replay</i>`;
+    const printersIds = {
         '1': 4,
         '1b': 23,
         '2': 7,
@@ -34,7 +34,6 @@ $(function () {
         '8': 6,
         '8b': 19
     };
-
 
     function showError(scope, message) {
         let text = message === undefined ? scope : `[${scope}] ${message}`;
@@ -319,31 +318,49 @@ $(function () {
     }
 
     function getLastThreeTimesMostUsedPrinter() {
+        let dormitories = [];
         let printers = [];
+        let printersNeighbours = {};
+        for (let i = 1; i <= 8; ++i) {
+            dormitories.push(i);
+
+            let printer0 = i;
+            let printer1 = i + 'b';
+            printers.push(printer0);
+            printers.push(printer1);
+            printersNeighbours[printer0] = printer1;
+            printersNeighbours[printer1] = printer0;
+        }
+
+        let printersLast = [];
         $('#tasks_history_tbody .cell-printer:lt(3)').each(function () {
-            printers.push($(this).text());
+            printersLast.push($(this).text());
         });
 
-        let frequencies0 = [];
-        let frequencies = [];
-        for (let i = 1; i <= 8; ++i) {
-            frequencies0[i] = 0;
-            frequencies[i] = 0;
-            frequencies[i + 'b'] = 0;
+        let frequenciesDormitories = [];
+        let frequenciesPrinters = [];
+        for (let dormitory of dormitories) {
+            frequenciesDormitories[dormitory] = 0;
         }
         for (let printer of printers) {
-            ++frequencies0[printer[0]];
-            ++frequencies[printer];
+            frequenciesPrinters[printer] = 0;
+        }
+        for (let printer of printersLast) {
+            ++frequenciesDormitories[printer[0]];
+            ++frequenciesPrinters[printer];
         }
 
-        let imax0 = -1;
-        for (let i = 1; i <= 8; ++i) {
-            if (imax0 == -1 || frequencies0[i] > frequencies0[imax0]) {
-                imax0 = i;
+        let mostUsedDormitory = -1;
+        let mostUsedPrinter = -1;
+        for (let printer of printersLast) {
+            let dormitory = printer[0];
+            if (mostUsedDormitory == -1 || frequenciesDormitories[dormitory] > frequenciesDormitories[mostUsedDormitory]) {
+                mostUsedDormitory = dormitory;
+                let printerNeighbour = printersNeighbours[printer];
+                mostUsedPrinter = frequenciesPrinters[printer] >= frequenciesPrinters[printerNeighbour] ? printer : printerNeighbour;
             }
         }
-        let imax = frequencies[imax0] > frequencies[imax0 + 'b'] ? imax0 : (imax0 + 'b');
-        return [imax0, imax];
+        return [mostUsedDormitory, mostUsedPrinter];
     }
 
     function initSocket() {
