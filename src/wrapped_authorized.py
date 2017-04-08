@@ -12,4 +12,4 @@ def query_route(url):
     json = r.json()
     if json['error']:
         abort(400, json['msg'])
-    return jsonify(json)
+    return jsonify(json['ans'])

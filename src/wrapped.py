@@ -29,23 +29,6 @@ def query_path(path, authorized=True):
     return jsonify(make_request_json(path, authorized))
 
 
-@wrapped.route('/query/tasks/<path:url>')
-def query_tasks(url):
-    print(session)
-    r = make_request_json(request.full_path)
-    tasks0 = r['array']
-    tasks = [{'id': task['Id'],
-              'time': task['MDateTime'],
-              'filename': task['FileName'],
-              'numberPages': task['NumberOfPages'],
-              'cost': task['Cost'],
-              'printer': task['ShortName'],
-              'status': task['Status'],
-              'shared': task['Shared']
-              } for task in tasks0]
-    return jsonify(tasks)
-
-
 # unauthorized
 @wrapped.route('/query/register/login/')
 def query_register_check_login_free():

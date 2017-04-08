@@ -59,6 +59,19 @@ $(function () {
         };
     }
 
+    function decodeTask(task) {
+        return {
+            id: task.Id,
+            time: task.MDateTime,
+            filename: task.FileName,
+            numberPages: task.NumberOfPages,
+            cost: task.Cost,
+            printer: task.ShortName,
+            status: task.Status,
+            shared: task.Shared
+        };
+    }
+
     // получает ячейку таблицы, скрывает весь её контент, вместо него показыавется анимация загрузки
     // считает, что в ячейке находится ровно один элемент
     function setCellContentToLoading(cell) {
@@ -159,8 +172,10 @@ $(function () {
 
     // загружает и обновляет задания
     async function downloadTasks(which) {
-        let tasks = await fetchJson(`/query/tasks/${which}?num=50`);
-        for (let task of tasks) {
+        let answer = await fetchJson(`/query/tasks/${which}?num=50`);
+        let tasksEncoded = answer.array;
+        for (let taskEncoded of tasksEncoded) {
+            let task = decodeTask(taskEncoded);
             let line;
             switch (task.status) {
                 case 'Pending':
@@ -383,7 +398,7 @@ $(function () {
                         $($('#tasks_current_tbody').children().get().reverse()).each(function () {
                             let row = $(this);
                             if (row.attr('id') === undefined) {
-                                let task = {id: id, time: taskInfo.MDateTime, filename: taskInfo.FileName, numberPages: taskInfo.NumberOfPages, cost: taskInfo.Cost, printer: taskInfo.ShortName};
+                                let task = decodeTask(taskInfo);
 
                                 let [printer0, printer] = getLastThreeTimesMostUsedPrinter();
                                 row.replaceWith(getTaskRow(task, getPrintersHtml(printer)));
