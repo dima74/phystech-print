@@ -72,6 +72,10 @@ $(function () {
         };
     }
 
+    function getHistoryTaskStatus(success) {
+        return success ? '<td class="green-text">напечатан</td>' : '<td class="red-text">отменён</td>';
+    }
+
     // получает ячейку таблицы, скрывает весь её контент, вместо него показыавется анимация загрузки
     // считает, что в ячейке находится ровно один элемент
     function setCellContentToLoading(cell) {
@@ -153,7 +157,7 @@ $(function () {
         return task.shared === 'NO' ? addToSharedIcon : removeFromSharedIcon;
     }
 
-    function getTaskRow(task, printersHtml) {
+    function getCurrentTaskRow(task, printersHtml) {
         if (printersHtml === undefined) {
             printersHtml = getPrintersHtml(task.printer);
         }
@@ -170,39 +174,47 @@ $(function () {
                 </tr>`;
     }
 
+    function getProcessTaskRow(task) {
+        return `<tr id="${task.id}" data-state="processing">
+                    <td></td>
+                    <td>${task.filename}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td colspan="3">обработка...</td>
+                </tr>`;
+    }
+
+    function getHistoryTaskRow(task) {
+        return `<tr id="${task.id}">
+                    <td>${task.time}</td>
+                    <td>${task.filename}</td>
+                    <td>${task.numberPages}</td>
+                    <td class="cell-printer">${task.printer}</td>
+                    ${getHistoryTaskStatus(task.status == 'Success')}
+                    <td>${getSharedIcon(task)}</td>
+                    <td>${replayIcon}</td>
+                </tr>`;
+    }
+
     // загружает и обновляет задания
     async function downloadTasks(which) {
         let answer = await fetchJson(`/query/tasks/${which}?num=50`);
         let tasksEncoded = answer.array;
+
         for (let taskEncoded of tasksEncoded) {
             let task = decodeTask(taskEncoded);
             let line;
             switch (task.status) {
                 case 'Pending':
-                    line = getTaskRow(task);
+                    line = getCurrentTaskRow(task);
                     break;
                 case 'Process':
-                    line = `<tr id="${task.id}" data-state="processing">
-                                <td></td>
-                                <td>${task.filename}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td colspan="3">обработка...</td>
-                            </tr>`;
+                    line = getProcessTaskRow(task);
                     break;
                 case 'Canceled':
                 case 'Success':
-                    cellStatus = task.status == 'Success' ? '<td class="green-text">напечатан</td>' : '<td class="red-text">отменён</td>';
-                    line = `<tr id="${task.id}">
-                                <td>${task.time}</td>
-                                <td>${task.filename}</td>
-                                <td>${task.numberPages}</td>
-                                <td class="cell-printer">${task.printer}</td>
-                                ${cellStatus}
-                                <td>${getSharedIcon(task)}</td>
-                                <td>${replayIcon}</td>
-                            </tr>`;
+                    line = getHistoryTaskRow(task);
                     break;
             }
 
@@ -266,6 +278,55 @@ $(function () {
             }
         }
 
+        function slideDownRow(row) {
+            //http://stackoverflow.com/a/3410943
+            row
+                .children('td')
+                .each(function () {
+                    let cell = $(this);
+                    let paddingTop = cell.css('paddingTop');
+                    let paddingBottom = cell.css('paddingBottom');
+                    cell.css({paddingTop: 0, paddingBottom: 0})
+                    cell.animate({paddingTop: paddingTop, paddingBottom: paddingBottom})
+                })
+                .wrapInner('<div style="display: none;" />')
+                .children()
+                .slideDown(function () {
+                    var $set = $(this);
+                    $set.replaceWith($set.contents());
+                });
+        }
+
+        function addRowToHistory(row, success) {
+            function rowToTask(row) {
+                let cells = []
+                row.children(':lt(4)').each(function () {
+                    cells.push($(this).text());
+                });
+                let id = row.attr('id');
+                let printer = row.find('.select-printer').val();
+                let shared = row.find('.task-action-share-add').length == 0 ? 'YES' : 'NO';
+                return {
+                    id: id,
+                    time: cells[0], // TODO вместо cell[0] взять текущее время
+                    filename: cells[1],
+                    numberPages: cells[2],
+                    printer: printer,
+                    cost: cells[3],
+                    shared: shared
+                }
+            }
+
+            let task = rowToTask(row);
+            task.status = success ? 'Success' : 'Canceled';
+            let rowHistory = getHistoryTaskRow(task);
+            return function () {
+                $('#tasks_history_tbody').prepend(rowHistory);
+                let newRow = $('#tasks_history_tbody').children(':first');
+                slideDownRow(newRow);
+            }
+        }
+
         $('.tasks_tbody').on('click', 'tr', function () {
             let task = $(this);
             if (task.data('state') === 'processing') {
@@ -274,7 +335,7 @@ $(function () {
             setPreview(task.attr('id'));
         });
 
-        function addActionOnClick(actionClass, actionUrl, errorMessage, deleteRow, newHtml) {
+        function addActionOnClick(actionClass, actionUrl, errorMessage, deleteRowAndAddToHistory, newHtml) {
             $('.tasks_tbody').on('click', actionClass, function (event) {
                 event.stopPropagation();
                 let cell = $(this).parent();
@@ -284,8 +345,9 @@ $(function () {
                 cell.html(loadingAnimation);
 
                 successHandlers = [changeElementContent(cell, newHtml)];
-                if (deleteRow) {
+                if (deleteRowAndAddToHistory) {
                     successHandlers.push(slideUpRow(row));
+                    successHandlers.push(addRowToHistory(row, actionUrl == 'print'));
                 }
                 $.get({
                     url: `/query/job/${actionUrl}/` + id,
@@ -295,8 +357,8 @@ $(function () {
             });
         }
 
-        addActionOnClick('.task-action-reject', 'cancel', 'Отмена заказа', true, '');
         addActionOnClick('.task-action-accept', 'print', 'Отправка на печать', true, '');
+        addActionOnClick('.task-action-reject', 'cancel', 'Отмена заказа', true, '');
         addActionOnClick('.task-action-replay', 'reprint', 'Повторная отправка на печать', false, replayIcon);
         addActionOnClick('.task-action-share-add', 'share', 'Добавление заказа в общий доступ', false, removeFromSharedIcon);
         addActionOnClick('.task-action-share-remove', 'unshare', 'Удаление заказа из общего доступа', false, addToSharedIcon);
@@ -401,7 +463,7 @@ $(function () {
                                 let task = decodeTask(taskInfo);
 
                                 let [printer0, printer] = getLastThreeTimesMostUsedPrinter();
-                                row.replaceWith(getTaskRow(task, getPrintersHtml(printer)));
+                                row.replaceWith(getCurrentTaskRow(task, getPrintersHtml(printer)));
                                 row = $('#' + id);
 
                                 if (printer !== task.printer) {
