@@ -54,6 +54,15 @@ $(function () {
     // используется при автовыборе принтера
     let promisePrintersAll;
 
+    let isTabActive = true;
+    $(window).focus(function () {
+        isTabActive = true;
+    });
+
+    $(window).blur(function () {
+        isTabActive = false;
+    });
+
     function showError(scope, message) {
         let text = message === undefined ? scope : `[${scope}] ${message}`;
         Materialize.toast(text, 40000);
@@ -64,6 +73,22 @@ $(function () {
         return function (response) {
             json = JSON.parse(response.responseText);
             showError(scope, json.message);
+        }
+    }
+
+    function showNotification(title, body) {
+        function notificate() {
+            let notify = new Notification(title, {body: body});
+            notify.onerror = function () {
+                console.log('Ошибка: Notification.permission === ' + Notification.permission);
+            };
+        }
+
+        if (Notification.permission === 'default') {
+            Notification.requestPermission(notificate);
+        }
+        else {
+            notificate();
         }
     }
 
@@ -447,7 +472,7 @@ $(function () {
             addRowToCurrent(row);
         }
 
-        addActionOnClickWithAjax('.task-action-accept', 'print', 'Отправка на печать', callbackMoveTaskToHistory('Queue'));
+        addActionOnClickWithAjax('.task-action-accept', 'print', 'Отправка на печать', [callbackMoveTaskToHistory('Queue'), Notification.requestPermission]);
         addActionOnClickWithAjax('.task-action-reject', 'cancel', 'Отмена заказа', callbackMoveTaskToHistory('Canceled'));
         addActionOnClickWithAjax('.task-action-replay', 'reprint', 'Повторная отправка на печать', callbackReturnTaskFromHistory);
         addActionOnClickWithAjax('.task-action-share-add', 'share', 'Добавление заказа в общий доступ', function (cell) { cell.html(removeFromSharedIcon); });
@@ -588,7 +613,11 @@ $(function () {
                         if (task.status == 'Printing' || task.status == 'Success') {
                             row.find('.history-task-status').replaceWith(getHistoryTaskStatus(task.status));
                             if (task.status == 'Success') {
-                                Materialize.toast('Заказ успешно напечатан!', 10000);
+                                if (isTabActive) {
+                                    Materialize.toast(task.filename + ': Успешно напечатан', 10000);
+                                } else {
+                                    showNotification(task.filename, 'Успешно напечатан!');
+                                }
                             }
                         }
                     }
