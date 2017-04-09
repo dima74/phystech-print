@@ -35,6 +35,24 @@ $(function () {
         '8b': 19
     };
 
+    let dormitoriesAll = [];
+    let printersAll = [];
+    let printersNeighbours = {};
+    for (let i = 1; i <= 8; ++i) {
+        dormitoriesAll.push(i);
+
+        let printer0 = i;
+        let printer1 = i + 'b';
+        printersAll.push(printer0);
+        printersAll.push(printer1);
+        printersNeighbours[printer0] = printer1;
+        printersNeighbours[printer1] = printer0;
+    }
+
+    // присваивается в момент загрузки файла
+    // используется при автовыборе принтера
+    let promisePrintersAll;
+
     function showError(scope, message) {
         let text = message === undefined ? scope : `[${scope}] ${message}`;
         Materialize.toast(text, 40000);
@@ -135,6 +153,7 @@ $(function () {
             });
             $formUpload.reset();
             $('#form_upload_checkbox_longedge').prop('disabled', true);
+            promisePrintersAll = $.get('/query/printers/all/');
             return false;
         });
     }
@@ -395,41 +414,27 @@ $(function () {
     }
 
     function getLastThreeTimesMostUsedPrinter() {
-        let dormitories = [];
         let printers = [];
-        let printersNeighbours = {};
-        for (let i = 1; i <= 8; ++i) {
-            dormitories.push(i);
-
-            let printer0 = i;
-            let printer1 = i + 'b';
-            printers.push(printer0);
-            printers.push(printer1);
-            printersNeighbours[printer0] = printer1;
-            printersNeighbours[printer1] = printer0;
-        }
-
-        let printersLast = [];
         $('#tasks_history_tbody .cell-printer:lt(3)').each(function () {
-            printersLast.push($(this).text());
+            printers.push($(this).text());
         });
 
         let frequenciesDormitories = [];
         let frequenciesPrinters = [];
-        for (let dormitory of dormitories) {
+        for (let dormitory of dormitoriesAll) {
             frequenciesDormitories[dormitory] = 0;
         }
-        for (let printer of printers) {
+        for (let printer of printersAll) {
             frequenciesPrinters[printer] = 0;
         }
-        for (let printer of printersLast) {
+        for (let printer of printers) {
             ++frequenciesDormitories[printer[0]];
             ++frequenciesPrinters[printer];
         }
 
         let mostUsedDormitory = -1;
         let mostUsedPrinter = -1;
-        for (let printer of printersLast) {
+        for (let printer of printers) {
             let dormitory = printer[0];
             if (mostUsedDormitory == -1 || frequenciesDormitories[dormitory] > frequenciesDormitories[mostUsedDormitory]) {
                 mostUsedDormitory = dormitory;
@@ -467,13 +472,27 @@ $(function () {
                                 row = $('#' + id);
 
                                 if (printer !== task.printer) {
-                                    let cell = row.find('select').parent();
-                                    let originalHtml = cell.html();
-                                    cell.html(loadingAnimation);
-                                    $.get({
-                                        url: `/query/job/move/?id=${id}&pid=${printersIds[printer]}`,
-                                        error: ajaxError('Выбор принтера'),
-                                        complete: changeElementContent(cell, originalHtml)
+                                    promisePrintersAll.then(function (data) {
+                                        let printerNeighbour = printersNeighbours[printer];
+                                        let printerEnabled = data[printersIds[printer]].status == 'ENABLED';
+                                        let printerNeighbourEnabled = data[printersIds[printerNeighbour]].status == 'ENABLED';
+                                        if (!printerEnabled && printerNeighbourEnabled) {
+                                            printer = printerNeighbour;
+                                        }
+
+                                        let cell = row.find('select').parent();
+                                        let originalHtml = cell.html();
+                                        cell.html(loadingAnimation);
+                                        $.get({
+                                            url: `/query/job/move/?id=${id}&pid=${printersIds[printer]}`,
+                                            success: function () {
+                                                if (!printerEnabled && !printerNeighbourEnabled) {
+                                                    showError('Автовыбор принтера', 'К сожалению, оба принтера в вашем общежитии недоступны');
+                                                }
+                                            },
+                                            error: ajaxError('Выбор принтера'),
+                                            complete: changeElementContent(cell, originalHtml)
+                                        });
                                     });
                                 }
                                 return false;
