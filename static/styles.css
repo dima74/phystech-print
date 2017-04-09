@@ -147,3 +147,8 @@ td {
 .cursor-default {
     cursor: default;
 }
+
+.icon {
+    vertical-align: middle;
+    user-select: none;
+}

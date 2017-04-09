@@ -15,8 +15,8 @@ $(function () {
             </div>
         </div>`;
     const acceptIcon = `<i class="material-icons waves-effect green-text task-action-accept" title="Напечатать">done</i>`;
-    const acceptIconPrinterError = `<i class="material-icons cursor-default task-action-accept" title="Принтер недоступен">done</i>`;
-    const acceptIconNotEnoughCash = `<i class="material-icons cursor-default task-action-accept" title="Недостаточно средств на счету">done</i>`;
+    const acceptIconPrinterError = `<i class="material-icons icon cursor-default task-action-accept" title="Принтер недоступен">done</i>`;
+    const acceptIconNotEnoughCash = `<i class="material-icons icon cursor-default task-action-accept" title="Недостаточно средств на счету">done</i>`;
     const rejectIcon = `<i class="material-icons waves-effect red-text task-action-reject" title="Отменить">clear</i>`;
     const addToSharedIcon = `<i class="material-icons waves-effect teal-text task-action-share-add" title="Добавить заказ в общий доступ">share</i>`;
     const removeFromSharedIcon = `<i class="material-icons waves-effect pink-text task-action-share-remove" title="Убрать заказ из общего доступа">share</i>`;
@@ -205,7 +205,7 @@ $(function () {
                 printersHtml += `<option${selected}>${printer}</option>`;
             }
         }
-        return `<select class="browser-default select-printer hide-on-loading">
+        return `<select class="browser-default select-printer">
                     ${printersHtml}
                 </select>`;
     }
@@ -239,6 +239,18 @@ $(function () {
                     <td></td>
                     <td></td>
                     <td colspan="3">обработка...</td>
+                </tr>`;
+    }
+
+    function getQueueTaskRow(task) {
+        return `<tr id="${task.id}">
+                    <td>${task.time}</td>
+                    <td>${task.filename}</td>
+                    <td>${task.numberPages}</td>
+                    <td>${task.cost}</td>
+                    <td>${task.printer}</td>
+                    <td colspan="2">готовится к печати...</td>
+                    <td>${rejectIcon}</td>
                 </tr>`;
     }
 
@@ -286,6 +298,9 @@ $(function () {
                     break;
                 case 'Invalid':
                     line = getInvalidTaskRow(task);
+                    break;
+                case 'Queue':
+                    line = getQueueTaskRow(task);
                     break;
                 default:
                     showError('Заказы', 'Неизвестный статус заказа: ' + task.status);
@@ -368,41 +383,34 @@ $(function () {
                 });
         }
 
-        function convertRowCurrentToTask(row) {
+        function convertRowToTask(row) {
             let cells = []
-            row.children(':lt(4)').each(function () {
+            row.children(':lt(3)').each(function () {
                 cells.push($(this).text());
             });
             let id = row.attr('id');
-            let printer = row.find('.select-printer').val();
-            let shared = row.find('.task-action-share-add').length == 0 ? 'YES' : 'NO';
+            let shared = row.find('.task-action-share-remove').length == 0 ? 'NO' : 'YES';
             return {
                 id: id,
                 time: cells[0], // TODO вместо cells[0] взять текущее время
                 filename: cells[1],
                 numberPages: cells[2],
-                printer: printer,
-                cost: cells[3],
                 shared: shared
             }
         }
 
+        function convertRowCurrentToTask(row) {
+            let task = convertRowToTask(row);
+            task.cost = row.children().eq(3).text();
+            task.printer = row.children().eq(4).text();
+            return task;
+        }
+
         function convertRowHistoryToTask(row) {
-            let cells = []
-            row.children(':lt(4)').each(function () {
-                cells.push($(this).text());
-            });
-            let id = row.attr('id');
-            let shared = row.find('.task-action-share-add').length == 0 ? 'YES' : 'NO';
-            return {
-                id: id,
-                time: cells[0], // TODO вместо cells[0] взять текущее время
-                filename: cells[1],
-                numberPages: cells[2],
-                printer: cells[3],
-                cost: loadingAnimation,
-                shared: shared
-            }
+            let task = convertRowToTask(row);
+            task.cost = loadingAnimation;
+            task.printer = row.children().eq(3).text();
+            return task;
         }
 
         function addRowToTable(rowOld, functionConvertRowOldToTask, functionGetRowNewFromTask, tableId, taskStatusNew, removeIdFromRowOld) {
@@ -445,17 +453,20 @@ $(function () {
             });
         }
 
-        function addActionOnClickWithAjax(actionClass, actionUrl, errorMessage, successHandlers) {
+        function addActionOnClickWithAjax(actionClass, actionUrl, errorMessage, ajaxHandlers, onclickHandler) {
             addActionOnClick(actionClass, function (cell, originalHtml) {
-                if (!Array.isArray(successHandlers)) {
-                    successHandlers = successHandlers === undefined ? [] : [successHandlers];
+                if (onclickHandler !== undefined) {
+                    onclickHandler(cell);
+                }
+                if (!Array.isArray(ajaxHandlers)) {
+                    ajaxHandlers = ajaxHandlers === undefined ? [] : [ajaxHandlers];
                 }
                 let id = cell.parent().attr('id');
                 $.get({
                     url: `/query/job/${actionUrl}/` + id,
                     success: function () {
-                        for (let successHandler of successHandlers) {
-                            successHandler(cell);
+                        for (let ajaxHandler of ajaxHandlers) {
+                            ajaxHandler(cell);
                         }
                     },
                     error: [ajaxError(errorMessage), changeElementContent(cell, originalHtml)]
@@ -477,8 +488,13 @@ $(function () {
             addRowToCurrent(row);
         }
 
-        addActionOnClickWithAjax('.task-action-accept.waves-effect', 'print', 'Отправка на печать', [callbackMoveTaskToHistory('Queue'), Notification.requestPermission]);
-        addActionOnClickWithAjax('.task-action-reject', 'cancel', 'Отмена заказа', callbackMoveTaskToHistory('Canceled'));
+        function removeSelect(cell) {
+            let select = cell.parent().find('.select-printer');
+            select.replaceWith(select.val());
+        }
+
+        addActionOnClickWithAjax('.task-action-accept.waves-effect', 'print', 'Отправка на печать', [callbackMoveTaskToHistory('Queue'), function () { Notification.requestPermission(); }], removeSelect);
+        addActionOnClickWithAjax('.task-action-reject', 'cancel', 'Отмена заказа', callbackMoveTaskToHistory('Canceled'), removeSelect);
         addActionOnClickWithAjax('.task-action-replay', 'reprint', 'Повторная отправка на печать', callbackReturnTaskFromHistory);
         addActionOnClickWithAjax('.task-action-share-add', 'share', 'Добавление заказа в общий доступ', function (cell) { cell.html(removeFromSharedIcon); });
         addActionOnClickWithAjax('.task-action-share-remove', 'unshare', 'Удаление заказа из общего доступа', function (cell) { cell.html(addToSharedIcon); });
