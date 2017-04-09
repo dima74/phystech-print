@@ -249,8 +249,7 @@ $(function () {
                     <td>${task.numberPages}</td>
                     <td>${task.cost}</td>
                     <td>${task.printer}</td>
-                    <td colspan="2">готовится к печати...</td>
-                    <td>${rejectIcon}</td>
+                    <td colspan="3">готовится к печати...</td>
                 </tr>`;
     }
 
@@ -474,11 +473,14 @@ $(function () {
             });
         }
 
-        function callbackMoveTaskToHistory(statusInHistory) {
+        function moveTaskToHistory(row, taskStatusNew) {
+            slideUpRow(row);
+            addRowToHistory(row, taskStatusNew);
+        }
+
+        function callbackMoveTaskToHistory(taskStatusNew) {
             return function (cell) {
-                let row = cell.parent();
-                slideUpRow(row);
-                addRowToHistory(row, statusInHistory);
+                moveTaskToHistory(cell.parent(), taskStatusNew);
             }
         }
 
@@ -493,7 +495,13 @@ $(function () {
             select.replaceWith(select.val());
         }
 
-        addActionOnClickWithAjax('.task-action-accept.waves-effect', 'print', 'Отправка на печать', [callbackMoveTaskToHistory('Queue'), function () { Notification.requestPermission(); }], removeSelect);
+        function callbackAcceptTask(cell) {
+            cell.next().remove();
+            cell.next().remove();
+            cell.replaceWith(`<td colspan="3">${getHistoryTaskStatus('Queue')}</td>`);
+        }
+
+        addActionOnClickWithAjax('.task-action-accept.waves-effect', 'print', 'Отправка на печать', [callbackAcceptTask, function () { Notification.requestPermission(); }], removeSelect);
         addActionOnClickWithAjax('.task-action-reject', 'cancel', 'Отмена заказа', callbackMoveTaskToHistory('Canceled'), removeSelect);
         addActionOnClickWithAjax('.task-action-replay', 'reprint', 'Повторная отправка на печать', callbackReturnTaskFromHistory);
         addActionOnClickWithAjax('.task-action-share-add', 'share', 'Добавление заказа в общий доступ', function (cell) { cell.html(removeFromSharedIcon); });
@@ -518,6 +526,129 @@ $(function () {
 
         $('#print_preview_navigate_before').click(function () { changePreviewPage(-1); });
         $('#print_preview_navigate_next').click(function () { changePreviewPage(+1); });
+
+        // socket
+        function getLastThreeTimesMostUsedPrinter() {
+            let printers = [];
+            $('#tasks_history_tbody .cell-printer:lt(3)').each(function () {
+                printers.push($(this).text());
+            });
+
+            let frequenciesDormitories = [];
+            let frequenciesPrinters = [];
+            for (let dormitory of dormitoriesAll) {
+                frequenciesDormitories[dormitory] = 0;
+            }
+            for (let printer of printersAll) {
+                frequenciesPrinters[printer] = 0;
+            }
+            for (let printer of printers) {
+                ++frequenciesDormitories[printer[0]];
+                ++frequenciesPrinters[printer];
+            }
+
+            let mostUsedDormitory = -1;
+            let mostUsedPrinter = -1;
+            for (let printer of printers) {
+                let dormitory = printer[0];
+                if (mostUsedDormitory == -1 || frequenciesDormitories[dormitory] > frequenciesDormitories[mostUsedDormitory]) {
+                    mostUsedDormitory = dormitory;
+                    let printerNeighbour = printersNeighbours[printer];
+                    mostUsedPrinter = frequenciesPrinters[printer] >= frequenciesPrinters[printerNeighbour] ? printer : printerNeighbour;
+                }
+            }
+            return [mostUsedDormitory, mostUsedPrinter];
+        }
+
+        function initSocket() {
+            function findRowAndUpdate(task) {
+                if (task.cost === undefined || task.cost == '0.00') {
+                    return;
+                }
+                let id = task.id;
+                let success = false;
+                $($('#tasks_current_tbody').children().get().reverse()).each(function () {
+                    let row = $(this);
+                    if (row.attr('id') === undefined) {
+                        let [printer0, printer] = getLastThreeTimesMostUsedPrinter();
+                        task.printer = printer;
+                        if (row.data('state') == 'ready') {
+                            row.attr('id', id);
+                            row.find('.preloader-wrapper').replaceWith(task.cost);
+                        } else {
+                            row.replaceWith(getCurrentTaskRow(task));
+                        }
+                        row = $('#' + id);
+
+                        if (printer !== task.printer) {
+                            promiseQueryPrintersAll.then(function (data) {
+                                queryPrintersAll = data;
+                                let printerNeighbour = printersNeighbours[printer];
+                                let printerEnabled = queryPrintersAll[printersIds[printer]].status == 'ENABLED';
+                                let printerNeighbourEnabled = queryPrintersAll[printersIds[printerNeighbour]].status == 'ENABLED';
+                                if (!printerEnabled && printerNeighbourEnabled) {
+                                    printer = printerNeighbour;
+                                }
+
+                                let cell = row.find('select').parent();
+                                let originalHtml = cell.html();
+                                cell.html(loadingAnimation);
+                                $.get({
+                                    url: `/query/job/move/?id=${id}&pid=${printersIds[printer]}`,
+                                    success: function () {
+                                        if (!printerEnabled && !printerNeighbourEnabled) {
+                                            showError('Автовыбор принтера', 'К сожалению, оба принтера в вашем общежитии недоступны');
+                                        }
+                                    },
+                                    error: ajaxError('Выбор принтера'),
+                                    complete: changeElementContent(cell, originalHtml)
+                                });
+                            });
+                        }
+                        success = true;
+                        return false;
+                    }
+                });
+                if (!success) {
+                    showError('WebSocket', 'Неизвестный заказ ' + id);
+                }
+            }
+
+            // let socket = io.connect('http://' + document.domain + ':' + location.port);
+            let socket = io.connect('http://print.mipt.ru:8082/');
+            socket.on('connect', function () {
+                socket.emit('register', JSON.stringify({'type': 'register', 'login': 'dima74'}));
+            });
+
+            socket.on('message', function (data) {
+                data = JSON.parse(data).ans;
+                if (data.array !== undefined) {
+                    let array = data.array;
+                    for (let taskInfo of array) {
+                        let task = decodeTask(taskInfo);
+                        let row = $('#' + task.id);
+                        if (row.length == 0) {
+                            findRowAndUpdate(task);
+                        } else {
+                            if (task.status == 'Printing') {
+                                row.find('.history-task-status').replaceWith(getHistoryTaskStatus(task.status));
+                            } else if (task.status == 'Success') {
+                                moveTaskToHistory(row, 'Success');
+                                if (isTabActive) {
+                                    Materialize.toast(task.filename + ': Успешно напечатан', 10000);
+                                } else {
+                                    showNotification(task.filename, 'Успешно напечатан!');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        initSocket();
+        window.callbackAcceptTask = callbackAcceptTask;
+        window.moveTaskToHistory = moveTaskToHistory;
     }
 
     // загружает задания и устанавливает обработчики
@@ -528,124 +659,6 @@ $(function () {
 
     function updateAllTasksSync() {
         updateAllTasks();
-    }
-
-    function getLastThreeTimesMostUsedPrinter() {
-        let printers = [];
-        $('#tasks_history_tbody .cell-printer:lt(3)').each(function () {
-            printers.push($(this).text());
-        });
-
-        let frequenciesDormitories = [];
-        let frequenciesPrinters = [];
-        for (let dormitory of dormitoriesAll) {
-            frequenciesDormitories[dormitory] = 0;
-        }
-        for (let printer of printersAll) {
-            frequenciesPrinters[printer] = 0;
-        }
-        for (let printer of printers) {
-            ++frequenciesDormitories[printer[0]];
-            ++frequenciesPrinters[printer];
-        }
-
-        let mostUsedDormitory = -1;
-        let mostUsedPrinter = -1;
-        for (let printer of printers) {
-            let dormitory = printer[0];
-            if (mostUsedDormitory == -1 || frequenciesDormitories[dormitory] > frequenciesDormitories[mostUsedDormitory]) {
-                mostUsedDormitory = dormitory;
-                let printerNeighbour = printersNeighbours[printer];
-                mostUsedPrinter = frequenciesPrinters[printer] >= frequenciesPrinters[printerNeighbour] ? printer : printerNeighbour;
-            }
-        }
-        return [mostUsedDormitory, mostUsedPrinter];
-    }
-
-    function initSocket() {
-        function findRowAndUpdate(task) {
-            if (task.cost === undefined || task.cost == '0.00') {
-                return;
-            }
-            let id = task.id;
-            let success = false;
-            $($('#tasks_current_tbody').children().get().reverse()).each(function () {
-                let row = $(this);
-                if (row.attr('id') === undefined) {
-                    let [printer0, printer] = getLastThreeTimesMostUsedPrinter();
-                    task.printer = printer;
-                    if (row.data('state') == 'ready') {
-                        row.attr('id', id);
-                        row.find('.preloader-wrapper').replaceWith(task.cost);
-                    } else {
-                        row.replaceWith(getCurrentTaskRow(task));
-                    }
-                    row = $('#' + id);
-
-                    if (printer !== task.printer) {
-                        promiseQueryPrintersAll.then(function (data) {
-                            queryPrintersAll = data;
-                            let printerNeighbour = printersNeighbours[printer];
-                            let printerEnabled = queryPrintersAll[printersIds[printer]].status == 'ENABLED';
-                            let printerNeighbourEnabled = queryPrintersAll[printersIds[printerNeighbour]].status == 'ENABLED';
-                            if (!printerEnabled && printerNeighbourEnabled) {
-                                printer = printerNeighbour;
-                            }
-
-                            let cell = row.find('select').parent();
-                            let originalHtml = cell.html();
-                            cell.html(loadingAnimation);
-                            $.get({
-                                url: `/query/job/move/?id=${id}&pid=${printersIds[printer]}`,
-                                success: function () {
-                                    if (!printerEnabled && !printerNeighbourEnabled) {
-                                        showError('Автовыбор принтера', 'К сожалению, оба принтера в вашем общежитии недоступны');
-                                    }
-                                },
-                                error: ajaxError('Выбор принтера'),
-                                complete: changeElementContent(cell, originalHtml)
-                            });
-                        });
-                    }
-                    success = true;
-                    return false;
-                }
-            });
-            if (!success) {
-                showError('WebSocket', 'Неизвестный заказ ' + id);
-            }
-        }
-
-        // let socket = io.connect('http://' + document.domain + ':' + location.port);
-        let socket = io.connect('http://print.mipt.ru:8082/');
-        socket.on('connect', function () {
-            socket.emit('register', JSON.stringify({'type': 'register', 'login': 'dima74'}));
-        });
-
-        socket.on('message', function (data) {
-            data = JSON.parse(data).ans;
-            if (data.array !== undefined) {
-                let array = data.array;
-                for (let taskInfo of array) {
-                    let task = decodeTask(taskInfo);
-                    let row = $('#' + task.id);
-                    if (row.length == 0) {
-                        findRowAndUpdate(task);
-                    } else {
-                        if (task.status == 'Printing' || task.status == 'Success') {
-                            row.find('.history-task-status').replaceWith(getHistoryTaskStatus(task.status));
-                            if (task.status == 'Success') {
-                                if (isTabActive) {
-                                    Materialize.toast(task.filename + ': Успешно напечатан', 10000);
-                                } else {
-                                    showNotification(task.filename, 'Успешно напечатан!');
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
     }
 
     async function updateUserInfo() {
@@ -665,7 +678,6 @@ $(function () {
         await updateQueryPrintersAll();
         await updateAllTasks();
         setTasksListeners();
-        initSocket();
         //$('body').addClass('loaded');
     }
 
