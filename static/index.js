@@ -15,8 +15,8 @@ $(function () {
             </div>
         </div>`;
     const acceptIcon = `<i class="material-icons waves-effect green-text task-action-accept" title="Напечатать">done</i>`;
-    const acceptIconPrinterError = `<i class="material-icons waves-effect task-action-accept" title="Принтер недоступен">done</i>`;
-    const acceptIconNotEnoughCash = `<i class="material-icons waves-effect task-action-accept" title="Недостаточно средств на счету">done</i>`;
+    const acceptIconPrinterError = `<i class="material-icons cursor-default task-action-accept" title="Принтер недоступен">done</i>`;
+    const acceptIconNotEnoughCash = `<i class="material-icons cursor-default task-action-accept" title="Недостаточно средств на счету">done</i>`;
     const rejectIcon = `<i class="material-icons waves-effect red-text task-action-reject" title="Отменить">clear</i>`;
     const addToSharedIcon = `<i class="material-icons waves-effect teal-text task-action-share-add" title="Добавить заказ в общий доступ">share</i>`;
     const removeFromSharedIcon = `<i class="material-icons waves-effect pink-text task-action-share-remove" title="Убрать заказ из общего доступа">share</i>`;
@@ -54,7 +54,8 @@ $(function () {
 
     // присваивается в момент загрузки файла
     // используется при автовыборе принтера
-    let promisePrintersAll;
+    let promiseQueryPrintersAll;
+    let queryPrintersAll;
 
     let isTabActive = true;
     $(window).focus(function () {
@@ -190,7 +191,7 @@ $(function () {
             });
             $formUpload.reset();
             $('#form_upload_checkbox_longedge').prop('disabled', true);
-            promisePrintersAll = $.get('/query/printers/all/');
+            promiseQueryPrintersAll = $.get('/query/printers/all/');
             return false;
         });
     }
@@ -216,13 +217,15 @@ $(function () {
     function getCurrentTaskRow(task) {
         let printersHtml = getPrintersHtml(task.printer);
         let idAttribute = task.id === undefined ? '' : `id=${task.id}`;
+        let acceptIconUsed = parseFloat($('#nav_account_number').text()) < parseFloat(task.cost) ? acceptIconNotEnoughCash :
+            queryPrintersAll[printersIds[task.printer]].status !== 'ENABLED' ? acceptIconPrinterError : acceptIcon;
         return `<tr ${idAttribute} data-state="ready">
                     <td>${task.time}</td>
                     <td>${task.filename}</td>
                     <td>${task.numberPages}</td>
                     <td>${task.cost}</td>
                     <td>${printersHtml}</td>
-                    <td>${acceptIcon}</td>
+                    <td>${acceptIconUsed}</td>
                     <td>${getSharedIcon(task)}</td>
                     <td>${rejectIcon}</td>
                 </tr>`;
@@ -474,7 +477,7 @@ $(function () {
             addRowToCurrent(row);
         }
 
-        addActionOnClickWithAjax('.task-action-accept', 'print', 'Отправка на печать', [callbackMoveTaskToHistory('Queue'), Notification.requestPermission]);
+        addActionOnClickWithAjax('.task-action-accept.waves-effect', 'print', 'Отправка на печать', [callbackMoveTaskToHistory('Queue'), Notification.requestPermission]);
         addActionOnClickWithAjax('.task-action-reject', 'cancel', 'Отмена заказа', callbackMoveTaskToHistory('Canceled'));
         addActionOnClickWithAjax('.task-action-replay', 'reprint', 'Повторная отправка на печать', callbackReturnTaskFromHistory);
         addActionOnClickWithAjax('.task-action-share-add', 'share', 'Добавление заказа в общий доступ', function (cell) { cell.html(removeFromSharedIcon); });
@@ -564,10 +567,11 @@ $(function () {
                     row = $('#' + id);
 
                     if (printer !== task.printer) {
-                        promisePrintersAll.then(function (data) {
+                        promiseQueryPrintersAll.then(function (data) {
+                            queryPrintersAll = data;
                             let printerNeighbour = printersNeighbours[printer];
-                            let printerEnabled = data[printersIds[printer]].status == 'ENABLED';
-                            let printerNeighbourEnabled = data[printersIds[printerNeighbour]].status == 'ENABLED';
+                            let printerEnabled = queryPrintersAll[printersIds[printer]].status == 'ENABLED';
+                            let printerNeighbourEnabled = queryPrintersAll[printersIds[printerNeighbour]].status == 'ENABLED';
                             if (!printerEnabled && printerNeighbourEnabled) {
                                 printer = printerNeighbour;
                             }
@@ -631,13 +635,18 @@ $(function () {
     async function updateUserInfo() {
         let response = await fetchJson(`/query/user/`);
         $('#nav_username').text(`${response.Nick}, ${response.FirstName} ${response.LastName}`);
-        $('#nav_account').text(response.Account + ' руб.');
+        $('#nav_account_number').text(response.Account);
+    }
+
+    async function updateQueryPrintersAll() {
+        queryPrintersAll = await fetchJson('/query/printers/all/');
     }
 
     async function init() {
         console.log('init');
         configureForm();
         await updateUserInfo();
+        await updateQueryPrintersAll();
         await updateAllTasks();
         setTasksListeners();
         initSocket();
