@@ -1,3 +1,4 @@
+const SLIDE_DURATION = 1000;
 $(function () {
     const loadingAnimation =
         `<div class="preloader-wrapper active size-auto">
@@ -185,12 +186,10 @@ $(function () {
         return task.shared === 'NO' ? addToSharedIcon : removeFromSharedIcon;
     }
 
-    function getCurrentTaskRow(task, printersHtml) {
-        if (printersHtml === undefined) {
-            printersHtml = getPrintersHtml(task.printer);
-        }
-
-        return `<tr id="${task.id}" data-state="ready">
+    function getCurrentTaskRow(task) {
+        let printersHtml = getPrintersHtml(task.printer);
+        let idAttribute = task.id === undefined ? '' : `id=${task.id}`;
+        return `<tr ${idAttribute} data-state="ready">
                     <td>${task.time}</td>
                     <td>${task.filename}</td>
                     <td>${task.numberPages}</td>
@@ -317,7 +316,7 @@ $(function () {
                 .animate({paddingTop: 0, paddingBottom: 0})
                 .wrapInner('<div />')
                 .children()
-                .slideUp(function () { row.remove(); });
+                .slideUp(SLIDE_DURATION, function () { row.remove(); });
         }
 
         function slideDownRow(row) {
@@ -328,44 +327,74 @@ $(function () {
                     let cell = $(this);
                     let paddingTop = cell.css('paddingTop');
                     let paddingBottom = cell.css('paddingBottom');
-                    cell.css({paddingTop: 0, paddingBottom: 0})
-                    cell.animate({paddingTop: paddingTop, paddingBottom: paddingBottom})
+                    cell.css({paddingTop: 0, paddingBottom: 0});
+                    cell.animate({paddingTop: paddingTop, paddingBottom: paddingBottom}, SLIDE_DURATION);
                 })
                 .wrapInner('<div style="display: none;" />')
                 .children()
-                .slideDown(function () {
+                .slideDown(SLIDE_DURATION, function () {
                     var $set = $(this);
                     $set.replaceWith($set.contents());
                 });
         }
 
-        function addRowToHistory(row, taskStatus) {
-            function rowToTask(row) {
-                let cells = []
-                row.children(':lt(4)').each(function () {
-                    cells.push($(this).text());
-                });
-                let id = row.attr('id');
-                let printer = row.find('.select-printer').val();
-                let shared = row.find('.task-action-share-add').length == 0 ? 'YES' : 'NO';
-                return {
-                    id: id,
-                    time: cells[0], // TODO вместо cells[0] взять текущее время
-                    filename: cells[1],
-                    numberPages: cells[2],
-                    printer: printer,
-                    cost: cells[3],
-                    shared: shared
-                }
+        function convertRowCurrentToTask(row) {
+            let cells = []
+            row.children(':lt(4)').each(function () {
+                cells.push($(this).text());
+            });
+            let id = row.attr('id');
+            let printer = row.find('.select-printer').val();
+            let shared = row.find('.task-action-share-add').length == 0 ? 'YES' : 'NO';
+            return {
+                id: id,
+                time: cells[0], // TODO вместо cells[0] взять текущее время
+                filename: cells[1],
+                numberPages: cells[2],
+                printer: printer,
+                cost: cells[3],
+                shared: shared
             }
+        }
 
-            let task = rowToTask(row);
-            task.status = taskStatus;
-            let rowHistory = getHistoryTaskRow(task);
-            row.removeAttr('id');
-            $('#tasks_history_tbody').prepend(rowHistory);
-            let newRow = $('#tasks_history_tbody').children(':first');
+        function convertRowHistoryToTask(row) {
+            let cells = []
+            row.children(':lt(4)').each(function () {
+                cells.push($(this).text());
+            });
+            let id = row.attr('id');
+            let shared = row.find('.task-action-share-add').length == 0 ? 'YES' : 'NO';
+            return {
+                id: id,
+                time: cells[0], // TODO вместо cells[0] взять текущее время
+                filename: cells[1],
+                numberPages: cells[2],
+                printer: cells[3],
+                cost: loadingAnimation,
+                shared: shared
+            }
+        }
+
+        function addRowToTable(rowOld, functionConvertRowOldToTask, functionGetRowNewFromTask, tableId, taskStatusNew, removeIdFromRowOld) {
+            let task = functionConvertRowOldToTask(rowOld);
+            task.status = taskStatusNew;
+            if (removeIdFromRowOld) {
+                rowOld.removeAttr('id');
+            } else {
+                delete task.id;
+            }
+            let rowNew = functionGetRowNewFromTask(task);
+            $(tableId).prepend(rowNew);
+            let newRow = $(tableId).children(':first');
             slideDownRow(newRow);
+        }
+
+        function addRowToHistory(row, taskStatusNew) {
+            addRowToTable(row, convertRowCurrentToTask, getHistoryTaskRow, '#tasks_history_tbody', taskStatusNew, true);
+        }
+
+        function addRowToCurrent(row) {
+            addRowToTable(row, convertRowHistoryToTask, getCurrentTaskRow, '#tasks_current_tbody', 'Pending', false);
         }
 
         $('.tasks_tbody').on('click', 'tr', function () {
@@ -412,9 +441,15 @@ $(function () {
             }
         }
 
+        function callbackReturnTaskFromHistory(cell) {
+            let row = cell.parent();
+            cell.html(replayIcon);
+            addRowToCurrent(row);
+        }
+
         addActionOnClickWithAjax('.task-action-accept', 'print', 'Отправка на печать', callbackMoveTaskToHistory('Queue'));
         addActionOnClickWithAjax('.task-action-reject', 'cancel', 'Отмена заказа', callbackMoveTaskToHistory('Canceled'));
-        addActionOnClickWithAjax('.task-action-replay', 'reprint', 'Повторная отправка на печать');
+        addActionOnClickWithAjax('.task-action-replay', 'reprint', 'Повторная отправка на печать', callbackReturnTaskFromHistory);
         addActionOnClickWithAjax('.task-action-share-add', 'share', 'Добавление заказа в общий доступ', function (cell) { cell.html(removeFromSharedIcon); });
         addActionOnClickWithAjax('.task-action-share-remove', 'unshare', 'Удаление заказа из общего доступа', function (cell) { cell.html(addToSharedIcon); });
 
@@ -492,7 +527,13 @@ $(function () {
                 let row = $(this);
                 if (row.attr('id') === undefined) {
                     let [printer0, printer] = getLastThreeTimesMostUsedPrinter();
-                    row.replaceWith(getCurrentTaskRow(task, getPrintersHtml(printer)));
+                    task.printer = printer;
+                    if (row.data('state') == 'ready') {
+                        row.attr('id', id);
+                        row.find('.preloader-wrapper').replaceWith(task.cost);
+                    } else {
+                        row.replaceWith(getCurrentTaskRow(task));
+                    }
                     row = $('#' + id);
 
                     if (printer !== task.printer) {
