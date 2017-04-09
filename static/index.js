@@ -15,6 +15,8 @@ $(function () {
             </div>
         </div>`;
     const acceptIcon = `<i class="material-icons waves-effect green-text task-action-accept" title="Напечатать">done</i>`;
+    const acceptIconPrinterError = `<i class="material-icons waves-effect task-action-accept" title="Принтер недоступен">done</i>`;
+    const acceptIconNotEnoughCash = `<i class="material-icons waves-effect task-action-accept" title="Недостаточно средств на счету">done</i>`;
     const rejectIcon = `<i class="material-icons waves-effect red-text task-action-reject" title="Отменить">clear</i>`;
     const addToSharedIcon = `<i class="material-icons waves-effect teal-text task-action-share-add" title="Добавить заказ в общий доступ">share</i>`;
     const removeFromSharedIcon = `<i class="material-icons waves-effect pink-text task-action-share-remove" title="Убрать заказ из общего доступа">share</i>`;
@@ -262,8 +264,8 @@ $(function () {
 
     // загружает и обновляет задания
     async function downloadTasks(which) {
-        let answer = await fetchJson(`/query/tasks/${which}?num=50`);
-        let tasksEncoded = answer.array;
+        let response = await fetchJson(`/query/tasks/${which}?num=50`);
+        let tasksEncoded = response.array;
 
         for (let taskEncoded of tasksEncoded) {
             let task = decodeTask(taskEncoded);
@@ -626,9 +628,16 @@ $(function () {
         });
     }
 
+    async function updateUserInfo() {
+        let response = await fetchJson(`/query/user/`);
+        $('#nav_username').text(`${response.Nick}, ${response.FirstName} ${response.LastName}`);
+        $('#nav_account').text(response.Account + ' руб.');
+    }
+
     async function init() {
         console.log('init');
         configureForm();
+        await updateUserInfo();
         await updateAllTasks();
         setTasksListeners();
         initSocket();

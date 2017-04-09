@@ -5,13 +5,15 @@ import re
 
 class User:
     def __init__(self, session, user_info):
+        self.update_user_info(user_info)
+        self.password = user_info['password']
+        self.session = session
+
+    def update_user_info(self, user_info):
         self.login = user_info['Nick']
         self.account = user_info['Account']
         self.first_name = user_info['FirstName']
         self.last_name = user_info['LastName']
-
-        self.password = user_info['password']
-        self.session = session
 
     def send_file_to_print_mipt_ru(self, info):
         def rewrite_request(prepared_request, filename):
