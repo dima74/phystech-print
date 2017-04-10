@@ -176,6 +176,7 @@ $(function () {
                         <td></td>
                     </tr>`;
             $('#tasks_current_tbody').prepend(line);
+            $('#print_preview').removeClass('loaded');
 
             $.post({
                 url: "/upload",
@@ -189,7 +190,6 @@ $(function () {
                         showError(data);
                         throw '';
                     }
-                    setPreviewForLastTask();
                 }
             });
             $formUpload.reset();
@@ -316,6 +316,8 @@ $(function () {
     }
 
     function setPreview(id, page = 1) {
+        $('#print_preview').removeClass('loaded');
+
         let task = $('#' + id);
         let numberPages = task.children().eq(2).text();
         if (page < 1 || page > numberPages) {
@@ -340,17 +342,20 @@ $(function () {
     }
 
     function setPreviewForLastTask() {
-        $('#print_preview').hide();
-
+        let success = false;
         $('#tasks_current_tbody').children().each(function () {
             let task = $(this);
             if (task.data('state') === 'ready') {
                 let id = task.attr('id');
                 setPreview(id);
-                $('#print_preview').show();
+                success = true;
                 return false;
             }
         });
+        if (!success) {
+            $('#print_preview_image').attr('src', '');
+            $('#print_preview').addClass('loaded');
+        }
     }
 
     async function downloadAllTasks() {
@@ -496,9 +501,13 @@ $(function () {
             addRowToCurrent(row);
         }
 
-        function removeSelect(cell) {
-            let select = cell.parent().find('.select-printer');
+        function removeSelectAndPreview(cell) {
+            let row = cell.parent();
+            let select = row.find('.select-printer');
             select.replaceWith(select.val());
+
+            row.data('state', 'loading');
+            setPreviewForLastTask();
         }
 
         function callbackAcceptTask(cell) {
@@ -507,8 +516,8 @@ $(function () {
             cell.replaceWith(`<td colspan="3">${getHistoryTaskStatus('Queue')}</td>`);
         }
 
-        addActionOnClickWithAjax('.task-action-accept.waves-effect', 'print', 'Отправка на печать', [callbackAcceptTask, function () { Notification.requestPermission(); }], removeSelect);
-        addActionOnClickWithAjax('.task-action-reject', 'cancel', 'Отмена заказа', callbackMoveTaskToHistory('Canceled'), removeSelect);
+        addActionOnClickWithAjax('.task-action-accept.waves-effect', 'print', 'Отправка на печать', [callbackAcceptTask, function () { Notification.requestPermission(); }], removeSelectAndPreview);
+        addActionOnClickWithAjax('.task-action-reject', 'cancel', 'Отмена заказа', callbackMoveTaskToHistory('Canceled'), removeSelectAndPreview);
         addActionOnClickWithAjax('.task-action-replay', 'reprint', 'Повторная отправка на печать', callbackReturnTaskFromHistory);
         addActionOnClickWithAjax('.task-action-share-add', 'share', 'Добавление заказа в общий доступ', function (cell) { cell.html(removeFromSharedIcon); });
         addActionOnClickWithAjax('.task-action-share-remove', 'unshare', 'Удаление заказа из общего доступа', function (cell) { cell.html(addToSharedIcon); });
@@ -582,6 +591,7 @@ $(function () {
                         } else {
                             row.replaceWith(getCurrentTaskRow(task, getLoadingAnimation('printer-select-loading')));
                             row = $('#' + id);
+                            setPreviewForLastTask();
 
                             let [dormitory, printer] = getLastThreeTimesMostUsedPrinter();
                             if (printer === -1) {
@@ -682,6 +692,7 @@ $(function () {
 
     async function init() {
         console.log('init');
+        $('#print_preview_image').on('load', function () { $('#print_preview').addClass('loaded'); });
         configureForm();
         await updateUserInfo();
         await updateQueryPrintersAll();

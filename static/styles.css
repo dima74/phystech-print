@@ -152,3 +152,20 @@ td {
     vertical-align: middle;
     user-select: none;
 }
+
+#print_preview_image_loader {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+#print_preview.loaded #print_preview_image_loader {
+    display: none;
+}
+
+#print_preview:not(.loaded) #print_preview_image {
+    display: none;
+}

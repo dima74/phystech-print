@@ -23,10 +23,14 @@ def custom400(error):
     return response
 
 
+def is_local():
+    return socket.gethostname() == 'idea'
+
+
 @app.route('/')
 @login_required
 def main():
-    return render_template('index.html', current_time=time.time())
+    return render_template('index.html', current_time=time.time(), local=is_local())
 
 
 @app.route('/news')
@@ -153,7 +157,7 @@ def upload_file():
 
 if __name__ == '__main__':
     # socketio.run(app, debug=True)
-    if socket.gethostname() == 'idea':
+    if is_local():
         app.run(debug=True)
     else:
         # gunicorn -w 4 -b 0.0.0.0:80 app:app

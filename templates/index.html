@@ -6,11 +6,13 @@
 {% endblock %}
 
 {% block body %}
-    <div id="loader-wrapper">
-        <div id="loader"></div>
-        <div class="loader-section section-left"></div>
-        <div class="loader-section section-right"></div>
-    </div>
+    {% if not local %}
+        <div id="loader-wrapper">
+            <div id="loader"></div>
+            <div class="loader-section section-left"></div>
+            <div class="loader-section section-right"></div>
+        </div>
+    {% endif %}
 
     {{ super() }}
 
@@ -103,6 +105,19 @@
 
             <div id="print_preview">
                 <div id="print_preview_image_wrapper">
+                    <div id="print_preview_image_loader" class="preloader-wrapper active big">
+                        <div class="spinner-layer spinner-green-only">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="gap-patch">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                    </div>
                     <img id="print_preview_image">
                 </div>
                 <div id="print_preview_navigation">
@@ -117,7 +132,7 @@
 
 {% block script %}
     {{ super() }}
-        <script src="http://print.mipt.ru:8082/socket.io/socket.io.js"></script>
-{#    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>#}
+    <script src="http://print.mipt.ru:8082/socket.io/socket.io.js"></script>
+    {#    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>#}
     <script src="/static/index.js?{{ current_time }}"></script>
 {% endblock %}
