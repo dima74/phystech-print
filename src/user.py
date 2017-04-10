@@ -24,7 +24,7 @@ class User:
         filename = info['filename']
         data = {
             'Filename': filename,
-            'nick': 'ZGltYTc0',
+            'nick': base64.b64encode(self.login.encode('UTF-8')),
             'mulpages': info['number_pages_on_list'],
             'longedge': info['longedge'],
             'land': info['land'],

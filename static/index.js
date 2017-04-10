@@ -617,7 +617,7 @@ $(function () {
             // let socket = io.connect('http://' + document.domain + ':' + location.port);
             let socket = io.connect('http://print.mipt.ru:8082/');
             socket.on('connect', function () {
-                socket.emit('register', JSON.stringify({'type': 'register', 'login': 'dima74'}));
+                socket.emit('register', JSON.stringify({'type': 'register', 'login': login}));
             });
 
             socket.on('message', function (data) {

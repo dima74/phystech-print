@@ -73,6 +73,9 @@
             $('#button_logout').click(function () {
                 window.location.replace('/logout');
             });
-        })
+        });
+        {% if g.user %}
+            login = '{{ g.user.login }}';
+        {% endif %}
     </script>
 {% endblock %}
