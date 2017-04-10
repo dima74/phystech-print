@@ -74,6 +74,24 @@ def login():
     return try_login_from_form()
 
 
+@auth.route('/register', methods=['POST'])
+def register():
+    login = request.form['register_login']
+    password = request.form['register_password']
+    data = {
+        'flogin': login,
+        'fpass': password,
+        'fpassConfirm': request.form['register_password_confirm']
+    }
+    r = requests.post(HOST + '/query/register/', data=data).json()
+    if r['error']:
+        return r['msg']
+
+    session['login'] = login
+    session['password'] = password
+    return 'OK'
+
+
 @auth.route('/logout')
 def logout():
     session.clear()

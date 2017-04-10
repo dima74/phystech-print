@@ -29,20 +29,7 @@ def query_path(path, authorized=True):
     return jsonify(make_request_json(path, authorized))
 
 
-# unauthorized
-@wrapped.route('/query/register/login/')
-def query_register_check_login_free():
-    return query_path(request.full_path.replace('register_login', 'flogin'), authorized=False)
-
-
-@wrapped.route('/register/')
-def query_register():
-    return query_path('/query' + request.full_path
-                      .replace('register_login=', 'flogin=')
-                      .replace('register_password=', 'fpass=')
-                      .replace('register_password_confirm=', 'fpassConfirm='), authorized=False)
-
-
+# images
 def make_request_image(path, used_requests):
     r = used_requests.get(HOST + request.full_path)
     return send_file(io.BytesIO(r.content), mimetype='image/png')

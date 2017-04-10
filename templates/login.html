@@ -124,6 +124,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.0/jquery.form.min.js"></script>
     <script>
         $(function () {
+            function goToNextPage() {
+                let next_url = url('?next');
+                window.location.replace(next_url === undefined ? '/' : next_url);
+            }
+
             $('#login_form').ajaxForm({
                 beforeSubmit: function () {
                     $('#login_error').hide();
@@ -132,8 +137,7 @@
                 success: function (data) {
                     $('#login_loading').hide();
                     if (data == 'OK') {
-                        next_url = url('?next');
-                        window.location.replace(next_url === undefined ? '/' : next_url);
+                        goToNextPage();
                     } else {
                         $('#login_error').text(data);
                         $('#login_error').show();
@@ -171,12 +175,22 @@
                 errorElement: 'div',
                 errorPlacement: function (error, element) {
                     error.insertAfter(element);
-                    error.css('margin-bottom', '20px')
+                    error.css('margin-bottom', '20px');
                 }
             });
 
             $('#register_login').on('keyup', function () {
                 $('#register_login').valid();
+            });
+
+            $('#register_form').ajaxForm({
+                success: function (data) {
+                    if (data === 'OK') {
+                        goToNextPage();
+                    } else {
+                        Materialize.toast(data.replace(/\. /g, '<br>'));
+                    }
+                }
             });
         });
     </script>
