@@ -1,19 +1,22 @@
 const SLIDE_DURATION = 1000;
 $(function () {
-    const loadingAnimation =
-        `<div class="preloader-wrapper active size-auto">
-            <div class="spinner-layer spinner-green-only">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
-                </div>
-            </div>
-        </div>`;
+    function getLoadingAnimation(cssClass) {
+        return `<div class="preloader-wrapper active size-auto ${cssClass}">
+                    <div class="spinner-layer spinner-green-only">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>`;
+    }
+
+    const loadingAnimation = getLoadingAnimation('');
     const acceptIcon = `<i class="material-icons waves-effect green-text task-action-accept" title="Напечатать">done</i>`;
     const acceptIconPrinterError = `<i class="material-icons icon cursor-default task-action-accept" title="Принтер недоступен">done</i>`;
     const acceptIconNotEnoughCash = `<i class="material-icons icon cursor-default task-action-accept" title="Недостаточно средств на счету">done</i>`;
@@ -214,8 +217,11 @@ $(function () {
         return task.shared === 'NO' ? addToSharedIcon : removeFromSharedIcon;
     }
 
-    function getCurrentTaskRow(task) {
-        let printersHtml = getPrintersHtml(task.printer);
+    function getCurrentTaskRow(task, printersHtml) {
+        if (printersHtml === undefined) {
+            printersHtml = getPrintersHtml(task.printer);
+        }
+
         let idAttribute = task.id === undefined ? '' : `id=${task.id}`;
         let acceptIconUsed = parseFloat($('#nav_account_number').text()) < parseFloat(task.cost) ? acceptIconNotEnoughCash :
             queryPrintersAll[printersIds[task.printer]].status !== 'ENABLED' ? acceptIconPrinterError : acceptIcon;
@@ -570,17 +576,18 @@ $(function () {
                 $($('#tasks_current_tbody').children().get().reverse()).each(function () {
                     let row = $(this);
                     if (row.attr('id') === undefined) {
-                        let [printer0, printer] = getLastThreeTimesMostUsedPrinter();
-                        task.printer = printer;
                         if (row.data('state') == 'ready') {
                             row.attr('id', id);
                             row.find('.preloader-wrapper').replaceWith(task.cost);
                         } else {
-                            row.replaceWith(getCurrentTaskRow(task));
-                        }
-                        row = $('#' + id);
+                            row.replaceWith(getCurrentTaskRow(task, getLoadingAnimation('printer-select-loading')));
+                            row = $('#' + id);
 
-                        if (printer !== task.printer) {
+                            let [dormitory, printer] = getLastThreeTimesMostUsedPrinter();
+                            if (printer === -1) {
+                                dormitory = task.printer[0];
+                                printer = task.printer;
+                            }
                             promiseQueryPrintersAll.then(function (data) {
                                 queryPrintersAll = data;
                                 let printerNeighbour = printersNeighbours[printer];
@@ -590,18 +597,16 @@ $(function () {
                                     printer = printerNeighbour;
                                 }
 
-                                let cell = row.find('select').parent();
-                                let originalHtml = cell.html();
-                                cell.html(loadingAnimation);
+                                console.log(`Автовыбор принтера: #${task.id}, ${task.printer} -> ${printer}`);
                                 $.get({
                                     url: `/query/job/move/?id=${id}&pid=${printersIds[printer]}`,
                                     success: function () {
+                                        row.find('.printer-select-loading').replaceWith(getPrintersHtml(printer));
                                         if (!printerEnabled && !printerNeighbourEnabled) {
                                             showError('Автовыбор принтера', 'К сожалению, оба принтера в вашем общежитии недоступны');
                                         }
                                     },
-                                    error: ajaxError('Выбор принтера'),
-                                    complete: changeElementContent(cell, originalHtml)
+                                    error: [function () { row.find('.printer-select-loading').replaceWith(getPrintersHtml(task.printer)); }, ajaxError('Автовыбор принтера')]
                                 });
                             });
                         }

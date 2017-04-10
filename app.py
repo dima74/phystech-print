@@ -78,6 +78,8 @@ def printers():
         printer = printers_info[str(printer_id)]
         printer['name'] = printer_name
         printer['id'] = printer_id
+        if printer['action'] not in status_colors:
+            abort(500, printer['action'])
         printer['status_color'] = status_colors.get(printer['action'], '#4a148c')
         printers.append(printer)
     return render_template('printers.html', current_time=time.time(), printers=printers)
