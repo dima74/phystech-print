@@ -117,7 +117,7 @@
 
 {% block script %}
     {{ super() }}
-    {#    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>#}
-    <script src="http://print.mipt.ru:8082/socket.io/socket.io.js"></script>
+        <script src="http://print.mipt.ru:8082/socket.io/socket.io.js"></script>
+{#    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>#}
     <script src="/static/index.js?{{ current_time }}"></script>
 {% endblock %}

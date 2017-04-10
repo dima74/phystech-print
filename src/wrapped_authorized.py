@@ -6,7 +6,7 @@ wrapped_authorized = Blueprint('wrapped_authorized', __name__)
 def query_route_json():
     path = request.full_path
     r = g.user.session.get(HOST + path)
-    print('route {}. request: {}'.format(path, r.text))
+    # print('route {}. request: {}'.format(path, r.text))
     json = r.json()
     if json['error']:
         abort(400, json['msg'])

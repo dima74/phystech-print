@@ -14,7 +14,7 @@ def make_request(path, authorized=True):
         used_requests = requests
 
     r = used_requests.get(HOST + path)
-    print('route {}. request: {}'.format(path, r.text))
+    # print('route {}. request: {}'.format(path, r.text))
     return r
 
 

@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 from src.wrapped import wrapped
 from src.wrapped_authorized import wrapped_authorized
 from src.wrapped_unauthorized import *
@@ -25,10 +25,6 @@ def custom400(error):
 @app.route('/')
 @login_required
 def main():
-    # user = g.user
-    # user.tasks_current = {}
-    # printers = ['{}{}'.format(i + 1, suffix) for i in range(8) for suffix in ['', 'b']]
-    # return render_template('index.html', user=user, printers=printers)
     return render_template('index.html', current_time=time.time())
 
 
@@ -125,30 +121,33 @@ def upload_file():
     return g.user.send_file_to_print_mipt_ru(info)
 
 
+# @socketio.on('connect')
+# def onconnect():
+#     print('onconnect', session)
+
+
+# @socketio.on('disconnect')
+# def ondisconnect():
+#     print('ondisconnect')
+
+
 # @socketio.on('message')
-# def handle_message(message):
+# def onmessage(message):
+#     print(session)
 #     print('received message: ' + message)
-#
-#
-# @socketio.on('my event')
-# def handle_my_custom_event(json):
-#     print(json)
-#     print('received json: ' + str(json))
-
-@socketio.on('connect')
-def onconnect():
-    print('onconnect')
 
 
-@socketio.on('disconnect')
-def ondisconnect():
-    print('ondisconnect')
+# @socketio.on_error()
+# def error_handler(e):
+#     emit('error', e.description)
 
 
-@socketio.on('aaa')
-def handle_my_custom_event(json):
-    print(json)
-    print('received json: ' + str(json))
+# @socketio.on('register')
+# def onregister(message):
+#     if try_login_from_cookies() != 'OK':
+#         abort(400, 'Не получилось войти, нет cookie')
+#     print('register', session.get('login', 'no login'))
+#     print(message)
 
 
 if __name__ == '__main__':

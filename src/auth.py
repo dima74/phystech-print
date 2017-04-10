@@ -10,7 +10,7 @@ def login_required_decorator(cookies_only):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             status = try_login_from_cookies()
-            print('user: {}, status: {}'.format(g.user, status))
+            # print('user: {}, status: {}'.format(g.user, status))
             if g.user is None:
                 if cookies_only:
                     abort(400)

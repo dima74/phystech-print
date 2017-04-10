@@ -619,10 +619,14 @@ $(function () {
                 }
             }
 
-            // let socket = io.connect('http://' + document.domain + ':' + location.port);
+            // let socket = io.connect('http://' + location.host);
             let socket = io.connect('http://print.mipt.ru:8082/');
             socket.on('connect', function () {
                 socket.emit('register', JSON.stringify({'type': 'register', 'login': login}));
+            });
+
+            socket.on('error', function (message) {
+                showError('SocketIO', message);
             });
 
             socket.on('message', function (data) {
@@ -683,7 +687,7 @@ $(function () {
         await updateQueryPrintersAll();
         await updateAllTasks();
         setTasksListeners();
-        //$('body').addClass('loaded');
+        // $('body').addClass('loaded');
     }
 
     init();
