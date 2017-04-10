@@ -46,7 +46,6 @@ class Users:
     cache = {}
 
     def add_user(self, session, user_info):
-        print(user_info)
         user = User(session, user_info)
         self.cache[user.login] = user
         return user

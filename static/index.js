@@ -687,7 +687,7 @@ $(function () {
         await updateQueryPrintersAll();
         await updateAllTasks();
         setTasksListeners();
-        // $('body').addClass('loaded');
+        $('body').addClass('loaded');
     }
 
     init();

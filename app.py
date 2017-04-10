@@ -4,6 +4,7 @@ from src.wrapped import wrapped
 from src.wrapped_authorized import wrapped_authorized
 from src.wrapped_unauthorized import *
 from src.auth import *
+import socket
 import time
 
 app = Flask(__name__)
@@ -151,5 +152,9 @@ def upload_file():
 
 
 if __name__ == '__main__':
-    # app.run(debug=True)
-    socketio.run(app, debug=True)
+    # socketio.run(app, debug=True)
+    if socket.gethostname() == 'idea':
+        app.run(debug=True)
+    else:
+        # gunicorn -w 4 -b 0.0.0.0:80 app:app
+        app.run()
