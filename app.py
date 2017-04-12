@@ -1,17 +1,17 @@
 from flask import Flask
 from flask_socketio import SocketIO, emit
-from src.wrapped import wrapped
+# from src.wrapped import wrapped
 from src.wrapped_authorized import wrapped_authorized
-from src.wrapped_unauthorized import *
+# from src.wrapped_unauthorized import *
 from src.auth import *
 import socket
 import time
 
 app = Flask(__name__)
 app.secret_key = '6eg\x18\x03\xd8\xaa@4\xdd/G\xd5fie\xf3\xf8\xb1uy\xf4se'
-app.register_blueprint(wrapped)
+# app.register_blueprint(wrapped)
 app.register_blueprint(wrapped_authorized)
-app.register_blueprint(wrapped_unauthorized)
+# app.register_blueprint(wrapped_unauthorized)
 app.register_blueprint(auth)
 socketio = SocketIO(app)
 
