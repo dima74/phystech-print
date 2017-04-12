@@ -7,16 +7,16 @@ from src.auth import *
 import socket
 import time
 
-main = Flask(__name__)
-main.secret_key = '6eg\x18\x03\xd8\xaa@4\xdd/G\xd5fie\xf3\xf8\xb1uy\xf4se'
-main.register_blueprint(wrapped)
-main.register_blueprint(wrapped_authorized)
-main.register_blueprint(wrapped_unauthorized)
-main.register_blueprint(auth)
-socketio = SocketIO(main)
+app = Flask(__name__)
+app.secret_key = '6eg\x18\x03\xd8\xaa@4\xdd/G\xd5fie\xf3\xf8\xb1uy\xf4se'
+app.register_blueprint(wrapped)
+app.register_blueprint(wrapped_authorized)
+app.register_blueprint(wrapped_unauthorized)
+app.register_blueprint(auth)
+socketio = SocketIO(app)
 
 
-@main.errorhandler(400)
+@app.errorhandler(400)
 def custom400(error):
     response = jsonify({'message': error.description})
     response.status_code = 400
@@ -27,24 +27,24 @@ def is_local():
     return socket.gethostname() == 'idea'
 
 
-@main.route('/')
+@app.route('/')
 @login_required
 def index():
     return render_template('index.html', current_time=time.time(), local=is_local())
 
 
-@main.route('/news')
+@app.route('/news')
 def news():
     return render_template('news.html')
 
 
-@main.route('/pay')
+@app.route('/pay')
 @login_required
 def pay():
     return render_template('pay.html')
 
 
-@main.route('/printers')
+@app.route('/printers')
 def printers():
     printers_ids = {
         '1': 4,
@@ -86,27 +86,27 @@ def printers():
     return render_template('printers.html', current_time=time.time(), printers=printers)
 
 
-@main.route('/forum')
+@app.route('/forum')
 def forum():
     return render_template('forum.html')
 
 
-@main.route('/howto')
+@app.route('/howto')
 def howto():
     return render_template('howto.html')
 
 
-@main.route('/doc/faq')
+@app.route('/doc/faq')
 def doc_faq():
     return render_template('doc/faq.html')
 
 
-@main.route('/test')
+@app.route('/test')
 def test():
     return render_template('test.html')
 
 
-@main.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['POST'])
 @login_required_cookies_only
 def upload_file():
     if 'file' not in request.files:
@@ -163,7 +163,7 @@ def upload_file():
 if __name__ == '__main__':
     # socketio.run(app, debug=True)
     if is_local():
-        main.run(debug=True)
+        app.run(debug=True)
     else:
         # gunicorn -w 4 -b 0.0.0.0:80 app:app
-        main.run()
+        app.run()
