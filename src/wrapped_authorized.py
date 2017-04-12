@@ -10,12 +10,12 @@ def query_route_json():
     json = r.json()
     if json['error']:
         abort(400, json['msg'])
-    return json['ans']
+    return json
 
 
 @wrapped_authorized.route('/query/user/')
 @login_required_cookies_only
 def query_route_user():
     user_info = query_route_json()
-    g.user.update_user_info(user_info)
+    g.user.update_user_info(user_info['ans'])
     return jsonify(user_info)
