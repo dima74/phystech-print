@@ -315,7 +315,7 @@ $(function () {
         }
     }
 
-    function setPreview(id, page = 1) {
+    async function setPreview(id, page = 1) {
         $('#print_preview').removeClass('loaded');
 
         let task = $('#' + id);
@@ -327,6 +327,7 @@ $(function () {
 
         $('.task-with-preview').removeClass('task-with-preview');
         task.addClass('task-with-preview');
+        await fetchJson('/query/job/preview/' + id);
         $('#print_preview_image').attr('src', `/png/${id}/${pageUrl}`);
         $('#print_preview_image').data('page', page);
         $('#print_preview_current_page').text(page + '/' + numberPages);
