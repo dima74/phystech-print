@@ -21,3 +21,5 @@
 * /png/<task_id>/<page>
 * /pic/paper.png?pid=<printer_id>
 * /pic/activity.png?pid=<printer_id>&y=50&x=683
+
+«»

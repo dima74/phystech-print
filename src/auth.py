@@ -69,6 +69,8 @@ def try_login(login, password):
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    if try_login_from_cookies() == 'OK':
+        return redirect('/')
     if request.method == 'GET':
         return render_template('login.html')
     return try_login_from_form()

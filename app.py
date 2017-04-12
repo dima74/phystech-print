@@ -96,6 +96,11 @@ def howto():
     return render_template('howto.html')
 
 
+@app.route('/doc/faq')
+def doc_faq():
+    return render_template('doc/faq.html')
+
+
 @app.route('/test')
 def test():
     return render_template('test.html')
