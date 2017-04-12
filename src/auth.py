@@ -16,7 +16,10 @@ def login_required_decorator(cookies_only):
                     abort(400)
                 return redirect(url_for('auth.login', next=None if request.full_path == '/?' else request.url))
             assert status == 'OK'
-            return f(*args, **kwargs)
+
+            response = make_response(f(*args, **kwargs))
+            response.set_cookie('printer_id', g.user.session.cookies['printer_id'])
+            return response
 
         return decorated_function
 
