@@ -79,8 +79,10 @@ def login():
     return try_login_from_form()
 
 
-@auth.route('/register', methods=['POST'])
+@auth.route('/register', methods=['GET', 'POST'])
 def register():
+    if request.method == 'GET':
+        return redirect('/')
     login = request.form['register_login']
     password = request.form['register_password']
     data = {

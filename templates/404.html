@@ -1,29 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Страница не найдена</title>
-    <style>
-        html, body {
-            height: 100%;
-        }
+{% extends "centered.html" %}
 
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-
-<div class="center">
+{% block centered %}
     <p>Здесь ничего нет</p>
     <p>Если вы считаете, что произошла ошибка, пожалуйста, <a href='mailto:print.diraria@yandex.ru'>напишите нам</a></p>
     <p><a href="/">Перейти на главную</a></p>
-</div>
-
-</body>
-</html>
+{% endblock %}

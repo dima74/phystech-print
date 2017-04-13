@@ -12,13 +12,11 @@ app.register_blueprint(auth)
 
 @app.errorhandler(400)
 def custom400(error):
-    response = jsonify({'message': error.description})
-    response.status_code = 400
-    return response
+    return jsonify({'message': error.description}), 404
 
 
 @app.errorhandler(404)
-def page_not_found(e):
+def custom404(error):
     return render_template('404.html'), 404
 
 
