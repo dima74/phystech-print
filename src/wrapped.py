@@ -19,3 +19,8 @@ def query_route_user():
     user_info = query_route_json()
     g.user.update_user_info(user_info['ans'])
     return jsonify(user_info)
+
+
+@wrapped.route('/query/register/login/')
+def query_register_login():
+    return requests.get(HOST + '/query/register/login/', params={'flogin': request.args['register_login']}).text
