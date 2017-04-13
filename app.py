@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_socketio import SocketIO, emit
 from src.wrapped import wrapped
 from src.auth import *
 import socket
@@ -9,7 +8,6 @@ app = Flask(__name__)
 app.secret_key = '6eg\x18\x03\xd8\xaa@4\xdd/G\xd5fie\xf3\xf8\xb1uy\xf4se'
 app.register_blueprint(wrapped)
 app.register_blueprint(auth)
-socketio = SocketIO(app)
 
 
 @app.errorhandler(400)
@@ -127,39 +125,8 @@ def upload_file():
     return g.user.send_file_to_print_mipt_ru(info)
 
 
-# @socketio.on('connect')
-# def onconnect():
-#     print('onconnect', session)
-
-
-# @socketio.on('disconnect')
-# def ondisconnect():
-#     print('ondisconnect')
-
-
-# @socketio.on('message')
-# def onmessage(message):
-#     print(session)
-#     print('received message: ' + message)
-
-
-# @socketio.on_error()
-# def error_handler(e):
-#     emit('error', e.description)
-
-
-# @socketio.on('register')
-# def onregister(message):
-#     if try_login_from_cookies() != 'OK':
-#         abort(400, 'Не получилось войти, нет cookie')
-#     print('register', session.get('login', 'no login'))
-#     print(message)
-
-
 if __name__ == '__main__':
-    # socketio.run(app, debug=True)
     if is_local():
         app.run(debug=True)
     else:
-        # gunicorn -w 4 -b 0.0.0.0:80 app:app
         app.run()
