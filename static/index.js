@@ -630,9 +630,7 @@ $(function () {
                 }
             }
 
-            let socket = io.connect('https://' + location.host);
-            // let socket = io.connect('https://xn--80aj3aox6a.xn--80ahmb2bb0i.xn--p1ai:8082');
-            // let socket = io.connect('http://print.mipt.ru:8082/');
+            let socket = io.connect('//' + location.host);
             socket.on('connect', function () {
                 socket.emit('register', JSON.stringify({'type': 'register', 'login': login}));
             });
