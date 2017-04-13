@@ -1,6 +1,7 @@
 from flask import Flask
 from src.wrapped import wrapped
 from src.auth import *
+from src.docs import docs
 import socket
 import time
 
@@ -8,6 +9,7 @@ app = Flask(__name__)
 app.secret_key = '6eg\x18\x03\xd8\xaa@4\xdd/G\xd5fie\xf3\xf8\xb1uy\xf4se'
 app.register_blueprint(wrapped)
 app.register_blueprint(auth)
+app.register_blueprint(docs)
 
 
 @app.errorhandler(400)
@@ -86,16 +88,6 @@ def printers():
 @app.route('/forum')
 def forum():
     return render_template('forum.html')
-
-
-@app.route('/howto')
-def howto():
-    return render_template('howto.html')
-
-
-@app.route('/doc/faq')
-def doc_faq():
-    return render_template('doc/faq.html')
 
 
 @app.route('/test')

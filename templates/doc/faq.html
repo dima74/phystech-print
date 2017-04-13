@@ -1,48 +1,20 @@
-{% extends "with_navbar.html" %}
+{% extends "with_navbar_centered_content.html" %}
 
-{% block head %}
-    <style>
-        html, body {
-            height: 100%;
-            width: 100%;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-        }
-
-        #main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
-{% endblock %}
-
-{% block body %}
-    {{ super() }}
-
-    <div id="main">
-        <div id="main-holder">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Часто задаваемые вопросы</span>
-                    <ul class="browser-default">
-                        <li><p><a href='/doc/card_pay'>Как оплатить принтер <b>студенческой карточкой Банка Москвы</b>?</a></p></li>
-                        <li><p><a href='/doc/ipp'>У меня возникает ошибка <b>«Невозможно подключиться к принтеру...»</b>. Что делать? </a></p></li>
-                        <li><p><a href='/doc/duplex'>Как напечатать <b>двусторонний документ</b>?</a></p></li>
-                        <li><p><a href='/doc/nodriver'>Можно ли отправлять документы в систему <b>без использования драйвера</b>?</a></p></li>
-                        <!-- <li><p><a href='/doc/quickprint'>Можно ли печатать и <b>не платить</b>?</a></p></li> -->
-                        <li><p><a href='/doc/refund'>Что делать, если документ не напечатался или напечатался плохо, а <b>деньги снялись?</b></a></p></li>
-                        <li><p><a href='/doc/delete_shared'>Я нашёл свои личные документы в Google, а ссылка ведёт на этот сайт. Как их удалить?</a></p></li>
-                        <li><p><a href='/doc/change_driver'>Я установил драйвер, но мои документы имеют статус <b>«не обработано»</b>. Что делать?</a></p></li>
-                        <li><p><a href='/doc/change_port'>Что делать, если при попытке печати через драйвер принтер выдаёт ошибку <b>«Отказано в доступе»</b>?</a></p></li>
-                    </ul>
-                </div>
-            </div>
+{% block centered %}
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">Часто задаваемые вопросы</span>
+            <ul class="browser-default">
+                <li><p><a href='/doc/card_pay'>Как оплатить принтер <b>студенческой карточкой Банка Москвы</b>?</a></p></li>
+                <li><p><a href='/doc/ipp'>У меня возникает ошибка <b>«Невозможно подключиться к принтеру...»</b>. Что делать? </a></p></li>
+                <li><p><a href='/doc/duplex'>Как напечатать <b>двусторонний документ</b>?</a></p></li>
+                <li><p><a href='/doc/nodriver'>Можно ли отправлять документы в систему <b>без использования драйвера</b>?</a></p></li>
+                <!-- <li><p><a href='/doc/quickprint'>Можно ли печатать и <b>не платить</b>?</a></p></li> -->
+                <li><p><a href='/doc/refund'>Что делать, если документ не напечатался или напечатался плохо, а <b>деньги снялись?</b></a></p></li>
+                <li><p><a href='/doc/delete_shared'>Я нашёл свои личные документы в Google, а ссылка ведёт на этот сайт. Как их удалить?</a></p></li>
+                <li><p><a href='/doc/change_driver'>Я установил драйвер, но мои документы имеют статус <b>«не обработано»</b>. Что делать?</a></p></li>
+                <li><p><a href='/doc/change_port'>Что делать, если при попытке печати через драйвер принтер выдаёт ошибку <b>«Отказано в доступе»</b>?</a></p></li>
+            </ul>
         </div>
     </div>
 {% endblock %}
