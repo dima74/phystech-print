@@ -1,1 +1,77 @@
 {% extends "with_navbar.html" %}
+
+{% block head %}
+    <style>
+        .form-visa .hidden:not(.show-form-visa) {
+            display: none;
+        }
+
+        .form-mastercard .hidden:not(.show-form-mastercard) {
+            display: none;
+        }
+
+        .form-qiwi .hidden:not(.show-form-qiwi) {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {{ super() }}
+    <div class="row">
+        <div class="col offset-m3 m6">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Пополнение счёта</span>
+                    <form class="form-visa" action='http://ussp.server.paykeeper.ru/create/' method='POST'>
+                        <input type='hidden' value='{{ g.user.login }}' name='clientid'/>
+
+                        <div class="input-field">
+                            <input value="50" name="sum" id="sum" type="text" class="validate" autofocus>
+                            <label for="sum">Введите сумму для пополнения:</label>
+                        </div>
+                        <div class="input-field">
+                            <select name="pstype" id="pstype">
+                                <option data-form-state="form-visa" value='rs'>Оплата картой Visa</option>
+                                <option data-form-state="form-mastercard" value='rs'>Оплата картой MasterCard</option>
+                                <option data-form-state="form-qiwi" value='qiwi'>Оплата QIWI Visa Wallet</option>
+                            </select>
+                            <label for="pstype">Выберите способ оплаты:</label>
+                        </div>
+
+                        <div class="input-field hidden show-form-qiwi">
+                            <input placeholder="+7 999 1234567" name="client_phone" id="client_phone" type="tel" required>
+                            <label for="client_phone">Введите телефон для оплаты:</label>
+                        </div>
+                        <p class="hidden show-form-qiwi" style="margin-bottom: 20px;">Для оплаты со счёта мобильного необходимо после ввода логина и пароля на платёжной странице QIWI выбрать «изменить способ оплаты» и выбрать «С баланса мобильного».</p>
+                        <button class="waves-effect waves-light btn">Пополнить счёт</button>
+
+                        <div style='text-align: center; margin-top: 30px;'>
+                            <span class='hidden show-form-visa show-form-mastercard'><img src='http://ussp.server.paykeeper.ru/pic/logos/Visa.png'/></span>
+                            <span class='hidden show-form-visa show-form-mastercard'><img src='http://ussp.server.paykeeper.ru/pic/logos/MasterCard.png'/></span>
+                            <span class='hidden show-form-visa show-form-qiwi'><img src='http://ussp.server.paykeeper.ru/pic/logos/Qiwi.png'/></span>
+                            <span class='hidden show-form-visa show-form-qiwi'><img src='http://ussp.server.paykeeper.ru/pic/logos/BeeLine.png'/></span>
+                            <span class='hidden show-form-visa show-form-qiwi'><img src='http://ussp.server.paykeeper.ru/pic/logos/MTS.png'/></span>
+                            <span class='hidden show-form-visa show-form-qiwi'><img src='http://ussp.server.paykeeper.ru/pic/logos/Megafon.png'/></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.0/jquery.form.min.js"></script>
+    {{ super() }}
+    <script>
+        $(function () {
+            $('select').material_select();
+
+            $('#pstype').change(function () {
+                $('form').removeClass();
+                $('form').addClass($(this).find(':selected').data('form-state'));
+            })
+        });
+    </script>
+{% endblock %}
