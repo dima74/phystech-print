@@ -3,7 +3,7 @@ from src.base import *
 docs = Blueprint('docs', __name__)
 
 
-@docs.route('/howto')
+@docs.route('/инструкция')
 def howto():
     return render_template('howto.html')
 

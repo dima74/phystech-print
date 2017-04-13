@@ -19,7 +19,13 @@ def custom400(error):
 
 @app.errorhandler(404)
 def custom404(error):
-    return render_template('404.html'), 404
+    return render_template('error.html', error_message='Здесь ничего нет', error404=True), 404
+
+
+@app.errorhandler(500)
+def custom500(error):
+    print('    [500] {}'.format(error.description))
+    return render_template('error.html', error_message='Внутренняя ошибка сервера', error404=False), 500
 
 
 def is_local():
@@ -32,18 +38,18 @@ def index():
     return render_template('index.html', current_time=time.time(), local=is_local())
 
 
-@app.route('/news')
+@app.route('/новости')
 def news():
     return render_template('news.html')
 
 
-@app.route('/pay')
+@app.route('/оплата')
 @login_required
 def pay():
     return render_template('pay.html')
 
 
-@app.route('/printers')
+@app.route('/принтеры')
 def printers():
     printers_ids = {
         '1': 4,
@@ -62,11 +68,14 @@ def printers():
         '8b': 19
     }
 
-    status_colors = {'READY': 'green',
-                     'PAPERJAM': 'red',
-                     'PAPERFEEDOUT': 'red',
-                     'CONNECTIONERROR': 'red',
-                     'ADMINSTOP': 'red'}
+    status_colors = {
+        'READY': 'green',
+        'PROCESSING': 'green',
+        'PAPERJAM': 'red',
+        'PAPERFEEDOUT': 'red',
+        'CONNECTIONERROR': 'red',
+        'ADMINSTOP': 'red'
+    }
 
     printers_names = ['1', '1b', '2', '2b', '3', '3b', '4', '4b', '6', '6b', '7', '7b', '8', '8b']
     # printers_ids = [4, 23, 7, 22, 3, 21, 5, 25, 1, 24, 2, 20, 6, 19]
@@ -79,13 +88,13 @@ def printers():
         printer['name'] = printer_name
         printer['id'] = printer_id
         if printer['action'] not in status_colors:
-            abort(500, printer['action'])
+            abort(500, 'Неизвестный статус принтера: {}'.format(printer['action']))
         printer['status_color'] = status_colors.get(printer['action'], '#4a148c')
         printers.append(printer)
     return render_template('printers.html', current_time=time.time(), printers=printers)
 
 
-@app.route('/forum')
+@app.route('/форум')
 def forum():
     return render_template('forum.html')
 
