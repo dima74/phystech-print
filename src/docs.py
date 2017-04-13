@@ -9,5 +9,6 @@ def howto():
 
 
 @docs.route('/doc/faq')
-def doc_faq():
-    return render_template('doc/faq.html')
+@docs.route('/doc/refund')
+def doc():
+    return render_template('{}.html'.format(request.path))

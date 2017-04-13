@@ -8,6 +8,11 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
+    <style>
+        .card .card-content p + p {
+            margin-top: 1em;
+        }
+    </style>
     {% block head %}{% endblock %}
 </head>
 <body>
