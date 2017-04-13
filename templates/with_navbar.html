@@ -42,12 +42,12 @@
     <nav>
         <div class="nav-wrapper">
             <ul id="nav-mobile" class="left hide-on-med-and-down">
-                <li id="nav_news"><a href="/новости">Новости</a></li>
-                <li id="nav_index"><a href="/">Очередь печати</a></li>
-                <li id="nav_pay"><a href="/оплата">Пополнить счёт</a></li>
-                <li id="nav_printers"><a href="/принтеры">Принтеры</a></li>
-                <li id="nav_forum"><a href="/форум">Форум</a></li>
-                <li id="nav_howto"><a href="/инструкция">Как печатать?</a></li>
+                <li id="nav_новости"><a href="/новости">Новости</a></li>
+                <li id="nav_главная"><a href="/">Очередь печати</a></li>
+                <li id="nav_оплата"><a href="/оплата">Пополнить счёт</a></li>
+                <li id="nav_принтеры"><a href="/принтеры">Принтеры</a></li>
+                <li id="nav_форум"><a href="/форум">Форум</a></li>
+                <li id="nav_инструкция"><a href="/инструкция">Как печатать?</a></li>
             </ul>
 
             {% if g.user %}
@@ -67,7 +67,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.3/js.cookie.min.js"></script>
     <script>
         $(function () {
-            let path = url(1) || 'index';
+            let path = decodeURI(url(1)) || 'главная';
             $('#nav_' + path).addClass('active');
 
             $('#button_logout').click(function () {
