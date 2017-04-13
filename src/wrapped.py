@@ -1,6 +1,6 @@
 from src.auth import *
 
-wrapped_authorized = Blueprint('wrapped_authorized', __name__)
+wrapped = Blueprint('wrapped', __name__)
 
 
 def query_route_json():
@@ -13,7 +13,7 @@ def query_route_json():
     return json
 
 
-@wrapped_authorized.route('/query/user/')
+@wrapped.route('/query/user/')
 @login_required_cookies_only
 def query_route_user():
     user_info = query_route_json()
