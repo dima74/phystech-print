@@ -600,7 +600,7 @@ $(function () {
                                 printer = task.printer;
                             }
                             promiseQueryPrintersAll.then(function (data) {
-                                queryPrintersAll = data;
+                                queryPrintersAll = data.ans;
                                 let printerNeighbour = printersNeighbours[printer];
                                 let printerEnabled = queryPrintersAll[printersIds[printer]].status == 'ENABLED';
                                 let printerNeighbourEnabled = queryPrintersAll[printersIds[printerNeighbour]].status == 'ENABLED';
@@ -630,7 +630,7 @@ $(function () {
                 }
             }
 
-            let socket = io.connect('https://' + location.host + '/socket.io');
+            let socket = io.connect('https://' + location.host);
             // let socket = io.connect('https://xn--80aj3aox6a.xn--80ahmb2bb0i.xn--p1ai:8082');
             // let socket = io.connect('http://print.mipt.ru:8082/');
             socket.on('connect', function () {
