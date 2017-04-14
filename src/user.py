@@ -1,6 +1,7 @@
 import requests
 import base64
 import re
+from cachetools import LRUCache
 
 
 class User:
@@ -8,6 +9,9 @@ class User:
         self.update_user_info(user_info)
         self.password = user_info['password']
         self.session = session
+
+    def __str__(self):
+        return 'User(login={})'.format(self.login)
 
     def update_user_info(self, user_info):
         self.login = user_info['Nick']
@@ -43,15 +47,18 @@ class User:
 
 
 class Users:
-    cache = {}
+    cache = LRUCache(maxsize=100)
 
     def add_user(self, session, user_info):
         user = User(session, user_info)
+        print('[Users] add_user', user)
         self.cache[user.login] = user
         return user
 
     def get_user(self, login):
-        return self.cache.get(login, None)
+        user = self.cache.get(login, None)
+        print('[Users] get_user', login, user)
+        return user
 
 
 users = Users()
