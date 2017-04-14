@@ -310,8 +310,11 @@ $(function () {
                 default:
                     showError('Заказы', 'Неизвестный статус заказа: ' + task.status);
             }
-
             $(`#tasks_${which}_tbody`).append(line);
+        }
+
+        if (which == 'current') {
+            setPreviewForLastTask();
         }
     }
 
@@ -360,8 +363,7 @@ $(function () {
     }
 
     async function downloadAllTasks() {
-        await downloadTasks('current');
-        await downloadTasks('history');
+        await Promise.all([downloadTasks('current'), downloadTasks('history')]);
     }
 
     // все обработчки являются делегатами (или как это называется)
@@ -673,7 +675,6 @@ $(function () {
     // загружает задания и устанавливает обработчики
     async function updateAllTasks() {
         await downloadAllTasks();
-        setPreviewForLastTask();
     }
 
     function updateAllTasksSync() {
@@ -694,8 +695,7 @@ $(function () {
         console.log('init');
         $('#print_preview_image').on('load', function () { $('#print_preview').addClass('loaded'); });
         configureForm();
-        await updateUserInfo();
-        await updateQueryPrintersAll();
+        await Promise.all([updateUserInfo(), updateQueryPrintersAll()]);
         await updateAllTasks();
         setTasksListeners();
         $('body').addClass('loaded');

@@ -4,12 +4,19 @@ from src.auth import *
 from src.docs import docs
 import socket
 import time
+import sys
 
 app = Flask(__name__)
 app.secret_key = '6eg\x18\x03\xd8\xaa@4\xdd/G\xd5fie\xf3\xf8\xb1uy\xf4se'
 app.register_blueprint(wrapped)
 app.register_blueprint(auth)
 app.register_blueprint(docs)
+
+
+@app.before_request
+def open_stdout():
+    sys.stdout = open('/home/dima/logs/flask.log', 'a')
+    print()
 
 
 @app.errorhandler(400)
