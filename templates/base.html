@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <title>Физтех.Печать</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/css/materialize.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <style>
         html, body {
             height: 100%;
+            min-width: 1000px;
+            min-height: 700px;
         }
 
-        .card .card-content p + p {
+        .card:not(.card-disable-p-margin) .card-content p + p {
             margin-top: 1em;
         }
 
