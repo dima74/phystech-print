@@ -217,21 +217,24 @@ $(function () {
         return task.shared === 'NO' ? addToSharedIcon : removeFromSharedIcon;
     }
 
+    function getAcceptIcon(cost, printer) {
+        return parseFloat($('#nav_account_number').text()) < parseFloat(cost) ? acceptIconNotEnoughCash :
+            queryPrintersAll[printersIds[printer]].status !== 'ENABLED' ? acceptIconPrinterError : acceptIcon;
+    }
+
     function getCurrentTaskRow(task, printersHtml) {
         if (printersHtml === undefined) {
             printersHtml = getPrintersHtml(task.printer);
         }
 
         let idAttribute = task.id === undefined ? '' : `id=${task.id}`;
-        let acceptIconUsed = parseFloat($('#nav_account_number').text()) < parseFloat(task.cost) ? acceptIconNotEnoughCash :
-            queryPrintersAll[printersIds[task.printer]].status !== 'ENABLED' ? acceptIconPrinterError : acceptIcon;
         return `<tr ${idAttribute} data-state="ready">
                     <td>${task.time}</td>
                     <td>${task.filename}</td>
                     <td>${task.numberPages}</td>
                     <td>${task.cost}</td>
                     <td>${printersHtml}</td>
-                    <td>${acceptIconUsed}</td>
+                    <td>${getAcceptIcon(task.cost, task.printer)}</td>
                     <td>${getSharedIcon(task)}</td>
                     <td>${rejectIcon}</td>
                 </tr>`;
@@ -527,18 +530,23 @@ $(function () {
 
         $('#tasks_current_tbody').on('change', '.select-printer', function (event) {
             event.stopPropagation();
-            let cell = $(this).parent();
+            let select = $(this);
+            let cell = select.parent();
             let row = cell.parent();
             let id = row.attr('id');
 
             let printerName = this.value;
             let printerId = printersIds[printerName];
-            let originalHtml = getPrintersHtml(printerName);
+            let newHtml = getPrintersHtml(printerName);
             cell.html(loadingAnimation);
             $.get({
                 url: `/query/job/move/?id=${id}&pid=${printerId}`,
+                success: function () {
+                    let cost = row.children().eq(4).text;
+                    row.children().eq(5).html(getAcceptIcon(cost, select.val()));
+                },
                 error: ajaxError('Выбор принтера'),
-                complete: changeElementContent(cell, originalHtml)
+                complete: changeElementContent(cell, newHtml)
             });
         });
 
