@@ -322,9 +322,12 @@ $(function () {
     }
 
     async function setPreview(id, page = 1) {
-        $('#print_preview').removeClass('loaded');
-
         let task = $('#' + id);
+        if (task.hasClass('task-with-preview') && $('#print_preview_image').data('page') == page) {
+            return;
+        }
+
+        $('#print_preview').removeClass('loaded');
         let numberPages = task.children().eq(2).text();
         assert(numberPages != '');
         if (page < 1 || page > numberPages) {
