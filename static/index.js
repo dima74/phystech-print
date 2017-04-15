@@ -228,7 +228,7 @@ $(function () {
         }
 
         let idAttribute = task.id === undefined ? '' : `id=${task.id}`;
-        return `<tr ${idAttribute} data-state="ready">
+        return `<tr ${idAttribute} data-state="ready" data-allow-preview="true">
                     <td>${task.time}</td>
                     <td>${task.filename}</td>
                     <td>${task.numberPages}</td>
@@ -263,7 +263,7 @@ $(function () {
     }
 
     function getHistoryTaskRow(task) {
-        return `<tr id="${task.id}">
+        return `<tr id="${task.id}" data-allow-preview="true">
                     <td>${task.time}</td>
                     <td>${task.filename}</td>
                     <td>${task.numberPages}</td>
@@ -326,6 +326,7 @@ $(function () {
 
         let task = $('#' + id);
         let numberPages = task.children().eq(2).text();
+        assert(numberPages != '');
         if (page < 1 || page > numberPages) {
             return;
         }
@@ -460,10 +461,9 @@ $(function () {
 
         $('.tasks_tbody').on('click', 'tr', function () {
             let task = $(this);
-            if (task.data('state') === 'processing') {
-                return;
+            if (task.data('allow-preview') === true) {
+                setPreview(task.attr('id'));
             }
-            setPreview(task.attr('id'));
         });
 
         function addActionOnClick(actionClass, callback) {
