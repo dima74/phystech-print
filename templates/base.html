@@ -15,11 +15,50 @@
         .card .card-content p + p {
             margin-top: 1em;
         }
+
+        @supports (display: grid) {
+            #oldbrowser {
+                display: none;
+            }
+        }
+
+        @supports not (display: grid) {
+            body > *:not(#oldbrowser) {
+                display: none;
+            }
+
+            body {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            #oldbrowser {
+                text-align: center;
+            }
+        }
     </style>
     {% block head %}{% endblock %}
 </head>
 <body>
 
+<div id="oldbrowser">
+    <h1>Физтех.Печать</h1>
+    К сожалению, Ваш браузер недостаточно новый.<br/>
+    Пожалуйста, <a href="//google.ru/chrome/browser/desktop/">обновите</a> свой браузер.<br/>
+    Тогда Вы сможете насладиться следующими замечательными возможностями нашего сайта:<br/>
+    <ul class="browser-default">
+        <li>Автоматический выбор принтера на основе последних заказов</li>
+        <li>Автоматическая смена принтера на другой в общежитии, если первый недоступен</li>
+        <li>Загрузка файла за один клик вместо трёх</li>
+        <li>Сохранение сессий, так что вам не придётся вводить пароль каждый раз</li>
+        <li>Плавные анимации загрузки</li>
+        <li>Красивый дизайн</li>
+        <li>Загрузка файла перетаскиванием (в разработке)</li>
+        <li>Мобильная версия (в разработке)</li>
+        <li>Загрузка нескольких файлов одновременно (в разработке)</li>
+    </ul>
+</div>
 {% block body %}{% endblock %}
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
