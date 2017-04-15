@@ -86,7 +86,7 @@ $(function () {
         function notificate() {
             let notify = new Notification(title, {body: body});
             notify.onerror = function () {
-                console.log('Ошибка: Notification.permission === ' + Notification.permission);
+                console.log('[Ошибка] Notification.permission === ' + Notification.permission);
             };
         }
 
@@ -159,13 +159,16 @@ $(function () {
             }
         });
 
-        // загрузка файла сразу после выбора
-        $('#form_upload_input_file').change(function () {
+        function ajaxFileUpload(files, appendFilesToFormData) {
             let $formUpload = $('#form_upload')[0];
             let formData = new FormData($formUpload);
 
-            let filename = $('#form_upload_input_file').find('input')[0].files[0].name;
-            line = `<tr>
+            for (let file of files) {
+                if (appendFilesToFormData) {
+                    formData.append('file', file);
+                }
+                let filename = file.name;
+                line = `<tr>
                         <td></td>
                         <td>${filename}</td>
                         <td></td>
@@ -175,8 +178,8 @@ $(function () {
                         <td></td>
                         <td></td>
                     </tr>`;
-            $('#tasks_current_tbody').prepend(line);
-            $('#print_preview').removeClass('loaded');
+                $('#tasks_current_tbody').prepend(line);
+            }
 
             $.post({
                 url: "/upload",
@@ -185,7 +188,7 @@ $(function () {
                 contentType: false,
                 processData: false,
                 success: function (data) {
-                    console.log(data);
+                    console.log('[Загрузка файла]', data);
                     if (data != 'OK') {
                         showError(data);
                         throw '';
@@ -195,7 +198,31 @@ $(function () {
             $formUpload.reset();
             $('#form_upload_checkbox_longedge').prop('disabled', true);
             promiseQueryPrintersAll = $.get('/query/printers/all/');
-            return false;
+        }
+
+        // загрузка файла сразу после выбора
+        $('#form_upload_input_file').change(function () {
+            ajaxFileUpload($('#file')[0].files, false);
+        });
+
+        // перетаскиваине файла
+        // глупые разработчики chrome, почему у FireFox всё всегда работает как надо??? [это про необходимость counter]
+        let counter = 0;
+        $('body').on('drag dragstart dragend dragover dragenter dragleave drop', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }).on('dragover dragenter', function () {
+            $('body').addClass('is-dragover');
+        }).on('dragstart dragenter', function () {
+            ++counter;
+        }).on('dragleave dragend drop', function () {
+            --counter;
+            if (counter == 0) {
+                $('body').removeClass('is-dragover');
+            }
+        }).on('drop', function (event) {
+            let files = event.originalEvent.dataTransfer.files;
+            ajaxFileUpload(files, true);
         });
     }
 
@@ -344,7 +371,6 @@ $(function () {
 
         $('#print_preview_navigate_before').toggleClass('print-preview-navigate-active', page > 1);
         $('#print_preview_navigate_next').toggleClass('print-preview-navigate-active', page < numberPages);
-        $('#print_preview_navigation').show();
     }
 
     function changePreviewPage(delta) {
@@ -604,7 +630,7 @@ $(function () {
                 let success = false;
                 $($('#tasks_current_tbody').children().get().reverse()).each(function () {
                     let row = $(this);
-                    if (row.attr('id') === undefined) {
+                    if (row.attr('id') === undefined && row.children().eq(1).text() === task.filename) {
                         if (row.data('state') == 'ready') {
                             row.attr('id', id);
                             row.find('.preloader-wrapper').replaceWith(task.cost);
@@ -627,7 +653,7 @@ $(function () {
                                     printer = printerNeighbour;
                                 }
 
-                                console.log(`Автовыбор принтера: #${task.id}, ${task.printer} -> ${printer}`);
+                                console.log(`[Автовыбор принтера] #${task.id}, ${task.printer} -> ${printer}`);
                                 $.get({
                                     url: `/query/job/move/?id=${id}&pid=${printersIds[printer]}`,
                                     success: function () {

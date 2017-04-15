@@ -1,7 +1,7 @@
 async function fetchJson(url) {
     let response = await fetch(`${url}`, {credentials: 'same-origin'});
     let json = await response.json();
-    console.log('fetchJson:', url, json);
+    console.log('[fetchJson]', url, json);
     return json.ans;
 }
 

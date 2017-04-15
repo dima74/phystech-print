@@ -16,6 +16,15 @@
 
     {{ super() }}
 
+    <div id="file_dragged_wrapper">
+        <div id="file_dragged_body_cover"></div>
+        <div id="file_dragged_holder">
+            <div id="file_dragged">
+                <h1>Отпустите файл, <br/>он загрузится автоматически</h1>
+            </div>
+        </div>
+    </div>
+
     <div id="main_container_wrapper">
         <div id="main_container">
             <div id="tasks_current_wrapper">
@@ -44,10 +53,12 @@
                     <div id="form_upload_card_content" class="card-content">
 
                         <form id="form_upload" method="POST">
-                            <div id="form_upload_input_file" class="file-field">
-                                <div class="btn">
-                                    <span>Выберите файл</span>
-                                    <input type="file" name="file">
+                            <div id="form_upload_input_file">
+                                <p>Перетащите файл в любое место</p>
+                                <p>или</p>
+                                <div id="form_upload_input_file_button">
+                                    <input type="file" name="file" id="file" class="inputfile" autofocus multiple>
+                                    <label id="form_upload_input_file_label" for="file" class="waves-effect waves-light btn">Выберите файл</label>
                                 </div>
                             </div>
 
@@ -118,9 +129,9 @@
                             </div>
                         </div>
                     </div>
-                    <img id="print_preview_image">
+                    <img id="print_preview_image" class="hide-while-print-preview-loads">
                 </div>
-                <div id="print_preview_navigation">
+                <div id="print_preview_navigation" class="hide-while-print-preview-loads">
                     <i id="print_preview_navigate_before" class="material-icons waves-effect small print-preview-navigate icon">navigate_before</i>
                     <p id="print_preview_current_page"></p>
                     <i id="print_preview_navigate_next" class="material-icons waves-effect small print-preview-navigate icon">navigate_next</i>

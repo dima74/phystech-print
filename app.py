@@ -15,8 +15,9 @@ app.register_blueprint(docs)
 
 @app.before_request
 def open_stdout():
-    sys.stdout = open('/home/dima/logs/flask.log', 'a')
-    print()
+    if not is_local():
+        sys.stdout = open('/home/dima/logs/flask.log', 'a')
+        print()
 
 
 @app.errorhandler(400)
@@ -114,11 +115,9 @@ def test():
 @app.route('/upload', methods=['POST'])
 @login_required_cookies_only
 def upload_file():
-    if 'file' not in request.files:
+    files = [file for file in request.files.getlist('file') if file.filename != '']
+    if len(files) == 0:
         return 'Некорректный запрос: нет параметра "file"'
-    file = request.files['file']
-    if file.filename == '':
-        return 'Некорректный запрос: пустое имя файла'
 
     def normalize(x, default='false'):
         return 'true' if x == 'on' else default
@@ -126,14 +125,18 @@ def upload_file():
     if 'number_pages_on_list' not in request.form:
         return 'Некорректный запрос: не указано число страниц на лист'
 
-    info = {'file': file.read(),
-            'filename': file.filename,
-            'color': normalize(request.form.get('color')),
-            'land': normalize(request.form.get('land')),
-            'duplex': normalize(request.form.get('duplex')),
-            'longedge': normalize(request.form.get('longedge'), 'true'),
-            'number_pages_on_list': request.form.get('number_pages_on_list')}
-    return g.user.send_file_to_print_mipt_ru(info)
+    for file in files:
+        info = {'file': file.read(),
+                'filename': file.filename,
+                'color': normalize(request.form.get('color')),
+                'land': normalize(request.form.get('land')),
+                'duplex': normalize(request.form.get('duplex')),
+                'longedge': normalize(request.form.get('longedge'), 'true'),
+                'number_pages_on_list': request.form.get('number_pages_on_list')}
+        status = g.user.send_file_to_print_mipt_ru(info)
+        if status != 'OK':
+            return status
+    return 'OK'
 
 
 if __name__ == '__main__':

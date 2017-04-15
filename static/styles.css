@@ -65,6 +65,7 @@ select {
 
 #form_upload_card_content {
     height: 100%;
+    padding: 15px;
 }
 
 #form_upload {
@@ -72,20 +73,81 @@ select {
     display: grid;
     grid-template-columns: 50% 50%;
     grid-template-areas: "button options";
+}
+
+#file_dragged_wrapper {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+}
+
+#file_dragged_holder {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+}
+
+#file_dragged {
+    height: 100%;
+    border-radius: 70px;
+    border: 10px dashed teal;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+#file_dragged_body_cover {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: white;
+    opacity: 0.9;
+}
+
+body:not(.is-dragover) > #file_dragged_wrapper {
+    display: none;
 }
 
 #form_upload_input_file {
     grid-area: button;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 2px dashed teal;
+}
+
+#form_upload_input_file > * {
+    margin: 10px;
+}
+
+.inputfile {
+    outline: none;
+    width: 0;
+    height: 0;
+    /*opacity: 0;*/
+    /*overflow: hidden;*/
+    position: absolute;
+    /*z-index: -1;*/
 }
 
 #form_upload_options {
     grid-area: options;
+    align-self: center;
+    justify-self: center;
 }
 
 #form_upload_select_number_pages {
     display: inline;
+}
+
+label {
+    color: black;
 }
 
 #print_preview_image_wrapper {
@@ -161,6 +223,6 @@ td {
     display: none;
 }
 
-#print_preview:not(.loaded) #print_preview_image {
+#print_preview:not(.loaded) .hide-while-print-preview-loads {
     display: none;
 }
