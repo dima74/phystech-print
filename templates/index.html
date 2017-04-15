@@ -105,7 +105,7 @@
 
             <div id="print_preview">
                 <div id="print_preview_image_wrapper">
-                    <div id="print_preview_image_loader" class="preloader-wrapper active big">
+                    <div id="print_preview_loader" class="preloader-wrapper active big">
                         <div class="spinner-layer spinner-green-only">
                             <div class="circle-clipper left">
                                 <div class="circle"></div>
@@ -132,9 +132,6 @@
 
 {% block script %}
     {{ super() }}
-{#        <script src="http://print.mipt.ru:8082/socket.io/socket.io.js"></script>#}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.11/socket.io.js"></script>
-{#    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.0.0/socket.io.js"></script>#}
-    {#    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>#}
     <script src="/static/index.js?{{ current_time }}"></script>
 {% endblock %}

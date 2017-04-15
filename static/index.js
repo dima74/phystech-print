@@ -340,6 +340,7 @@ $(function () {
 
         $('#print_preview_navigate_before').toggleClass('print-preview-navigate-active', page > 1);
         $('#print_preview_navigate_next').toggleClass('print-preview-navigate-active', page < numberPages);
+        $('#print_preview_navigation').show();
     }
 
     function changePreviewPage(delta) {
@@ -361,6 +362,7 @@ $(function () {
         });
         if (!success) {
             $('#print_preview_image').attr('src', '');
+            $('#print_preview_navigation').hide();
             $('#print_preview').addClass('loaded');
         }
     }
@@ -377,7 +379,12 @@ $(function () {
                 .animate({paddingTop: 0, paddingBottom: 0})
                 .wrapInner('<div />')
                 .children()
-                .slideUp(SLIDE_DURATION, function () { row.remove(); });
+                .slideUp(SLIDE_DURATION, function () {
+                    row.remove();
+                    if ($('.task-with-preview').length == 0) {
+                        setPreviewForLastTask();
+                    }
+                });
         }
 
         function slideDownRow(row) {
@@ -507,13 +514,12 @@ $(function () {
             addRowToCurrent(row);
         }
 
-        function removeSelectAndPreview(cell) {
+        function replaceSelectWithText(cell) {
             let row = cell.parent();
             let select = row.find('.select-printer');
             select.replaceWith(select.val());
 
             row.data('state', 'loading');
-            setPreviewForLastTask();
         }
 
         function callbackAcceptTask(cell) {
@@ -522,8 +528,8 @@ $(function () {
             cell.replaceWith(`<td colspan="3">${getHistoryTaskStatus('Queue')}</td>`);
         }
 
-        addActionOnClickWithAjax('.task-action-accept.waves-effect', 'print', 'Отправка на печать', [callbackAcceptTask, function () { Notification.requestPermission(); }], removeSelectAndPreview);
-        addActionOnClickWithAjax('.task-action-reject', 'cancel', 'Отмена заказа', callbackMoveTaskToHistory('Canceled'), removeSelectAndPreview);
+        addActionOnClickWithAjax('.task-action-accept.waves-effect', 'print', 'Отправка на печать', [callbackAcceptTask, function () { Notification.requestPermission(); }], replaceSelectWithText);
+        addActionOnClickWithAjax('.task-action-reject', 'cancel', 'Отмена заказа', callbackMoveTaskToHistory('Canceled'), replaceSelectWithText);
         addActionOnClickWithAjax('.task-action-replay', 'reprint', 'Повторная отправка на печать', callbackReturnTaskFromHistory);
         addActionOnClickWithAjax('.task-action-share-add', 'share', 'Добавление заказа в общий доступ', function (cell) { cell.html(removeFromSharedIcon); });
         addActionOnClickWithAjax('.task-action-share-remove', 'unshare', 'Удаление заказа из общего доступа', function (cell) { cell.html(addToSharedIcon); });
@@ -676,8 +682,6 @@ $(function () {
         }
 
         initSocket();
-        window.callbackAcceptTask = callbackAcceptTask;
-        window.moveTaskToHistory = moveTaskToHistory;
     }
 
     // загружает задания и устанавливает обработчики

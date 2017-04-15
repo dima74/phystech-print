@@ -153,7 +153,7 @@ td {
     user-select: none;
 }
 
-#print_preview_image_loader {
+#print_preview_loader {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -162,7 +162,7 @@ td {
     margin: auto;
 }
 
-#print_preview.loaded #print_preview_image_loader {
+#print_preview.loaded #print_preview_loader {
     display: none;
 }
 
