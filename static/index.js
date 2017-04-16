@@ -628,7 +628,7 @@ $(function () {
 
         function initSocket() {
             function findRowAndUpdate(task) {
-                if (task.cost === undefined || task.cost == '0.00') {
+                if (task.cost === undefined || task.cost == '0.00' && task.status != 'Invalid') {
                     return;
                 }
                 let id = task.id;
@@ -641,37 +641,42 @@ $(function () {
                             row.attr('id', id);
                             row.find('.preloader-wrapper').replaceWith(task.cost);
                         } else {
-                            row.replaceWith(getCurrentTaskRow(task, getLoadingAnimation('printer-select-loading')));
-                            row = $('#' + id);
-                            setPreviewForLastTask();
+                            assert(task.status == 'Pending' || task.status == 'Invalid');
+                            let rowHtml = task.status === 'Pending' ? getCurrentTaskRow(task, getLoadingAnimation('printer-select-loading')) : getInvalidTaskRow(task);
+                            row.replaceWith(rowHtml);
 
-                            let [dormitory, printer] = getLastThreeTimesMostUsedPrinter();
-                            if (printer === -1) {
-                                dormitory = task.printer[0];
-                                printer = task.printer;
-                            }
-                            promiseQueryPrintersAll.then(function (data) {
-                                queryPrintersAll = data.ans;
-                                let printerNeighbour = printersNeighbours[printer];
-                                let printerEnabled = queryPrintersAll[printersIds[printer]].status == 'ENABLED';
-                                let printerNeighbourEnabled = queryPrintersAll[printersIds[printerNeighbour]].status == 'ENABLED';
-                                if (!printerEnabled && printerNeighbourEnabled) {
-                                    printer = printerNeighbour;
+                            if (task.status == 'Pending') {
+                                row = $('#' + id);
+                                setPreviewForLastTask();
+
+                                let [dormitory, printer] = getLastThreeTimesMostUsedPrinter();
+                                if (printer === -1) {
+                                    dormitory = task.printer[0];
+                                    printer = task.printer;
                                 }
+                                promiseQueryPrintersAll.then(function (data) {
+                                    queryPrintersAll = data.ans;
+                                    let printerNeighbour = printersNeighbours[printer];
+                                    let printerEnabled = queryPrintersAll[printersIds[printer]].status == 'ENABLED';
+                                    let printerNeighbourEnabled = queryPrintersAll[printersIds[printerNeighbour]].status == 'ENABLED';
+                                    if (!printerEnabled && printerNeighbourEnabled) {
+                                        printer = printerNeighbour;
+                                    }
 
-                                console.log(`[Автовыбор принтера] #${task.id}, ${task.printer} -> ${printer}`);
-                                $.get({
-                                    url: `/query/job/move/?id=${id}&pid=${printersIds[printer]}`,
-                                    success: function () {
-                                        row.find('.printer-select-loading').replaceWith(getPrintersHtml(printer));
-                                        setTaskAcceptIcon(row, printer);
-                                        if (!printerEnabled && !printerNeighbourEnabled) {
-                                            showError('Автовыбор принтера', 'К сожалению, оба принтера в вашем общежитии недоступны');
-                                        }
-                                    },
-                                    error: [function () { row.find('.printer-select-loading').replaceWith(getPrintersHtml(task.printer)); }, ajaxError('Автовыбор принтера')]
+                                    console.log(`[Автовыбор принтера] #${task.id}, ${task.printer} -> ${printer}`);
+                                    $.get({
+                                        url: `/query/job/move/?id=${id}&pid=${printersIds[printer]}`,
+                                        success: function () {
+                                            row.find('.printer-select-loading').replaceWith(getPrintersHtml(printer));
+                                            setTaskAcceptIcon(row, printer);
+                                            if (!printerEnabled && !printerNeighbourEnabled) {
+                                                showError('Автовыбор принтера', 'К сожалению, оба принтера в вашем общежитии недоступны');
+                                            }
+                                        },
+                                        error: [function () { row.find('.printer-select-loading').replaceWith(getPrintersHtml(task.printer)); }, ajaxError('Автовыбор принтера')]
+                                    });
                                 });
-                            });
+                            }
                         }
                         success = true;
                         return false;
