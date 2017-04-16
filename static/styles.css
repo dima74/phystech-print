@@ -100,6 +100,14 @@ select {
     text-align: center;
 }
 
+#file_dragged:not(.multiple) #file_dragged_multiple {
+    display: none;
+}
+
+#file_dragged.multiple #file_dragged_single {
+    display: none;
+}
+
 #file_dragged_body_cover {
     position: absolute;
     height: 100%;

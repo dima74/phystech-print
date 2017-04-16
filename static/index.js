@@ -213,8 +213,9 @@ $(function () {
             event.stopPropagation();
         }).on('dragover dragenter', function () {
             $('body').addClass('is-dragover');
-        }).on('dragstart dragenter', function () {
+        }).on('dragstart dragenter', function (event) {
             ++counter;
+            $('#file_dragged').toggleClass('multiple', event.originalEvent.dataTransfer.items.length > 1);
         }).on('dragleave dragend drop', function () {
             --counter;
             if (counter == 0) {
