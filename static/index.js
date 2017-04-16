@@ -564,6 +564,11 @@ $(function () {
         addActionOnClickWithAjax('.task-action-share-add', 'share', 'Добавление заказа в общий доступ', function (cell) { cell.html(removeFromSharedIcon); });
         addActionOnClickWithAjax('.task-action-share-remove', 'unshare', 'Удаление заказа из общего доступа', function (cell) { cell.html(addToSharedIcon); });
 
+        function setTaskAcceptIcon(row, printer) {
+            let cost = row.children().eq(3).text();
+            row.children().eq(5).html(getAcceptIcon(cost, printer));
+        }
+
         $('#tasks_current_tbody').on('change', '.select-printer', function (event) {
             event.stopPropagation();
             let select = $(this);
@@ -578,8 +583,7 @@ $(function () {
             $.get({
                 url: `/query/job/move/?id=${id}&pid=${printerId}`,
                 success: function () {
-                    let cost = row.children().eq(4).text;
-                    row.children().eq(5).html(getAcceptIcon(cost, select.val()));
+                    setTaskAcceptIcon(row, select.val());
                 },
                 error: ajaxError('Выбор принтера'),
                 complete: changeElementContent(cell, newHtml)
@@ -633,6 +637,7 @@ $(function () {
                     let row = $(this);
                     if (row.attr('id') === undefined && row.children().eq(1).text() === task.filename) {
                         if (row.data('state') == 'ready') {
+                            // понять, когда этот if срабатывает
                             row.attr('id', id);
                             row.find('.preloader-wrapper').replaceWith(task.cost);
                         } else {
@@ -659,6 +664,7 @@ $(function () {
                                     url: `/query/job/move/?id=${id}&pid=${printersIds[printer]}`,
                                     success: function () {
                                         row.find('.printer-select-loading').replaceWith(getPrintersHtml(printer));
+                                        setTaskAcceptIcon(row, printer);
                                         if (!printerEnabled && !printerNeighbourEnabled) {
                                             showError('Автовыбор принтера', 'К сожалению, оба принтера в вашем общежитии недоступны');
                                         }
