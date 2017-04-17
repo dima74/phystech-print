@@ -1,0 +1,146 @@
+{% extends "with_navbar_centered_content.html" %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        td {
+            padding: 2px 5px;
+        }
+
+        td.td-no-padding {
+            padding: 0;
+        }
+
+        .tiny {
+            height: 20px;
+            width: 20px;
+        }
+
+        .container {
+            height: 100%;
+        }
+
+        body:not(.loaded) table {
+            display: none;
+        }
+
+        #centered {
+            width: 70%;
+        }
+
+        .preloader-wrapper-wrapper {
+            width: 100%;
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block centered %}
+    {{ super() }}
+
+
+    <table class="highlight">
+        <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Автор</th>
+            <th>Название</th>
+            <th>Страниц</th>
+            <th>С1</th>
+        </tr>
+        </thead>
+
+        <tbody id="tasks_tbody"></tbody>
+    </table>
+
+    <div class="preloader-wrapper-wrapper">
+        <div class="preloader-wrapper big active">
+            <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    {{ super() }}
+    <script>
+        $(function () {
+            const ownIcon = `<i class="material-icons waves-effect green-text task-action-own" title="Добавить в очередь документов">add</i>`;
+
+            function decodeTask(task) {
+                return {
+                    id: task.Id,
+                    time: task.MDateTime,
+                    filename: task.FileName,
+                    numberPages: task.NumberOfPages,
+                    author: task.Nick
+                };
+            }
+
+            let lastTaskIndex = 0;
+            let addingTasks = false;
+
+            async function addTasks() {
+                addingTasks = true;
+                const numberTasksToAdd = 100;
+                let response = await fetchJson(`/query/lib/all/?num=${numberTasksToAdd}&from=${lastTaskIndex}`);
+                lastTaskIndex += numberTasksToAdd;
+                let tasksEncoded = response.array;
+                for (let taskEncoded of tasksEncoded) {
+                    let task = decodeTask(taskEncoded);
+                    row =
+                        `<tr id="${task.id}">
+                            <td nowrap>${task.time}</td>
+                            <td>${task.author}</td>
+                            <td>${task.filename}</td>
+                            <td>${task.numberPages}</td>
+                            <td class="td-no-padding">${ownIcon}</td>
+                        </tr>`;
+                    $('#tasks_tbody').append(row);
+                }
+                addingTasks = false;
+            }
+
+            function setListeners() {
+                $('#tasks_tbody').on('click', '.task-action-own', function () {
+                    let cell = $(this).parent();
+                    let row = cell.parent();
+                    cell.html(loadingAnimation);
+                    $.get({
+                        url: `/query/lib/own/${row.attr('id')}`,
+                        success: function (data) {
+                            cell.html(ownIcon);
+                        },
+                        error: ajaxError('Добавление заказа из библиотеки')
+                    });
+                });
+
+                $(window).scroll(function (event) {
+                    if ($(window).scrollTop() + 2 * $(window).height() > $(document).height() && !addingTasks) {
+                        addTasks();
+                    }
+                });
+            }
+
+            async function init() {
+                await addTasks();
+                setListeners();
+                $('body').addClass('loaded');
+            }
+
+            init();
+        });
+    </script>
+{% endblock %}

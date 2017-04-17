@@ -1,22 +1,5 @@
 const SLIDE_DURATION = 1000;
 $(function () {
-    function getLoadingAnimation(cssClass) {
-        return `<div class="preloader-wrapper active size-auto ${cssClass}">
-                    <div class="spinner-layer spinner-green-only">
-                        <div class="circle-clipper left">
-                            <div class="circle"></div>
-                        </div>
-                        <div class="gap-patch">
-                            <div class="circle"></div>
-                        </div>
-                        <div class="circle-clipper right">
-                            <div class="circle"></div>
-                        </div>
-                    </div>
-                </div>`;
-    }
-
-    const loadingAnimation = getLoadingAnimation('');
     const acceptIcon = `<i class="material-icons waves-effect green-text task-action-accept" title="Напечатать">done</i>`;
     const acceptIconPrinterError = `<i class="material-icons icon cursor-default task-action-accept" title="Принтер недоступен">done</i>`;
     const acceptIconNotEnoughCash = `<i class="material-icons icon cursor-default task-action-accept" title="Недостаточно средств на счету">done</i>`;
@@ -68,19 +51,6 @@ $(function () {
     $(window).blur(function () {
         isTabActive = false;
     });
-
-    function showError(scope, message) {
-        let text = message === undefined ? scope : `[${scope}] ${message}`;
-        Materialize.toast(text, 40000);
-        throw text;
-    }
-
-    function ajaxError(scope) {
-        return function (response) {
-            json = JSON.parse(response.responseText);
-            showError(scope, json.message);
-        }
-    }
 
     function showNotification(title, body) {
         function notificate() {

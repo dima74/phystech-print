@@ -8,11 +8,12 @@
             flex-direction: column;
         }
 
-        #centered {
+        #centered_wrapped {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            align-items: center;
+            justify-content: space-between;
         }
     </style>
 {% endblock %}
@@ -20,7 +21,11 @@
 {% block body %}
     {{ super() }}
 
-    <div id="centered">
-        {% block centered %}{% endblock %}
+    <div id="centered_wrapped">
+        <div></div>
+        <div id="centered">
+            {% block centered %}{% endblock %}
+        </div>
+        <div></div>
     </div>
 {% endblock %}

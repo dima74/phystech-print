@@ -107,6 +107,11 @@ def forum():
     return render_template('forum.html')
 
 
+@app.route('/библиотека')
+def library():
+    return render_template('library.html')
+
+
 @app.route('/test')
 def test():
     return render_template('test.html')
