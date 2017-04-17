@@ -9,10 +9,10 @@
                 <br>Вот некоторые возможности, которых нет на оригинальном сайте:</p>
             {% block list_of_features %}{{ super() }}{% endblock %}
             <p>Пожалуйста, пишите любые предложения и вопросы <a href="mailto:print.diraria@yandex.ru">на почту</a>.
-                <br>Также можно оставить предложение в форме ниже: (пока что не работает)</p>
+                <br>Также можете оставить предложение в форме ниже: (пока что не работает)</p>
             <form id="form" method="POST" action="/о_сайте">
-                <textarea id="form_suggestion" placeholder="Ваше предложение" class="materialize-textarea"></textarea>
-                <input id="form_email" placeholder="Email, на который придёт ответ, необязательно">
+                <textarea id="form_suggestion" placeholder="Ваше предложение" class="materialize-textarea" required></textarea>
+                <input id="form_email" placeholder="Email, на который придёт ответ (необязательно)">
                 <button id="form_button" class="waves-effect waves-light btn">Отправить</button>
             </form>
         </div>
