@@ -112,6 +112,14 @@ def library():
     return render_template('library.html')
 
 
+@app.route('/о_сайте', methods=['POST', 'GET'])
+def about():
+    if request.method == 'GET':
+        return render_template('about.html')
+
+    return 'Пока что не реализовано', 501
+
+
 @app.route('/test')
 def test():
     return render_template('test.html')

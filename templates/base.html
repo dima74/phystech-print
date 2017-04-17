@@ -41,6 +41,25 @@
                 text-align: left;
             }
         }
+
+        /* Style Placeholders */
+        ::-webkit-input-placeholder {
+            color: #424242;
+        }
+
+        ::-moz-placeholder {
+            /* Firefox 19+ */
+            color: #424242;
+            opacity: 1;
+        }
+
+        :-ms-input-placeholder {
+            color: #424242;
+        }
+
+        .text-align-center {
+            text-align: center;
+        }
     </style>
     {% block head %}{% endblock %}
 </head>
@@ -51,23 +70,25 @@
     К сожалению, Ваш браузер недостаточно новый.<br/>
     Пожалуйста, <a href="//google.ru/chrome/browser/desktop/">обновите</a> свой браузер.<br/>
     Тогда Вы сможете насладиться следующими замечательными возможностями нашего сайта:<br/>
-    <ul id="list-of-features" class="browser-default">
-        <li>Автоматический выбор принтера на основе последних заказов</li>
-        <li>Автоматическая смена принтера на другой в общежитии, если первый недоступен</li>
-        <li>Загрузка файла за один клик вместо трёх</li>
-        <li>Загрузка файла перетаскиванием</li>
-        <li>Загрузка нескольких файлов одновременно</li>
-        <li>Сохранение сессий, так что вам не придётся вводить пароль каждый раз</li>
-        <li>Плавные анимации загрузки</li>
-        <li>Красивый дизайн</li>
-        <li>Мобильная версия (в разработке)</li>
-    </ul>
+    {% block list_of_features %}
+        <ul id="list_of_features" class="browser-default">
+            <li>Автоматический выбор принтера на основе последних заказов</li>
+            <li>Автоматическая смена принтера на другой в общежитии, если первый недоступен</li>
+            <li>Загрузка файла за один клик вместо трёх</li>
+            <li>Загрузка файла перетаскиванием</li>
+            <li>Загрузка нескольких файлов одновременно</li>
+            <li>Плавные анимации загрузки</li>
+            <li>Красивый дизайн</li>
+            <li>Мобильная версия (в разработке)</li>
+        </ul>
+    {% endblock %}
 </div>
 {% block body %}{% endblock %}
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-url/2.4.1/url.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.0/jquery.form.min.js"></script>
 <script src="/static/framework.js?{{ current_time }}"></script>
 {% block script %}{% endblock %}
 
