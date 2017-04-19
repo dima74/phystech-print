@@ -28,3 +28,4 @@
 * /pic/activity.png?pid=<printer_id>&y=50&x=683
 
 «»
+—

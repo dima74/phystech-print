@@ -1,4 +1,6 @@
 from flask import Flask
+from flask_mail import Mail, Message
+
 from src.wrapped import wrapped
 from src.auth import *
 from src.docs import docs
@@ -7,10 +9,12 @@ import time
 import sys
 
 app = Flask(__name__)
+app.config.from_pyfile('config.cfg')
 app.secret_key = '6eg\x18\x03\xd8\xaa@4\xdd/G\xd5fie\xf3\xf8\xb1uy\xf4se'
 app.register_blueprint(wrapped)
 app.register_blueprint(auth)
 app.register_blueprint(docs)
+mail = Mail(app)
 
 
 @app.before_request
@@ -117,7 +121,13 @@ def about():
     if request.method == 'GET':
         return render_template('about.html')
 
-    return 'Пока что не реализовано', 501
+    text = request.form['form_suggestion']
+    if 'form_email' in request.form and request.form['form_email'] != '':
+        text = 'От {}\n\n{}'.format(request.form['form_email'], text)
+
+    message = Message("Физтех.Печать --- предложение", recipients=['info@физтех-печать.рф'], body=text)
+    mail.send(message)
+    return 'OK'
 
 
 @app.route('/test')

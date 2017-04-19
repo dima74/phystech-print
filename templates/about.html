@@ -11,8 +11,8 @@
             <p>Пожалуйста, пишите любые предложения и вопросы <a href="mailto:info@физтех-печать.рф">на почту</a>.
                 <br>Также можете оставить предложение в форме ниже: (пока что не работает)</p>
             <form id="form" method="POST" action="/о_сайте">
-                <textarea id="form_suggestion" placeholder="Ваше предложение" class="materialize-textarea" required></textarea>
-                <input id="form_email" placeholder="Email, на который придёт ответ (необязательно)">
+                <textarea id="form_suggestion" name="form_suggestion" placeholder="Ваше предложение" class="materialize-textarea" required></textarea>
+                <input id="form_email" name="form_email" placeholder="Email, на который придёт ответ (необязательно)">
                 <button id="form_button" class="waves-effect waves-light btn">Отправить</button>
             </form>
         </div>
@@ -21,9 +21,14 @@
 
 {% block script %}
     <script>
+        let form_email;
         $('#form').ajaxForm({
+            beforeSubmit: function () {
+                form_email = $('#form_email').val();
+            },
             success: function () {
-                Materialize.toast('<div class="text-align-center">Спасибо за предложение! <br>Мы скоро Вам ответим.</div>');
+                let text = 'Спасибо за предложение!' + (form_email === '' ? '' : '<br>Мы скоро Вам ответим.');
+                Materialize.toast(`<div class="text-align-center">${text}</div>`);
                 $('#form').resetForm();
             },
             error: function (response) {
