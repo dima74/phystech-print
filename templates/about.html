@@ -1,5 +1,27 @@
 {% extends "with_navbar_centered_content.html" %}
 
+{% block head %}
+    {{ super() }}
+    <style>
+        #form_wrapper:not(.form-form) #form {
+            display: none;
+        }
+
+        #form_wrapper:not(.form-loading) .preloader-wrapper {
+            display: none;
+        }
+
+        #form_wrapper:not(.form-result) #form-result {
+            display: none;
+        }
+
+        #form_wrapper.form-loading, #form_wrapper.form-result {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+{% endblock %}
+
 {% block centered %}
     <div class="card">
         <div class="card-content">
@@ -9,12 +31,31 @@
                 <br>Вот некоторые возможности, которых нет на оригинальном сайте:</p>
             {% block list_of_features %}{{ super() }}{% endblock %}
             <p>Пожалуйста, пишите любые предложения и вопросы <a href="mailto:info@физтех-печать.рф">на почту</a>.
-                <br>Также можете оставить предложение в форме ниже: (пока что не работает)</p>
-            <form id="form" method="POST" action="/о_сайте">
-                <textarea id="form_suggestion" name="form_suggestion" placeholder="Ваше предложение" class="materialize-textarea" required></textarea>
-                <input id="form_email" name="form_email" placeholder="Email, на который придёт ответ (необязательно)">
-                <button id="form_button" class="waves-effect waves-light btn">Отправить</button>
-            </form>
+                <br>Также можете оставить предложение в форме ниже:</p>
+
+            <div id="form_wrapper" class="form-form">
+                <form id="form" method="POST" action="/о_сайте">
+                    <textarea id="form_suggestion" name="form_suggestion" placeholder="Ваше предложение" class="materialize-textarea" required></textarea>
+                    <input id="form_email" name="form_email" placeholder="Email, на который придёт ответ (необязательно)">
+                    <button id="form_button" class="waves-effect waves-light btn">Отправить</button>
+                </form>
+
+                <div class="preloader-wrapper active tiny">
+                    <div class="spinner-layer spinner-green-only">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <p id="form_result"></p>
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -25,14 +66,17 @@
         $('#form').ajaxForm({
             beforeSubmit: function () {
                 form_email = $('#form_email').val();
+                $('#form_wrapper').removeClass().addClass('form-loading');
             },
             success: function () {
                 let text = 'Спасибо за предложение!' + (form_email === '' ? '' : '<br>Мы скоро Вам ответим.');
-                Materialize.toast(`<div class="text-align-center">${text}</div>`);
-                $('#form').resetForm();
+                $('#form_result').html(text);
             },
             error: function (response) {
-                Materialize.toast(response.responseText);
+                $('#form_result').text(response.responseText);
+            },
+            complete: function () {
+                $('#form_wrapper').removeClass().addClass('form-result');
             }
         });
     </script>

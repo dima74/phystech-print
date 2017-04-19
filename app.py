@@ -1,3 +1,4 @@
+from threading import Thread
 from flask import Flask
 from flask_mail import Mail, Message
 
@@ -115,6 +116,20 @@ def library():
     return render_template('library.html')
 
 
+def async(f):
+    def wrapper(*args, **kwargs):
+        thread = Thread(target=f, args=args, kwargs=kwargs)
+        thread.start()
+
+    return wrapper
+
+
+@async
+def send_email_async(message):
+    with app.app_context():
+        mail.send(message)
+
+
 @app.route('/о_сайте', methods=['POST', 'GET'])
 def about():
     if request.method == 'GET':
@@ -125,7 +140,7 @@ def about():
         text = 'От {}\n\n{}'.format(request.form['form_email'], text)
 
     message = Message("Физтех.Печать --- предложение", recipients=['info@физтех-печать.рф'], body=text)
-    mail.send(message)
+    send_email_async(message)
     return 'OK'
 
 
