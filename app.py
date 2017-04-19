@@ -10,7 +10,6 @@ import sys
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
-app.secret_key = '6eg\x18\x03\xd8\xaa@4\xdd/G\xd5fie\xf3\xf8\xb1uy\xf4se'
 app.register_blueprint(wrapped)
 app.register_blueprint(auth)
 app.register_blueprint(docs)
