@@ -2,14 +2,34 @@
 
 {% block head %}
     <style>
+        @media only screen and (min-width: 993px) {
+            .container, #login_div, .valign-wrapper, #or_div {
+                height: 100%;
+            }
+
+            #title {
+                position: absolute;
+                width: 100%;
+            }
+
+            #footer {
+                position: absolute;
+                width: 100%;
+                bottom: 0;
+            }
+        }
+
+        @media only screen and (max-width: 992px) {
+            h1 {
+                font-size: 3rem;
+            }
+        }
+
         .container, #login_div, .valign-wrapper, #or_div {
-            height: 100%;
             text-align: center;
         }
 
         #title {
-            position: absolute;
-            width: 100%;
             text-align: center;
         }
 
@@ -44,13 +64,17 @@
         }
 
         #or {
-            width: 100%
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         #footer {
-            position: absolute;
-            bottom: 20px;
+            margin-bottom: 20px;
             text-align: center;
+        }
+
+        .card {
             width: 100%;
         }
     </style>
@@ -61,17 +85,17 @@
     <h1 id="title"><a href="/" id="title_link">Физтех.Печать</a></h1>
 
     <div id="container" class="row container">
-        <div id="login_div" class="col m5 valign-wrapper">
+        <div id="login_div" class="col s12 l5 valign-wrapper">
             <div class="card valign">
                 <div class="card-content">
                     <span class="card-title">Войдите</span>
 
                     <form id="login_form" method="POST" class="row">
-                        <div class="input-field col m12">
+                        <div class="input-field col s12">
                             <input id="login_login" name="login_login" type="text" autofocus required>
                             <label for="login_login">Логин</label>
                         </div>
-                        <div class="input-field col m12">
+                        <div class="input-field col s12">
                             <input id="login_password" name="login_password" type="password" required>
                             <label for="login_password">Пароль</label>
                         </div>
@@ -83,27 +107,27 @@
             </div>
         </div>
 
-        <div id="or_div" class="col m2">
+        <div id="or_div" class="col s12 l2">
             <div class="valign-wrapper">
                 <div id="or" class="valign">или</div>
             </div>
         </div>
 
-        <div class="col m5 valign-wrapper">
+        <div class="col s12 l5 valign-wrapper">
             <div class="card valign">
                 <div class="card-content">
                     <span class="card-title">Зарегистрируйтесь</span>
 
                     <form id="register_form" method="POST" action="/register" class="row">
-                        <div class="input-field col m12">
+                        <div class="input-field col s12">
                             <input id="register_login" name="register_login" type="text" autocomplete="off">
                             <label for="register_login">Логин</label>
                         </div>
-                        <div class="input-field col m12">
+                        <div class="input-field col s12">
                             <input id="register_password" name="register_password" type="password">
                             <label for="register_password">Пароль</label>
                         </div>
-                        <div class="input-field col m12">
+                        <div class="input-field col s12">
                             <input id="register_password_confirm" name="register_password_confirm" type="password">
                             <label for="register_password_confirm">Повторите пароль</label>
                         </div>
