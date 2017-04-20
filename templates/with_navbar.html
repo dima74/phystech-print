@@ -41,15 +41,26 @@
 {% block body %}
     <nav>
         <div class="nav-wrapper">
-            <ul id="nav-mobile" class="left hide-on-med-and-down">
-                <li id="nav_новости"><a href="/новости">Новости</a></li>
-                <li id="nav_главная"><a href="/">Очередь печати</a></li>
-                <li id="nav_оплата"><a href="/оплата">Пополнить счёт</a></li>
-                <li id="nav_принтеры"><a href="/принтеры">Принтеры</a></li>
-                <li id="nav_форум"><a href="/форум">Форум</a></li>
-                <li id="nav_библиотека"><a href="/библиотека">Библиотека</a></li>
-                <li id="nav_инструкция"><a href="/инструкция">Как печатать?</a></li>
-                <li id="nav_о_сайте"><a href="/о_сайте">О сайте</a></li>
+            <a data-activates="navbar-mobile" class="button-collapse waves-effect"><i class="material-icons">menu</i></a>
+            <ul id="navbar" class="left hide-on-med-and-down">
+                <li class="nav_новости"><a href="/новости">Новости</a></li>
+                <li class="nav_главная"><a href="/">Очередь печати</a></li>
+                <li class="nav_оплата"><a href="/оплата">Пополнить счёт</a></li>
+                <li class="nav_принтеры"><a href="/принтеры">Принтеры</a></li>
+                <li class="nav_форум"><a href="/форум">Форум</a></li>
+                <li class="nav_библиотека"><a href="/библиотека">Библиотека</a></li>
+                <li class="nav_инструкция"><a href="/инструкция">Как печатать?</a></li>
+                <li class="nav_о_сайте"><a href="/о_сайте">О сайте</a></li>
+            </ul>
+            <ul id="navbar-mobile" class="side-nav">
+                <li class="nav_новости"><a href="/новости">Новости</a></li>
+                <li class="nav_главная"><a href="/">Очередь печати</a></li>
+                <li class="nav_оплата"><a href="/оплата">Пополнить счёт</a></li>
+                <li class="nav_принтеры"><a href="/принтеры">Принтеры</a></li>
+                <li class="nav_форум"><a href="/форум">Форум</a></li>
+                <li class="nav_библиотека"><a href="/библиотека">Библиотека</a></li>
+                <li class="nav_инструкция"><a href="/инструкция">Как печатать?</a></li>
+                <li class="nav_о_сайте"><a href="/о_сайте">О сайте</a></li>
             </ul>
 
             {% if g.user %}
@@ -70,7 +81,7 @@
     <script>
         $(function () {
             let path = decodeURI(url(1)) || 'главная';
-            $('#nav_' + path).addClass('active');
+            $('.nav_' + path).addClass('active');
 
             $('#button_logout').click(function () {
                 window.location.replace('/logout');
@@ -79,5 +90,6 @@
         {% if g.user %}
             login = '{{ g.user.login }}';
         {% endif %}
+        $(".button-collapse").sideNav();
     </script>
 {% endblock %}

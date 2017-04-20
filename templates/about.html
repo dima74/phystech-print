@@ -61,6 +61,7 @@
 {% endblock %}
 
 {% block script %}
+    {{ super() }}
     <script>
         let form_email;
         $('#form').ajaxForm({
