@@ -1,4 +1,4 @@
-{% extends "with_navbar_centered_content.html" %}
+{% extends "with_navbar_centered_content_with_container.html" %}
 
 {% block head %}
     {{ super() }}
@@ -19,14 +19,10 @@
             text-align: center;
             margin-top: 20px;
         }
-
-        .card {
-            margin: 10px;
-        }
     </style>
 {% endblock %}
 
-{% block centered %}
+{% block centered_in_container %}
     <div class="card">
         <div class="card-content">
             <span class="card-title">Физтех.Печать</span>

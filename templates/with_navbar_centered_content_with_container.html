@@ -1,0 +1,16 @@
+{% extends "with_navbar_centered_content.html" %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        #centered {
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+
+{% block centered %}
+    <div class="container">
+        {% block centered_in_container %}{% endblock %}
+    </div>
+{% endblock %}

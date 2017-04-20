@@ -1,50 +1,44 @@
-{% extends "with_navbar.html" %}
+{% extends "with_navbar_centered_content_with_container.html" %}
 
-{% block body %}
-    {{ super() }}
-
-    <div class="row">
-        <div class="col m6 offset-m3 s12">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">О системе</span>
-                    <p>Система общественной печати «<a href='/'>Физтех-Печать</a>» предназначена для круглосуточной печати любых документов формата A4. Процесс печати полностью автоматизирован и управляется с помощью веб-сайта.</p>
-                    <p>Вы загружаете документ на сайт, он обработается за несколько секунд. После этого вы сможете выбрать принтер и подтвердить печать. Деньги со счёта спишутся только при успешной печати документа, когда последняя страница выйдет из принтера. Кроме того, отправлять документы вы можете, установив <a href='/static/driver.zip'>специальный драйвер</a>. Он позволит отправлять документы из любых программ, которые у Вас установлены, и гибко настраивать параметры печати.</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">Для печати Вам потребуется:</span>
+{% block centered_in_container %}
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">О системе</span>
+            <p>Система общественной печати «<a href='/'>Физтех-Печать</a>» предназначена для круглосуточной печати любых документов формата A4. Процесс печати полностью автоматизирован и управляется с помощью веб-сайта.</p>
+            <p>Вы загружаете документ на сайт, он обработается за несколько секунд. После этого вы сможете выбрать принтер и подтвердить печать. Деньги со счёта спишутся только при успешной печати документа, когда последняя страница выйдет из принтера. Кроме того, отправлять документы вы можете, установив <a href='/static/driver.zip'>специальный драйвер</a>. Он позволит отправлять документы из любых программ, которые у Вас установлены, и гибко настраивать параметры печати.</p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">Для печати Вам потребуется:</span>
+            <ul class="browser-default">
+                <li><p><a href='/login'>Зарегистрироваться</a></p></li>
+                <li><p>Установить драйвер для вашей ОС</p>
                     <ul class="browser-default">
-                        <li><p><a href='/login'>Зарегистрироваться</a></p></li>
-                        <li><p>Установить драйвер для вашей ОС</p>
-                            <ul class="browser-default">
-                                <li><a href='/doc/xp/'>Windows XP x32/x64</a></li>
-                                <li><a href='/doc/vista/'>Windows Vista x32/x64/Server 2008</a></li>
-                                <li><a href='/doc/linux/'>GNU/Linux/MacOS</a></li>
-                            </ul>
-                            <p>либо использовать кнопку «Добавить файл» в <a href='/'>Очереди печати</a></p>
-                            <p>В Windows 7, возможно, потребуется <a href='/doc/change_driver'>изменить драйвер</a> на наш.</p>
-                        </li>
-                        <li><p><a href='/pay'> Пополнить счёт </a></p>
-                            <ul class="browser-default">
-                                <li><a href='/pay/#sms'>SMS</a></li>
-                                <li><a href='/pay/#qiwi'>Qiwi</a></li>
-                                <li><a href='/pay/#wm'>WebMoney</a></li>
-                                <li><a href='/pay/#visa'>Visa</a></li>
-                            </ul>
-                        </li>
+                        <li><a href='/doc/xp/'>Windows XP x32/x64</a></li>
+                        <li><a href='/doc/vista/'>Windows Vista x32/x64/Server 2008</a></li>
+                        <li><a href='/doc/linux/'>GNU/Linux/MacOS</a></li>
                     </ul>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <p>Рекомендуем прочесть раздел <a href='/doc/faq'>FAQ</a> перед использованием системы.</p>
-                    <p>Про настройку цветной печати можете прочитать <a href='http://print.mipt.ru/lib/43760/pdf/'>здесь</a>.</p>
-                    <p>При неудовлетворительном качестве отпечатанного документа вы можете <a href='/doc/refund/'>вернуть средства</a> на личный счёт.</p>
-                    <p>По любым вопросам о работе системы можно обращаться <a href='mailto:contacts@tmg-co.ru'>по почте</a>.</p>
-                </div>
-            </div>
+                    <p>либо использовать кнопку «Добавить файл» в <a href='/'>Очереди печати</a></p>
+                    <p>В Windows 7, возможно, потребуется <a href='/doc/change_driver'>изменить драйвер</a> на наш.</p>
+                </li>
+                <li><p><a href='/pay'> Пополнить счёт </a></p>
+                    <ul class="browser-default">
+                        <li><a href='/pay/#sms'>SMS</a></li>
+                        <li><a href='/pay/#qiwi'>Qiwi</a></li>
+                        <li><a href='/pay/#wm'>WebMoney</a></li>
+                        <li><a href='/pay/#visa'>Visa</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content">
+            <p>Рекомендуем прочесть раздел <a href='/doc/faq'>FAQ</a> перед использованием системы.</p>
+            <p>Про настройку цветной печати можете прочитать <a href='http://print.mipt.ru/lib/43760/pdf/'>здесь</a>.</p>
+            <p>При неудовлетворительном качестве отпечатанного документа вы можете <a href='/doc/refund/'>вернуть средства</a> на личный счёт.</p>
+            <p>По любым вопросам о работе системы можно обращаться <a href='mailto:contacts@tmg-co.ru'>по почте</a>.</p>
         </div>
     </div>
 {% endblock %}

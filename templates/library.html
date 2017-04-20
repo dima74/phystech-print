@@ -1,4 +1,4 @@
-{% extends "with_navbar_centered_content.html" %}
+{% extends "with_navbar_centered_content_with_container.html" %}
 
 {% block head %}
     {{ super() }}
@@ -20,10 +20,6 @@
             display: none;
         }
 
-        #centered, table {
-            width: 100%;
-        }
-
         .filename {
             word-break: break-all;
         }
@@ -38,34 +34,32 @@
 {% endblock %}
 
 
-{% block centered %}
-    <div class="container">
-        <table class="highlight">
-            <thead>
-            <tr>
-                <th class="hide-on-med-and-down">Дата</th>
-                <th class="hide-on-med-and-down">Автор</th>
-                <th>Название</th>
-                <th class="hide-on-med-and-down">Страниц</th>
-                <th>С1</th>
-            </tr>
-            </thead>
+{% block centered_in_container %}
+    <table class="highlight">
+        <thead>
+        <tr>
+            <th class="hide-on-med-and-down">Дата</th>
+            <th class="hide-on-med-and-down">Автор</th>
+            <th>Название</th>
+            <th class="hide-on-med-and-down">Страниц</th>
+            <th>С1</th>
+        </tr>
+        </thead>
 
-            <tbody id="tasks_tbody"></tbody>
-        </table>
+        <tbody id="tasks_tbody"></tbody>
+    </table>
 
-        <div class="preloader-wrapper-wrapper">
-            <div class="preloader-wrapper big active">
-                <div class="spinner-layer spinner-blue-only">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="gap-patch">
-                        <div class="circle"></div>
-                    </div>
-                    <div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
+    <div class="preloader-wrapper-wrapper">
+        <div class="preloader-wrapper big active">
+            <div class="spinner-layer spinner-blue-only">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
                 </div>
             </div>
         </div>
