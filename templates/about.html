@@ -1,4 +1,4 @@
-{% extends "with_navbar_centered_content_with_container.html" %}
+{% extends "with_navbar_centered_content_wrap_content.html" %}
 
 {% block head %}
     {{ super() }}
@@ -22,14 +22,14 @@
     </style>
 {% endblock %}
 
-{% block centered_in_container %}
+{% block centered_wrap_content %}
     <div class="card">
         <div class="card-content">
-            <span class="card-title">Физтех.Печать</span>
+            <span class="card-title">О сайте</span>
             <p>Наш сайт является обёрткой над сайтом <a href="http://print.mipt.ru/">print.mipt.ru</a> — сервисом печати для студентов МФТИ.</p>
             <p>Мы очень старались, чтобы этот сайт получился удобным и красивым.
                 <br>Вот некоторые возможности, которых нет на оригинальном сайте:</p>
-            {% block list_of_features %}{{ super() }}{% endblock %}
+            {{ self.list_of_features() }}
             <p>Пожалуйста, пишите любые предложения и вопросы <a href="mailto:info@физтех-печать.рф">на почту</a>.
                 <br>Также можете оставить предложение в форме ниже:</p>
 

@@ -70,7 +70,14 @@
                     <span id="nav_button"><button id="button_logout" class="waves-effect waves-light btn">Выйти</button></span>
                 </div>
             {% else %}
-                <a href="/" class="brand-logo right">Физтех.Печать</a>
+                {% if self.nav_title() %}
+                    <div class="brand-logo right">{% block nav_title %}{% endblock %}</div>
+                {% elif self.nav_title_mobile() %}
+                    <div class="brand-logo right hide-on-large-only">{% block nav_title_mobile %}{% endblock %}</div>
+                    <a href="/" class="brand-logo right hide-on-med-and-down">Физтех.Печать</a>
+                {% else %}
+                    <a href="/" class="brand-logo right">Физтех.Печать</a>
+                {% endif %}
             {% endif %}
         </div>
     </nav>
