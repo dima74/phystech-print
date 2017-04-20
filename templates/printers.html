@@ -80,7 +80,7 @@
                         <div class="col m6">
                             <div class="card">
                                 <div class="printer-info-paper-wrapper">
-                                    <img src="http://print.mipt.ru/pic/paper.png?pid={{ printer.id }}&time={{ current_time }}" class="printer-info-paper">
+                                    <img src="/pic/paper.png?pid={{ printer.id }}&time={{ current_time }}" class="printer-info-paper">
                                 </div>
                                 <div class="card-content">
                                     <svg height="32" width="32" class="printer-status">
@@ -115,7 +115,7 @@
                             {% for printer in printers %}
                                 <div class="printers_history_row">
                                     <span class="printers_history_span">{{ printer.name }}</span>
-                                    <img class="printers_history_img" data-src="http://print.mipt.ru/pic/activity.png?pid={{ printer.id }}&time={{ current_time }}">
+                                    <img class="printers_history_img" data-src="/pic/activity.png?pid={{ printer.id }}&time={{ current_time }}">
                                 </div>
                             {% endfor %}
                         </div>
