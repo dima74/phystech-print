@@ -16,16 +16,16 @@
             width: 20px;
         }
 
-        .container {
-            height: 100%;
-        }
-
         body:not(.loaded) table {
             display: none;
         }
 
-        #centered {
-            width: 70%;
+        #centered, table {
+            width: 100%;
+        }
+
+        .filename {
+            word-break: break-all;
         }
 
         .preloader-wrapper-wrapper {
@@ -39,31 +39,33 @@
 
 
 {% block centered %}
-    <table class="highlight">
-        <thead>
-        <tr>
-            <th>Дата</th>
-            <th>Автор</th>
-            <th>Название</th>
-            <th>Страниц</th>
-            <th>С1</th>
-        </tr>
-        </thead>
+    <div class="container">
+        <table class="highlight">
+            <thead>
+            <tr>
+                <th class="hide-on-med-and-down">Дата</th>
+                <th class="hide-on-med-and-down">Автор</th>
+                <th>Название</th>
+                <th class="hide-on-med-and-down">Страниц</th>
+                <th>С1</th>
+            </tr>
+            </thead>
 
-        <tbody id="tasks_tbody"></tbody>
-    </table>
+            <tbody id="tasks_tbody"></tbody>
+        </table>
 
-    <div class="preloader-wrapper-wrapper">
-        <div class="preloader-wrapper big active">
-            <div class="spinner-layer spinner-blue-only">
-                <div class="circle-clipper left">
-                    <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                    <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                    <div class="circle"></div>
+        <div class="preloader-wrapper-wrapper">
+            <div class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue-only">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -99,10 +101,10 @@
                     let task = decodeTask(taskEncoded);
                     row =
                         `<tr id="${task.id}">
-                            <td nowrap>${task.time}</td>
-                            <td>${task.author}</td>
-                            <td>${task.filename}</td>
-                            <td>${task.numberPages}</td>
+                            <td class="hide-on-med-and-down" nowrap>${task.time}</td>
+                            <td class="hide-on-med-and-down">${task.author}</td>
+                            <td class="filename">${task.filename}</td>
+                            <td class="hide-on-med-and-down">${task.numberPages}</td>
                             <td class="td-no-padding">${ownIcon}</td>
                         </tr>`;
                     $('#tasks_tbody').append(row);
