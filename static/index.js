@@ -706,7 +706,8 @@ $(function () {
 
     async function updateUserInfo() {
         let response = await fetchJson(`/query/user/`);
-        $('#nav_username').text(`${response.Nick}, ${response.FirstName} ${response.LastName}`);
+        $('#nav_user_login').text(`${response.Nick}`);
+        $('#nav_user_name').text(`, ${response.FirstName} ${response.LastName}`);
         $('#nav_account_number').text(response.Account);
     }
 
@@ -724,5 +725,6 @@ $(function () {
         $('body').addClass('loaded');
     }
 
+    $(".button-collapse").sideNav();
     init();
 });

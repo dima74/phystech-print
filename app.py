@@ -146,7 +146,7 @@ def about():
 
 @app.route('/test')
 def test():
-    return render_template('test.html')
+    return render_template('test/test.html')
 
 
 @app.route('/upload', methods=['POST'])

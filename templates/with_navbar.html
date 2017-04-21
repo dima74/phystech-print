@@ -2,24 +2,21 @@
 
 {% block head %}
     <style>
-        #nav_right, #nav_username, #nav_account, #nav_button {
-            line-height: normal;
-        }
-
         #nav_right {
             display: grid;
             grid-template-rows: 50% 50%;
             grid-template-columns: auto 20px auto 20px;
-            grid-template-areas: "nav_username . nav_button ." "nav_account . nav_button .";
+            grid-template-areas: "nav_user_info . nav_button ." "nav_account . nav_button .";
             height: 100%;
+            line-height: initial;
         }
 
-        #nav_username, #nav_account {
+        #nav_user_info, #nav_account {
             font-size: large;
         }
 
-        #nav_username {
-            grid-area: nav_username;
+        #nav_user_info {
+            grid-area: nav_user_info;
             align-self: end;
             justify-self: center;
         }
@@ -39,7 +36,7 @@
 {% endblock %}
 
 {% block body %}
-    <nav>
+    <nav class="nav-extended">
         <div class="nav-wrapper">
             <a data-activates="navbar-mobile" class="button-collapse waves-effect"><i class="material-icons">menu</i></a>
             <ul id="navbar" class="left hide-on-med-and-down">
@@ -64,8 +61,8 @@
             </ul>
 
             {% if g.user %}
-                <div id="nav_right" class="right">
-                    <span id="nav_username">{{ g.user.login }}, {{ g.user.first_name }} {{ g.user.last_name }}</span>
+                <div id="nav_right" class="brand-logo right">
+                    <span id="nav_user_info"><span id="nav_user_login">{{ g.user.login }}</span><span id="nav_user_name" class="hide-on-med-and-down">, {{ g.user.first_name }} {{ g.user.last_name }}</span></span>
                     <span id="nav_account"><span id="nav_account_number">{{ g.user.account }}</span> руб.</span>
                     <span id="nav_button"><button id="button_logout" class="waves-effect waves-light btn">Выйти</button></span>
                 </div>
@@ -80,6 +77,7 @@
                 {% endif %}
             {% endif %}
         </div>
+        {% block nav_content %}{% endblock %}
     </nav>
 {% endblock %}
 
@@ -97,6 +95,5 @@
         {% if g.user %}
             login = '{{ g.user.login }}';
         {% endif %}
-        $(".button-collapse").sideNav();
     </script>
 {% endblock %}

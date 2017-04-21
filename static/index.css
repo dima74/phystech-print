@@ -234,3 +234,7 @@ td {
 #print_preview:not(.loaded) .hide-while-print-preview-loads {
     display: none;
 }
+
+.tabs::-webkit-scrollbar {
+    display: none;
+}
