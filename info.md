@@ -26,6 +26,3 @@
 * /lib/<lib_id>/png/<page> (не работает)
 * /pic/paper.png?pid=<printer_id>
 * /pic/activity.png?pid=<printer_id>&y=50&x=683
-
-«»
-—
