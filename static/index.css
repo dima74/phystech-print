@@ -46,6 +46,7 @@
     #print_preview {
         grid-area: print_preview;
         padding: 10px;
+        overflow-y: auto;
     }
 }
 
@@ -77,7 +78,7 @@ body {
 }
 
 #main_container_wrapper {
-    flex-grow: 1;
+    flex: 1;
     /* http://stackoverflow.com/questions/18639129/how-to-make-nested-flexboxes-work */
     position: relative;
 }
@@ -182,7 +183,7 @@ label {
 }
 
 #print_preview_image_wrapper {
-    flex-grow: 1;
+    flex: 1;
     /* http://stackoverflow.com/questions/18639129/how-to-make-nested-flexboxes-work */
     position: relative;
     display: flex;
@@ -206,6 +207,7 @@ label {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 3rem;
 }
 
 table.highlight > tbody > tr:hover {

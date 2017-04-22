@@ -3,6 +3,15 @@ if (window.matchMedia("only screen and (max-width: 992px)").matches) {
     $('ul.tabs').tabs();
 }
 
+$(window).resize(function () {
+    if (window.matchMedia("only screen and (max-width: 992px)").matches) {
+        $('.nav-content ul').addClass('tabs');
+        $('ul.tabs').tabs();
+    } else {
+        $('#form_upload_div, #print_preview, #tasks_current_wrapper, #tasks_history_wrapper').show();
+    }
+});
+
 const SLIDE_DURATION = 1000;
 $(function () {
     const acceptIcon = `<i class="material-icons waves-effect green-text task-action-accept" title="Напечатать">done</i>`;
