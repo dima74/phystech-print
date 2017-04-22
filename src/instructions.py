@@ -11,5 +11,6 @@ def howto():
 @instructions.route('/инструкции/часто_задаваемые_вопросы')
 @instructions.route('/инструкции/возврат_средств')
 @instructions.route('/инструкции/настройка_драйвера')
+@instructions.route('/инструкции/ipp')
 def doc():
     return render_template(request.path + '.html')

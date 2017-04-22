@@ -1,0 +1,26 @@
+{% extends "instruction-template.html" %}
+
+{% block nav_title %}Internet Printing Client{% endblock %}
+
+{% block centered_wrap_content %}
+    <div>
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Включение Internet Printing Client в ОС Windows Vista / 7 / Server 2008</span>
+
+                <p>Если при попытке подключения к ipp-принтеру (в системе print.mipt.ru используется именно этот протокол), вы получаете сообщение «Невозможно подключиться к принтеру...» («Windows can't connect to printer...»), возможно, поможет включение в настройках ОС поддержки ipp-клиента.</p>
+                <img src='/pic/docs/vista_ipp/ipp1.png'>
+
+                <p>Откройте панель управления (control panel) и выберите «Программы и компоненты»:</p>
+                <img src='/pic/docs/vista_ipp/ipp2.png'>
+
+                <p>Выберите слева «Включение или отключение компонентов Windows»:</p>
+                <img src='/pic/docs/vista_ipp/ipp3.png'>
+
+                <p>В появившемся списке выберите группу «Службы печати» и поставьте галочку напротив пункта «Клиент интернет-печати». Нажмите Ok и перезагрузите компьютер. После загрузки возвращайтесь к установке принтера.</p>
+                <img src='/pic/docs/vista_ipp/ipp4.png'>
+                <p>Администраторы сервиса выражают признательность пользователям <b>archimed7592</b> и <b>LLL</b> за предоставленное решение проблемы и проявленное терпение.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

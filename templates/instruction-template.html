@@ -1,0 +1,23 @@
+{% extends "with_navbar_centered_content_wrap_content.html" %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        .card-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-content img {
+            margin: 1rem auto;
+        }
+
+        p, img {
+            max-width: 777px;
+        }
+
+        .card-content :last-child {
+            margin-bottom: 0;
+        }
+    </style>
+{% endblock %}
