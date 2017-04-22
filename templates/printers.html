@@ -1,34 +1,42 @@
 {% extends "with_navbar.html" %}
 
+{% block nav_title_mobile %}Принтеры{% endblock %}
+
 {% block head %}
     <style>
-        /* Основная разметка */
-        body {
-            display: flex;
-            flex-direction: column;
+        @media only screen and (min-width: 993px) {
+            /* Основная разметка */
+            body {
+                display: flex;
+                flex-direction: column;
+            }
+
+            #main {
+                flex: 1;
+                /* http://stackoverflow.com/questions/18639129/how-to-make-nested-flexboxes-work */
+                position: relative;
+            }
+
+            #printers_info, #printers_history {
+                height: 100%;
+                width: 50%;
+                position: absolute;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            #printers_history {
+                right: 0;
+            }
+
+            #printers_info_wrapper, #printers_history_wrapper {
+                height: 100%;
+                overflow-y: auto;
+            }
         }
 
-        #main {
-            flex-grow: 1;
-            /* http://stackoverflow.com/questions/18639129/how-to-make-nested-flexboxes-work */
-            position: relative;
-        }
-
-        #printers_info, #printers_history {
-            height: 100%;
-            width: 50%;
-            position: absolute;
-            padding-top: 10px;
-            padding-bottom: 10px;
-        }
-
-        #printers_history {
-            right: 0;
-        }
-
-        #printers_info_wrapper, #printers_history_wrapper {
-            height: 100%;
-            overflow-y: auto;
+        #printers_info_row {
+            margin-bottom: 0;
         }
 
         #printers_history_wrapper {
@@ -75,9 +83,9 @@
     <div id="main">
         <div id="printers_info">
             <div id="printers_info_wrapper">
-                <div class="row">
+                <div id="printers_info_row" class="row">
                     {% for printer in printers %}
-                        <div class="col m6">
+                        <div class="col s12 l6">
                             <div class="card">
                                 <div class="printer-info-paper-wrapper">
                                     <img src="/pic/paper.png?pid={{ printer.id }}&time={{ current_time }}" class="printer-info-paper">
