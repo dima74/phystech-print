@@ -10,9 +10,6 @@ def howto():
 
 @instructions.route('/инструкции/часто_задаваемые_вопросы')
 @instructions.route('/инструкции/возврат_средств')
-@instructions.route('/инструкции/драйвер_для_windows')
-@instructions.route('/инструкции/драйвер_для_windows_vista')
-@instructions.route('/инструкции/драйвер_для_linux')
-@instructions.route('/инструкции/изменить_драйвер')
+@instructions.route('/инструкции/настройка_драйвера')
 def doc():
     return render_template(request.path + '.html')
