@@ -4,6 +4,7 @@
 
 {% block head %}
     {{ super() }}
+    <link rel="stylesheet" href="/static/tasksTable.css?{{ current_time }}">
     <style>
         td {
             padding: 2px 5px;
@@ -20,10 +21,6 @@
 
         body:not(.loaded) table {
             display: none;
-        }
-
-        .filename {
-            word-break: break-all;
         }
 
         .preloader-wrapper-wrapper {
@@ -95,13 +92,13 @@
                 let tasksEncoded = response.array;
                 for (let taskEncoded of tasksEncoded) {
                     let task = decodeTask(taskEncoded);
-                    row =
+                    let row =
                         `<tr id="${task.id}">
-                            <td class="hide-on-med-and-down" nowrap>${task.time}</td>
-                            <td class="hide-on-med-and-down">${task.author}</td>
-                            <td class="filename">${task.filename}</td>
-                            <td class="hide-on-med-and-down">${task.numberPages}</td>
-                            <td class="td-no-padding">${ownIcon}</td>
+                            <td class="rowTime hide-on-med-and-down">${task.time}</td>
+                            <td class="rowAuthor hide-on-med-and-down">${task.author}</td>
+                            <td class="rowFilename">${task.filename}</td>
+                            <td class="rowNumberPages hide-on-med-and-down">${task.numberPages}</td>
+                            <td class="rowOwnIcon td-no-padding">${ownIcon}</td>
                         </tr>`;
                     $('#tasks_tbody').append(row);
                 }
@@ -115,7 +112,7 @@
                     cell.html(loadingAnimation);
                     $.get({
                         url: `/query/lib/own/${row.attr('id')}`,
-                        success: function (data) {
+                        success: function () {
                             cell.html(ownIcon);
                         },
                         error: ajaxError('Добавление заказа из библиотеки')

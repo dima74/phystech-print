@@ -1,0 +1,7 @@
+.rowTime {
+    white-space: nowrap;
+}
+
+.rowFilename {
+    word-break: break-all;
+}

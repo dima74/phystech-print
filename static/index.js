@@ -142,17 +142,10 @@ $(function () {
                 if (appendFilesToFormData) {
                     formData.append('file', file);
                 }
-                let filename = file.name;
-                line = `<tr>
-                        <td></td>
-                        <td>${filename}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>${loadingAnimation}</td>
-                        <td></td>
-                        <td></td>
-                    </tr>`;
+                let line = getTaskRow({
+                    filename: file.name,
+                    acceptIcon: loadingAnimation
+                });
                 $('#tasks_current_tbody').prepend(line);
             }
 
@@ -225,67 +218,94 @@ $(function () {
             queryPrintersAll[printersIds[printer]].status !== 'ENABLED' ? acceptIconPrinterError : acceptIcon;
     }
 
-    function getCurrentTaskRow(task, printersHtml) {
-        if (printersHtml === undefined) {
-            printersHtml = getPrintersHtml(task.printer);
+    function getTaskRow(row) {
+        let rowDefault = {
+            time: '',
+            filename: '',
+            numberPages: '',
+            cost: '',
+            printersHtml: '',
+            acceptIcon: '',
+            sharedIcon: '',
+            rejectIcon: ''
         }
+        row = Object.assign(rowDefault, row);
 
-        let idAttribute = task.id === undefined ? '' : `id=${task.id}`;
-        return `<tr ${idAttribute} data-state="ready" data-allow-preview="true">
-                    <td>${task.time}</td>
-                    <td>${task.filename}</td>
-                    <td>${task.numberPages}</td>
-                    <td>${task.cost}</td>
-                    <td>${printersHtml}</td>
-                    <td>${getAcceptIcon(task.cost, task.printer)}</td>
-                    <td>${getSharedIcon(task)}</td>
-                    <td>${rejectIcon}</td>
+        let idAttribute = row.id === undefined ? '' : `id=${row.id}`;
+        let dataStateAttribute = row.state === undefined ? '' : `data-state="${row.state}"`;
+        let dataAllowPreviewAttribute = row.allowPreview === undefined ? '' : `data-allow-preview="${row.allowPreview}"`;
+
+        let lastThreeColumns = row.colspan === undefined ?
+            `<td class="rowAcceptIcon">${row.acceptIcon}</td>
+             <td class="rowSharedIcon">${row.sharedIcon}</td>
+             <td class="rowRejectIcon">${row.rejectIcon}</td>`
+            : `<td colspan="3" class="rowStatus">${row.colspan}</td>`;
+        return `<tr ${idAttribute} ${dataStateAttribute} ${dataAllowPreviewAttribute}>
+                    <td class="rowTime hide-on-med-and-down">${row.time}</td>
+                    <td class="rowFilename">${row.filename}</td>
+                    <td class="rowNumberPages hide-on-med-and-down">${row.numberPages}</td>
+                    <td class="rowCost">${row.cost}</td>
+                    <td class="rowPrinters">${row.printersHtml}</td>
+                    ${lastThreeColumns}
                 </tr>`;
+    }
+
+    function getCurrentTaskRow(task, printersHtml) {
+        return getTaskRow({
+            id: task.id,
+            time: task.time,
+            filename: task.filename,
+            numberPages: task.numberPages,
+            cost: task.cost,
+            printersHtml: printersHtml === undefined ? getPrintersHtml(task.printer) : printersHtml,
+            acceptIcon: getAcceptIcon(task.cost, task.printer),
+            sharedIcon: getSharedIcon(task),
+            rejectIcon: rejectIcon,
+            state: 'ready',
+            allowPreview: 'true'
+        })
     }
 
     function getProcessTaskRow(task) {
-        return `<tr id="${task.id}" data-state="processing">
-                    <td></td>
-                    <td>${task.filename}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td colspan="3">обработка...</td>
-                </tr>`;
+        return getTaskRow({
+            id: task.id,
+            filename: task.filename,
+            state: 'processing',
+            colspan: 'обработка...'
+        });
     }
 
     function getQueueTaskRow(task) {
-        return `<tr id="${task.id}">
-                    <td>${task.time}</td>
-                    <td>${task.filename}</td>
-                    <td>${task.numberPages}</td>
-                    <td>${task.cost}</td>
-                    <td>${task.printer}</td>
-                    <td colspan="3">готовится к печати...</td>
-                </tr>`;
+        return getTaskRow({
+            id: task.id,
+            time: task.time,
+            filename: task.filename,
+            numberPages: task.numberPages,
+            cost: task.cost,
+            printer: task.printer,
+            colspan: 'готовится к печати...'
+        });
     }
 
     function getHistoryTaskRow(task) {
         return `<tr id="${task.id}" data-allow-preview="true">
-                    <td>${task.time}</td>
-                    <td>${task.filename}</td>
-                    <td>${task.numberPages}</td>
-                    <td class="cell-printer">${task.printer}</td>
-                    <td>${getHistoryTaskStatus(task.status)}</td>
-                    <td>${getSharedIcon(task)}</td>
-                    <td>${replayIcon}</td>
+                    <td class="rowTime hide-on-med-and-down">${task.time}</td>
+                    <td class="rowFilename">${task.filename}</td>
+                    <td class="rowNumberPages hide-on-med-and-down">${task.numberPages}</td>
+                    <td class="rowPrinters hide-on-med-and-down">${task.printer}</td>
+                    <td class="rowStatus">${getHistoryTaskStatus(task.status)}</td>
+                    <td class="rowSharedIcon">${getSharedIcon(task)}</td>
+                    <td class="rowReplayIcon">${replayIcon}</td>
                 </tr>`;
     }
 
     function getInvalidTaskRow(task) {
-        return `<tr id="${task.id}">
-                    <td>${task.time}</td>
-                    <td>${task.filename}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td colspan="3">не обработан</td>
-                </tr>`;
+        return getTaskRow({
+            id: task.id,
+            time: task.time,
+            filename: task.filename,
+            colspan: 'не обработан'
+        })
     }
 
     // загружает и обновляет задания
@@ -615,10 +635,11 @@ $(function () {
                             // понять, когда этот if срабатывает
                             row.attr('id', id);
                             row.find('.preloader-wrapper').replaceWith(task.cost);
+                        } else if (task.status == 'Invalid') {
+                            row.replaceWith(getInvalidTaskRow(task));
                         } else {
-                            assert(task.status == 'Pending' || task.status == 'Invalid');
-                            let rowHtml = task.status === 'Pending' ? getCurrentTaskRow(task, getLoadingAnimation('printer-select-loading')) : getInvalidTaskRow(task);
-                            row.replaceWith(rowHtml);
+                            assert(task.status == 'Pending');
+                            row.replaceWith(getCurrentTaskRow(task, getLoadingAnimation('printer-select-loading')));
 
                             if (task.status == 'Pending') {
                                 row = $('#' + id);
@@ -629,28 +650,32 @@ $(function () {
                                     dormitory = task.printer[0];
                                     printer = task.printer;
                                 }
-                                promiseQueryPrintersAll.then(function (data) {
-                                    queryPrintersAll = data.ans;
-                                    let printerNeighbour = printersNeighbours[printer];
-                                    let printerEnabled = queryPrintersAll[printersIds[printer]].status == 'ENABLED';
-                                    let printerNeighbourEnabled = queryPrintersAll[printersIds[printerNeighbour]].status == 'ENABLED';
-                                    if (!printerEnabled && printerNeighbourEnabled) {
-                                        printer = printerNeighbour;
-                                    }
+                                if (task.printer === printer) {
+                                    row.find('.printer-select-loading').replaceWith(getPrintersHtml(task.printer))
+                                } else {
+                                    promiseQueryPrintersAll.then(function (data) {
+                                        queryPrintersAll = data.ans;
+                                        let printerNeighbour = printersNeighbours[printer];
+                                        let printerEnabled = queryPrintersAll[printersIds[printer]].status == 'ENABLED';
+                                        let printerNeighbourEnabled = queryPrintersAll[printersIds[printerNeighbour]].status == 'ENABLED';
+                                        if (!printerEnabled && printerNeighbourEnabled) {
+                                            printer = printerNeighbour;
+                                        }
 
-                                    console.log(`[Автовыбор принтера] #${task.id}, ${task.printer} -> ${printer}`);
-                                    $.get({
-                                        url: `/query/job/move/?id=${id}&pid=${printersIds[printer]}`,
-                                        success: function () {
-                                            row.find('.printer-select-loading').replaceWith(getPrintersHtml(printer));
-                                            setTaskAcceptIcon(row, printer);
-                                            if (!printerEnabled && !printerNeighbourEnabled) {
-                                                showError('Автовыбор принтера', 'К сожалению, оба принтера в вашем общежитии недоступны');
-                                            }
-                                        },
-                                        error: [function () { row.find('.printer-select-loading').replaceWith(getPrintersHtml(task.printer)); }, ajaxError('Автовыбор принтера')]
+                                        console.log(`[Автовыбор принтера] #${task.id}, ${task.printer} -> ${printer}`);
+                                        $.get({
+                                            url: `/query/job/move/?id=${id}&pid=${printersIds[printer]}`,
+                                            success: function () {
+                                                row.find('.printer-select-loading').replaceWith(getPrintersHtml(printer));
+                                                setTaskAcceptIcon(row, printer);
+                                                if (!printerEnabled && !printerNeighbourEnabled) {
+                                                    showError('Автовыбор принтера', 'К сожалению, оба принтера в вашем общежитии недоступны');
+                                                }
+                                            },
+                                            error: [function () { row.find('.printer-select-loading').replaceWith(getPrintersHtml(task.printer)); }, ajaxError('Автовыбор принтера')]
+                                        });
                                     });
-                                });
+                                }
                             }
                         }
                         success = true;

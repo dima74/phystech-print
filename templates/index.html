@@ -1,8 +1,9 @@
 {% extends "with_navbar.html" %}
 {% block head %}
     {{ super() }}
-    <link rel="stylesheet" href="/static/index.css?{{ current_time }}">
     <link rel="stylesheet" href="/static/loader.css">
+    <link rel="stylesheet" href="/static/index.css?{{ current_time }}">
+    <link rel="stylesheet" href="/static/tasksTable.css?{{ current_time }}">
 {% endblock %}
 
 {% block nav_content %}
@@ -39,14 +40,15 @@
 
     <div id="main_container_wrapper">
         <div id="main_container">
+            <div class="hide-on-large-only"></div>
             <div id="tasks_current_wrapper">
                 <div id="tasks_current">
                     <table class="highlight">
                         <thead>
                         <tr>
-                            <th>Время</th>
+                            <th class="hide-on-med-and-down">Время</th>
                             <th>Файл</th>
-                            <th>Страниц</th>
+                            <th class="hide-on-med-and-down">Страниц</th>
                             <th>Цена</th>
                             <th>Принтер</th>
                             <th>С1</th>
@@ -113,10 +115,10 @@
                     <table class="highlight">
                         <thead>
                         <tr>
-                            <th>Время</th>
+                            <th class="hide-on-med-and-down">Время</th>
                             <th>Файл</th>
-                            <th>Страниц</th>
-                            <th>Принтер</th>
+                            <th class="hide-on-med-and-down">Страниц</th>
+                            <th class="hide-on-med-and-down">Принтер</th>
                             <th>Статус</th>
                             <th>С1</th>
                             <th>С2</th>
@@ -151,6 +153,7 @@
                     <i id="print_preview_navigate_next" class="material-icons waves-effect small print-preview-navigate icon">navigate_next</i>
                 </div>
             </div>
+            <div class="hide-on-large-only"></div>
         </div>
     </div>
 {% endblock %}
