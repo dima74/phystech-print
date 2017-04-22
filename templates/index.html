@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block nav_content %}
-    <div class="nav-content">
-        <ul class="tabs tabs-transparent">
+    <div class="nav-content hide-on-large-only">
+        <ul class="tabs-transparent">
             <li class="tab"><a href="#form_upload_div">Загрузить файл</a></li>
             <li class="tab"><a href="#print_preview">Превью</a></li>
             <li class="tab"><a href="#tasks_current_wrapper">Текущие заказы</a></li>
@@ -18,7 +18,7 @@
 
 {% block body %}
     {% if not local %}
-        <div id="loader-wrapper">
+        <div id="loader-wrapper" class="hide-on-med-and-down">
             <div id="loader"></div>
             <div class="loader-section section-left"></div>
             <div class="loader-section section-right"></div>

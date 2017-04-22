@@ -1,3 +1,8 @@
+if (window.matchMedia("only screen and (max-width: 992px)").matches) {
+    $('.nav-content ul').addClass('tabs');
+    $('ul.tabs').tabs();
+}
+
 const SLIDE_DURATION = 1000;
 $(function () {
     const acceptIcon = `<i class="material-icons waves-effect green-text task-action-accept" title="Напечатать">done</i>`;
@@ -725,6 +730,5 @@ $(function () {
         $('body').addClass('loaded');
     }
 
-    $(".button-collapse").sideNav();
     init();
 });
