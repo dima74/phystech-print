@@ -70,7 +70,7 @@ def try_login(login, password):
     return 'OK'
 
 
-@auth.route('/login', methods=['GET', 'POST'])
+@auth.route('/войти', methods=['GET', 'POST'])
 def login():
     if try_login_from_cookies() == 'OK':
         return redirect('/')
@@ -79,7 +79,7 @@ def login():
     return try_login_from_form()
 
 
-@auth.route('/register', methods=['GET', 'POST'])
+@auth.route('/регистрация', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
         return redirect('/')
@@ -99,7 +99,7 @@ def register():
     return 'OK'
 
 
-@auth.route('/logout')
+@auth.route('/выйти')
 def logout():
     session.clear()
     return redirect('/')
