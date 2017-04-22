@@ -37,7 +37,7 @@
                 text-align: center;
             }
 
-            #list-of-features {
+            .list-of-features {
                 text-align: left;
             }
         }
@@ -71,7 +71,7 @@
     Пожалуйста, <a href="//google.ru/chrome/browser/desktop/">обновите</a> свой браузер.<br/>
     Тогда Вы сможете насладиться следующими замечательными возможностями нашего сайта:<br/>
     {% block list_of_features %}
-        <ul id="list_of_features" class="browser-default">
+        <ul class="browser-default list-of-features">
             <li>Автоматический выбор принтера на основе последних заказов</li>
             <li>Автоматическая смена принтера на другой в общежитии, если первый недоступен</li>
             <li>Загрузка файла за один клик вместо трёх</li>
@@ -79,7 +79,7 @@
             <li>Загрузка нескольких файлов одновременно</li>
             <li>Плавные анимации загрузки</li>
             <li>Красивый дизайн</li>
-            <li>Мобильная версия (в разработке)</li>
+            <li>Мобильная версия</li>
         </ul>
     {% endblock %}
 </div>
