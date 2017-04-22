@@ -234,7 +234,7 @@ td {
 
 .print-preview-navigate:not(.print-preview-navigate-active) {
     opacity: 0;
-    transition: opacity 1000ms;
+    transition: opacity 1s;
     cursor: auto;
 }
 

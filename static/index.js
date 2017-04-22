@@ -355,10 +355,20 @@ $(function () {
         }
 
         if (which == 'current') {
-            setPreviewForLastTask();
+            await setPreviewForLastTask();
         }
     }
 
+    /*
+     Состояния превью:
+     а --- анимация загрузки
+     и --- изображение
+     н --- навигация
+     - а.. в начале загрузки страницы
+     - .ин обычное состояние
+     - а.н при смене страницы
+     - а.н при смене заказа
+     */
     async function setPreview(id, page = 1) {
         let task = $('#' + id);
         if (task.hasClass('task-with-preview') && $('#print_preview_image').data('page') == page) {
@@ -375,13 +385,16 @@ $(function () {
 
         $('.task-with-preview').removeClass('task-with-preview');
         task.addClass('task-with-preview');
-        await fetchJson('/query/job/preview/' + id);
-        $('#print_preview_image').attr('src', `/png/${id}/${pageUrl}`);
         $('#print_preview_image').data('page', page);
         $('#print_preview_current_page').text(page + '/' + numberPages);
-
         $('#print_preview_navigate_before').toggleClass('print-preview-navigate-active', page > 1);
         $('#print_preview_navigate_next').toggleClass('print-preview-navigate-active', page < numberPages);
+
+        await fetchJson('/query/job/preview/' + id);
+        let textPage = $('#print_preview_image').data('page');
+        if (page == textPage) {
+            $('#print_preview_image').attr('src', `/png/${id}/${pageUrl}`);
+        }
     }
 
     function changePreviewPage(delta) {
@@ -390,17 +403,17 @@ $(function () {
         setPreview(id, page + delta);
     }
 
-    function setPreviewForLastTask() {
+    async function setPreviewForLastTask() {
         let success = false;
-        $('#tasks_current_tbody').children().each(function () {
-            let task = $(this);
+        for (let child of $('#tasks_current_tbody').children()) {
+            let task = $(child);
             if (task.data('state') === 'ready') {
                 let id = task.attr('id');
-                setPreview(id);
+                await setPreview(id);
                 success = true;
                 return false;
             }
-        });
+        }
         if (!success) {
             $('#print_preview_image').attr('src', '');
             $('#print_preview_navigation').hide();
@@ -760,13 +773,22 @@ $(function () {
         queryPrintersAll = await fetchJson('/query/printers/all/');
     }
 
+    function checkIfPreviewLoads() {
+        let imagePage = parseInt($('#print_preview_image').attr('src').slice(-3));
+        let textPage = $('#print_preview_image').data('page');
+        if (imagePage === textPage) {
+            $('#print_preview').addClass('loaded');
+        }
+    }
+
     async function init() {
         console.log('init');
-        $('#print_preview_image').on('load', function () { $('#print_preview').addClass('loaded'); });
+        $('#print_preview_image').on('load', checkIfPreviewLoads);
         configureForm();
         await Promise.all([updateUserInfo(), updateQueryPrintersAll()]);
         await updateAllTasks();
         setTasksListeners();
+        $('#print_preview_navigation').removeClass('hide');
         $('body').addClass('loaded');
     }
 
