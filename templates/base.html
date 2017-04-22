@@ -66,9 +66,9 @@
 <body>
 
 <div id="oldbrowser">
-    <h1>Физтех.Печать</h1>
+    <h3>Физтех.Печать</h3>
     К сожалению, Ваш браузер недостаточно новый.<br/>
-    Пожалуйста, <a href="//google.ru/chrome/browser/desktop/">обновите</a> свой браузер.<br/>
+    Пожалуйста, <a id="link_browser_download" href="https://google.ru/chrome/browser/desktop/">обновите</a> свой браузер.<br/>
     Тогда Вы сможете насладиться следующими замечательными возможностями нашего сайта:<br/>
     {% block list_of_features %}
         <ul class="browser-default list-of-features">
@@ -90,6 +90,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-url/2.4.1/url.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.0/jquery.form.min.js"></script>
 <script src="/static/framework.js?{{ current_time }}"></script>
+<script>
+    if (/android/i.test(navigator.userAgent)) {
+        $('#link_browser_download').attr('href', 'market://details?id=com.android.chrome');
+    }
+
+    if (/iPad|iPhone|iPod/i.test(navigator.userAgent)) {
+        $('#link_browser_download').attr('href', 'https://itunes.apple.com/app/id535886823');
+    }
+</script>
 {% block script %}{% endblock %}
 
 </body>
