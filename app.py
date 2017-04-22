@@ -4,7 +4,7 @@ from flask_mail import Mail, Message
 
 from src.wrapped import wrapped
 from src.auth import *
-from src.docs import docs
+from src.instructions import instructions
 import socket
 import time
 import sys
@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
 app.register_blueprint(wrapped)
 app.register_blueprint(auth)
-app.register_blueprint(docs)
+app.register_blueprint(instructions)
 mail = Mail(app)
 
 
