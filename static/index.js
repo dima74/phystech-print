@@ -11,6 +11,7 @@ $(function () {
     const rejectIcon = `<i class="material-icons waves-effect red-text task-action-reject" title="Отменить">clear</i>`;
     const addToSharedIcon = `<i class="material-icons waves-effect teal-text task-action-share-add" title="Добавить заказ в общий доступ">share</i>`;
     const removeFromSharedIcon = `<i class="material-icons waves-effect pink-text task-action-share-remove" title="Убрать заказ из общего доступа">share</i>`;
+    const lockedIcon = `<i class="material-icons deep-orange-text task-action-locked icon cursor-default" title="Заказ добавлен в библиотеку другим пользователем">lock</i>`;
     const replayIcon = `<i class="material-icons waves-effect blue-text task-action-replay" title="Добавить в очередь документов">replay</i>`;
     const printersIds = {
         '1': 4,
@@ -210,7 +211,12 @@ $(function () {
     }
 
     function getSharedIcon(task) {
-        return task.shared === 'NO' ? addToSharedIcon : removeFromSharedIcon;
+        const sharedICons = {
+            'NO': addToSharedIcon,
+            'YES': removeFromSharedIcon,
+            'OTHER': lockedIcon
+        };
+        return sharedICons[task.shared];
     }
 
     function getAcceptIcon(cost, printer) {
