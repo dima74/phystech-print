@@ -130,11 +130,14 @@ def send_email_async(message):
         mail.send(message)
 
 
-@app.route('/о_сайте', methods=['POST', 'GET'])
+@app.route('/о_сайте')
 def about():
     if request.method == 'GET':
         return render_template('about.html')
 
+
+@app.route('/новое_предложение', methods=['POST'])
+def suggest():
     text = request.form['form_suggestion']
     if 'form_email' in request.form and request.form['form_email'] != '':
         text = 'От {}\n\n{}'.format(request.form['form_email'], text)
