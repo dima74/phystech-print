@@ -1,0 +1,18 @@
+{% extends "instruction-template.html" %}
+
+{% block centered_wrap_content %}
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">Двусторонняя печать</span>
+            <p>Для того, напечатать с двух сторон, в меню печати (оно может выглядеть иначе, в зависимости от приложения, операционной системы) нужно выбрать пункт «свойства принтера». Проследите, чтобы был выбран именно принтер с url <b>http://print.mipt.ru/printers/future</b> (или без указания порта).</p>
+            <img src='/pic/docs/duplex/screen_1.gif'>
+            <p>В открывшемся окне вы можете выбрать двустороннюю или одностороннюю печать:</p>
+            <img src='/pic/docs/duplex/screen_2.gif'>
+            <p>Сбоку в этом окошке изображено направление текста.</p>
+            <img src='/pic/docs/duplex/screen_3.gif'>
+            <p>Нажав на кнопку «Дополнительно», вы можете выбрать размер бумаги (<b>должен стоять A4</b>), параметры PostScript.</p>
+            <img src='/pic/docs/duplex/screen_4.gif'>
+            <p>Если вы правильно настроили двустороннюю печать, то в свойствах документа в правом нижнем углу будет написано «Двустороняя печать».</p>
+            <img src='/pic/docs/duplex/screen_5.gif'>
+        </div>
+{% endblock %}

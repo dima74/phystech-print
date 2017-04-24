@@ -1,0 +1,23 @@
+{% extends "instruction-template.html" %}
+
+{% block centered_wrap_content %}
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">Печать без драйверов</span>
+            <p>Для печати без драйверов необходимо воспользоваться формой отправки на сайте, она распологается в правом верхнем углу списка ваших документов.</p>
+            <img src='/pic/docs/nodriver/pic1.gif'>
+
+            <p>Система поддерживает следующие форматы:</p>
+            <ul class="browser-default">
+                <li>документы PDF</li>
+                <li>файлы OpenOffice (odt, odp, ods и другие)</li>
+                <li>документы Microsoft Office (doc, xls, ppt, docx, xlsx, pptx, vnd)</li>
+                <li>текстовые документы RTF</li>
+                <li>изображения (png, jpeg, tiff и другие)</li>
+                <li>HTML-документы (пока только файлы)</li>
+                <li>документы в формате PostScript</li>
+                <li>текстовые документы (plain text)</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

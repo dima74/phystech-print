@@ -1,0 +1,42 @@
+{% extends "instruction-template.html" %}
+
+{% block centered_wrap_content %}
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">Изменение свойств порта</span>
+            <p>Если при попытке печати или обращении к свойствам принтера выдаётся ошибка «Отсутствуют права доступа к принтеру», «Отказано в доступе» или т.п., скорее всего, вам нужно изменить пароль в свойствах порта принтера.</p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">Откройте «Устройства и принтеры»</span>
+            <p>Выделите любой принтер одним нажатием левой кнопки мыши.</p>
+            <img src='/pic/docs/faq/change_port_1.png'>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">На панели меню нажмите появившуюся кнопку «Свойства сервера печати»</span>
+            <img src='/pic/docs/faq/change_port_2.png'>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">Выберите вкладку «Порты»</span>
+            <img src='/pic/docs/faq/change_port_3.png'>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">Пролистайте список портов и найдите порт, начинающийся с «http://»</span>
+            <img src='/pic/docs/faq/change_port_4.png'>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">Нажмите на кнопку «Настроить порт»</span>
+            <p>В появившемся окне укажите ваш актуальный логин и пароль.</p>
+            <img src='/pic/docs/faq/change_port_5.png'>
+        </div>
+    </div>
+{% endblock %}
