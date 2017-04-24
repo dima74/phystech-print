@@ -16,5 +16,11 @@
 "([а-яА-Яa-zA-Z ?]*[а-яА-Я ?]*[а-яА-Яa-zA-Z ?]*)"
 «$1»
 
+<img[^>]*>
+<div class="img-wrapper">$0</div>
+
+<div class="img-wrapper">(.*)</div>
+$1
+
 «»
 —
