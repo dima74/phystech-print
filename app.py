@@ -36,7 +36,7 @@ def custom404(error):
 
 @app.errorhandler(500)
 def custom500(error):
-    print('    [500] {}'.format(error.description))
+    print('    [500] {}'.format(error.description if 'description' in error else ''))
     return render_template('error.html', error_message='Внутренняя ошибка сервера', error404=False), 500
 
 
