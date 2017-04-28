@@ -1,9 +1,9 @@
 {% extends "with_navbar.html" %}
 {% block head %}
     {{ super() }}
-    <link rel="stylesheet" href="/static/loader.css">
-    <link rel="stylesheet" href="/static/index.css?{{ current_time }}">
-    <link rel="stylesheet" href="/static/tasksTable.css?{{ current_time }}">
+    <link rel="stylesheet" href="/static/loader.css?{{ version }}">
+    <link rel="stylesheet" href="/static/index.css?{{ version }}">
+    <link rel="stylesheet" href="/static/tasksTable.css?{{ version }}">
 {% endblock %}
 
 {% block nav_content %}
@@ -161,5 +161,5 @@
 {% block script %}
     {{ super() }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.11/socket.io.js"></script>
-    <script src="/static/index.js?{{ current_time }}"></script>
+    <script src="/static/index.js?{{ version }}"></script>
 {% endblock %}

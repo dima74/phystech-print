@@ -11,10 +11,20 @@ import sys
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
+app.config['VERSIOM'] = '1.0.0'
 app.register_blueprint(wrapped)
 app.register_blueprint(auth)
 app.register_blueprint(instructions)
 mail = Mail(app)
+
+
+@app.context_processor
+def inject():
+    return dict(
+        local=is_local(),
+        version=time.time() if is_local() else app.config['VERSIOM'],
+        current_time=time.time()
+    )
 
 
 @app.before_request
@@ -47,7 +57,7 @@ def is_local():
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html', current_time=time.time(), local=is_local())
+    return render_template('index.html')
 
 
 @app.route('/новости')
@@ -103,7 +113,7 @@ def printers():
             abort(500, 'Неизвестный статус принтера: {}'.format(printer['action']))
         printer['status_color'] = status_colors.get(printer['action'], '#4a148c')
         printers.append(printer)
-    return render_template('printers.html', current_time=time.time(), printers=printers)
+    return render_template('printers.html', printers=printers)
 
 
 @app.route('/форум')
