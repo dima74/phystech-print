@@ -148,13 +148,13 @@
                 </div>
             </div>
 
-            <div id="print_preview">
-                <div id="print_preview_title_wrapper">
+            <div id="print_preview" data-state="loading-first">
+                <div id="print_preview_title_wrapper" class="hide-when-preview-absent hide-while-loading-first">
                     <span id="print_preview_title"></span>
                     <a id="print_preview_link_to_pdf" target="_blank"><i class="material-icons waves-effect small icon" title="Скачать как pdf">picture_as_pdf</i></a>
                 </div>
                 <div id="print_preview_image_wrapper">
-                    <div id="print_preview_loader" class="preloader-wrapper active big">
+                    <div id="print_preview_loader" class="preloader-wrapper active big hide-when-preview-present">
                         <div class="spinner-layer spinner-green-only">
                             <div class="circle-clipper left">
                                 <div class="circle"></div>
@@ -167,9 +167,9 @@
                             </div>
                         </div>
                     </div>
-                    <img id="print_preview_image" class="hide-while-print-preview-loads">
+                    <img id="print_preview_image" class="hide-when-preview-absent hide-while-loading-first hide-while-loading">
                 </div>
-                <div id="print_preview_navigation" class="hide">
+                <div id="print_preview_navigation" class="hide-when-preview-absent hide-while-loading-first">
                     <i id="print_preview_navigate_before" class="material-icons waves-effect small print-preview-navigate icon" title="Предыдущая страница">navigate_before</i>
                     <p id="print_preview_current_page"></p>
                     <i id="print_preview_navigate_next" class="material-icons waves-effect small print-preview-navigate icon" title="Следующая страница">navigate_next</i>

@@ -368,7 +368,7 @@ $(function () {
             return;
         }
 
-        $('#print_preview').removeClass('loaded');
+        $('#print_preview').attr('data-state', 'loading');
         let numberPages = task.children().eq(2).text();
         assert(numberPages != '');
         if (page < 1 || page > numberPages) {
@@ -411,8 +411,7 @@ $(function () {
         }
         if (!success) {
             $('#print_preview_image').attr('src', '');
-            $('#print_preview_navigation').hide();
-            $('#print_preview').addClass('loaded');
+            $('#print_preview').attr('data-state', 'preview-absent');
         }
     }
 
@@ -783,7 +782,7 @@ $(function () {
         let imagePage = parseInt($('#print_preview_image').attr('src').slice(-3));
         let textPage = $('#print_preview_image').data('page');
         if (imagePage === textPage) {
-            $('#print_preview').addClass('loaded');
+            $('#print_preview').attr('data-state', 'preview-present');
         }
     }
 
@@ -794,7 +793,6 @@ $(function () {
         await Promise.all([updateUserInfo(true), updateQueryPrintersAll(true)]);
         await updateAllTasks(true);
         setTasksListeners();
-        $('#print_preview_navigation').removeClass('hide');
         $('body').addClass('loaded');
         console.log('init end');
     }

@@ -267,10 +267,18 @@ td {
     vertical-align: middle;
 }
 
-#print_preview.loaded #print_preview_loader {
+#print_preview[data-state="loading-first"] .hide-while-loading-first {
     display: none;
 }
 
-#print_preview:not(.loaded) .hide-while-print-preview-loads {
+#print_preview[data-state="loading"] .hide-while-loading {
+    display: none;
+}
+
+#print_preview[data-state="preview-present"] .hide-when-preview-present {
+    display: none;
+}
+
+#print_preview[data-state="preview-absent"] .hide-when-preview-absent {
     display: none;
 }
