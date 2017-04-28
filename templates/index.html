@@ -1,4 +1,23 @@
 {% extends "with_navbar.html" %}
+
+{% block head_first %}
+    <script>
+        async function fetchJson(url) {
+            let response = await fetch(`${url}`, {credentials: 'same-origin'});
+            let json = await response.json();
+            console.log('[fetchJson]', url, json);
+            return json.ans;
+        }
+
+        let responseQueryUser = fetchJson(`/query/user/`);
+        let responseQueryPrintersAll = fetchJson('/query/printers/all/');
+        let responseQueryTasks = {
+            current: fetchJson(`/query/tasks/current?num=50`),
+            history: fetchJson(`/query/tasks/history?num=50`)
+        };
+    </script>
+{% endblock %}
+
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" href="/static/loader.css?{{ version }}">

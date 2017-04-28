@@ -323,11 +323,8 @@ $(function () {
         })
     }
 
-    // загружает и обновляет задания
-    async function downloadTasks(which) {
-        let response = await fetchJson(`/query/tasks/${which}?num=50`);
+    function updateTasks(which, response) {
         let tasksEncoded = response.array;
-
         for (let taskEncoded of tasksEncoded) {
             let task = decodeTask(taskEncoded);
             let line;
@@ -352,10 +349,6 @@ $(function () {
                     showError('Заказы', 'Неизвестный статус заказа: ' + task.status);
             }
             $(`#tasks_${which}_tbody`).append(line);
-        }
-
-        if (which == 'current') {
-            await setPreviewForLastTask();
         }
     }
 
@@ -421,8 +414,19 @@ $(function () {
         }
     }
 
-    async function downloadAllTasks() {
-        await Promise.all([downloadTasks('current'), downloadTasks('history')]);
+    async function downloadAndUpdateAllTasks(firstTime) {
+        async function downloadAndUpdateTasks(which) {
+            updateTasks(which, await fetchJson(`/query/tasks/${which}?num=50`));
+        }
+
+        if (firstTime) {
+            for (let which of ['current', 'history']) {
+                updateTasks(which, await responseQueryTasks[which]);
+            }
+        } else {
+            await Promise.all([downloadAndUpdateTasks('current'), downloadAndUpdateTasks('history')]);
+        }
+        setPreviewForLastTask();
     }
 
     // все обработчки являются делегатами (или как это называется)
@@ -754,23 +758,23 @@ $(function () {
     }
 
     // загружает задания и устанавливает обработчики
-    async function updateAllTasks() {
-        await downloadAllTasks();
+    async function updateAllTasks(firstTime) {
+        await downloadAndUpdateAllTasks(firstTime);
     }
 
     function updateAllTasksSync() {
         updateAllTasks();
     }
 
-    async function updateUserInfo() {
-        let response = await fetchJson(`/query/user/`);
+    async function updateUserInfo(firstTime) {
+        let response = await (firstTime ? responseQueryUser : fetchJson(`/query/user/`));
         $('#nav_user_login').text(`${response.Nick}`);
         $('#nav_user_name').text(`, ${response.FirstName} ${response.LastName}`);
         $('#nav_account_number').text(response.Account);
     }
 
-    async function updateQueryPrintersAll() {
-        queryPrintersAll = await fetchJson('/query/printers/all/');
+    async function updateQueryPrintersAll(firstTime) {
+        queryPrintersAll = await (firstTime ? responseQueryPrintersAll : fetchJson('/query/printers/all/'));
     }
 
     function checkIfPreviewLoads() {
@@ -785,11 +789,12 @@ $(function () {
         console.log('init');
         $('#print_preview_image').on('load', checkIfPreviewLoads);
         configureForm();
-        await Promise.all([updateUserInfo(), updateQueryPrintersAll()]);
-        await updateAllTasks();
+        await Promise.all([updateUserInfo(true), updateQueryPrintersAll(true)]);
+        await updateAllTasks(true);
         setTasksListeners();
         $('#print_preview_navigation').removeClass('hide');
         $('body').addClass('loaded');
+        console.log('init end');
     }
 
     init();
