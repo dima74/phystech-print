@@ -232,7 +232,7 @@ table.highlight > tbody > tr:hover {
 }
 
 .task-with-preview {
-    background: #e0f2f1;
+    background: #e0f2f1 !important;
 }
 
 td {
