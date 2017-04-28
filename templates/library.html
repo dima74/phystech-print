@@ -2,6 +2,18 @@
 
 {% block nav_title_mobile %}Библиотека{% endblock %}
 
+{% block head_first %}
+    <script>
+        async function fetchJson(url) {
+            let response = await fetch(`${url}`, {credentials: 'same-origin'});
+            let json = await response.json();
+            return json.ans;
+        }
+
+        let responseQueryLibAll = fetchJson('/query/lib/all/?num=100&from=0');
+    </script>
+{% endblock %}
+
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" href="/static/tasksTable.css?{{ version }}">
@@ -31,7 +43,6 @@
         }
     </style>
 {% endblock %}
-
 
 {% block centered_in_container %}
     <table class="highlight">
@@ -84,10 +95,13 @@
             let lastTaskIndex = 0;
             let addingTasks = false;
 
-            async function addTasks() {
+            async function addTasks(firstTime = false) {
+                if (addingTasks) {
+                    return;
+                }
                 addingTasks = true;
                 const numberTasksToAdd = 100;
-                let response = await fetchJson(`/query/lib/all/?num=${numberTasksToAdd}&from=${lastTaskIndex}`);
+                let response = await (firstTime ? responseQueryLibAll : fetchJson(`/query/lib/all/?num=${numberTasksToAdd}&from=${lastTaskIndex}`));
                 lastTaskIndex += numberTasksToAdd;
                 let tasksEncoded = response.array;
                 for (let taskEncoded of tasksEncoded) {
@@ -127,7 +141,7 @@
             }
 
             async function init() {
-                await addTasks();
+                await addTasks(true);
                 setListeners();
                 $('body').addClass('loaded');
             }
