@@ -159,7 +159,7 @@ def suggest():
 
 @app.route('/test')
 def test():
-    return render_template('test/test.html')
+    return render_template('test.html')
 
 
 @app.route('/загрузить', methods=['POST'])
