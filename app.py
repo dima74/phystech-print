@@ -11,7 +11,7 @@ import sys
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
-app.config['VERSIOM'] = '1.0.0'
+app.config['VERSIOM'] = '28.04.2017'
 app.register_blueprint(wrapped)
 app.register_blueprint(auth)
 app.register_blueprint(instructions)
