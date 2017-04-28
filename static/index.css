@@ -182,6 +182,22 @@ label {
     color: black;
 }
 
+#print_preview_title_wrapper {
+    align-self: center;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    min-height: 30px;
+}
+
+#print_preview_title {
+    margin-right: 10px;
+}
+
+#print_preview_link_to_pdf {
+    color: initial;
+}
+
 #print_preview_image_wrapper {
     flex: 1;
     /* http://stackoverflow.com/questions/18639129/how-to-make-nested-flexboxes-work */
@@ -243,9 +259,12 @@ td {
     cursor: default;
 }
 
+.material-icons {
+    user-select: none;
+}
+
 .icon {
     vertical-align: middle;
-    user-select: none;
 }
 
 #print_preview.loaded #print_preview_loader {

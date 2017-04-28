@@ -11,7 +11,6 @@ import sys
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
-app.config['VERSIOM'] = '28.04.2017'
 app.register_blueprint(wrapped)
 app.register_blueprint(auth)
 app.register_blueprint(instructions)
@@ -22,7 +21,7 @@ mail = Mail(app)
 def inject():
     return dict(
         local=is_local(),
-        version=time.time() if is_local() else app.config['VERSIOM'],
+        version=time.time() if is_local() else app.config['VERSION'],
         current_time=time.time()
     )
 

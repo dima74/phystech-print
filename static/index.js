@@ -379,6 +379,8 @@ $(function () {
         $('.task-with-preview').removeClass('task-with-preview');
         task.addClass('task-with-preview');
         $('#print_preview_image').data('page', page);
+        $('#print_preview_title').text($(`#${id}`).find(`.rowFilename`).text());
+        $('#print_preview_link_to_pdf').attr('href', `/preview/${id}`);
         $('#print_preview_current_page').text(page + '/' + numberPages);
         $('#print_preview_navigate_before').toggleClass('print-preview-navigate-active', page > 1);
         $('#print_preview_navigate_next').toggleClass('print-preview-navigate-active', page < numberPages);
