@@ -17,30 +17,29 @@
                 position: relative;
             }
 
-            #printers_info, #printers_history {
+            #printers_info, #tabs_wrapper {
                 height: 100%;
                 width: 50%;
                 position: absolute;
-                padding-top: 10px;
                 padding-bottom: 10px;
             }
 
-            #printers_history {
+            #tabs_wrapper {
                 right: 0;
             }
 
-            #printers_info_wrapper, #printers_history_wrapper {
+            #printers_info_wrapper, #tabs {
                 height: 100%;
                 overflow-y: auto;
             }
         }
 
-        #printers_info_row {
-            margin-bottom: 0;
+        #printers_info {
+            padding-top: 10px;
         }
 
-        #printers_history_wrapper {
-            padding: 0 0.75rem;
+        #printers_info_row {
+            margin-bottom: 0;
         }
 
         /* Информация о принтерах */
@@ -63,6 +62,7 @@
         /* История заказов */
         .printers_history_row {
             display: table-row;
+            height: 50px;
         }
 
         .printers_history_span {
@@ -73,6 +73,28 @@
 
         .printers_history_img {
             display: table-cell;
+        }
+
+        .waves-effect.card {
+            display: block;
+        }
+
+        #tabs_wrapper {
+            padding: 10px;
+        }
+
+        #tabs {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #tabs_wrapper .card {
+            margin: 10px;
+        }
+
+        ul {
+            padding-left: 20px;
         }
     </style>
 {% endblock %}
@@ -86,7 +108,7 @@
                 <div id="printers_info_row" class="row">
                     {% for printer in printers %}
                         <div class="col s12 l6">
-                            <div class="card">
+                            <div class="waves-effect card printer-info-card" data-name="{{ printer.name }}">
                                 <div class="printer-info-paper-wrapper">
                                     <img src="/pic/paper.png?pid={{ printer.id }}&time={{ current_time }}" class="printer-info-paper">
                                 </div>
@@ -113,22 +135,52 @@
             </div>
         </div>
 
-        <div id="printers_history">
-            <div id="printers_history_wrapper">
-                <div class="card">
-                    <div class="card-content">
-                        <span class="card-title">История за день</span>
+        <div id="tabs_wrapper">
+            <div id="tabs">
+                <div></div>
+                <div id="tabs_holder">
+                    <ul class="tabs">
+                        <li class="tab"><a href="#printers_history">История за день</a></li>
+                        <li class="tab"><a href="#printers_details">Подробная информация</a></li>
+                    </ul>
 
-                        <div id="printers_history_table">
-                            {% for printer in printers %}
-                                <div class="printers_history_row">
-                                    <span class="printers_history_span">{{ printer.name }}</span>
-                                    <img class="printers_history_img" data-src="/pic/activity.png?pid={{ printer.id }}&time={{ current_time }}">
-                                </div>
-                            {% endfor %}
+                    <div id="printers_history" class="card">
+                        <div class="card-content">
+                            <div id="printers_history_table">
+                                {% for printer in printers %}
+                                    <div class="printers_history_row">
+                                        <span class="printers_history_span">{{ printer.name }}</span>
+                                        <img class="printers_history_img" data-src="/pic/activity.png?pid={{ printer.id }}&time={{ current_time }}">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="printers_details">
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-title">Принтер <span id="printers_details_name"></span></span>
+
+                                <ul class="browser-default">
+                                    <li>Лазерный чёрно-белый принтер <span id="printers_details_model"></span></li>
+                                    <li id="printers_details_locationDescription"></li>
+                                    <li>Формат бумаги: A4</li>
+                                    <li>Поддерживается автоматическая двусторонняя печать</li>
+                                    <li>Скорость печати: до <span id="printers_details_pagesPerMinute"></span> страниц в минуту</li>
+                                    <li>Лоток подачи: <span id="printers_details_numberPagesMax"></span> страниц</li>
+                                    <li id="printers_details_price">Стоимость печати:
+                                        <ul class="browser-default">
+                                            <li>Односторонняя: от <span id="printers_details_pageCostSingle"></span> руб.</li>
+                                            <li>Двусторонняя: от <span id="printers_details_pageCostDuplex"></span> руб.</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div></div>
             </div>
         </div>
     </div>
@@ -136,15 +188,33 @@
 
 {% block script %}
     {{ super() }}
+    <script src="/static/printersInfo.js"></script>
     <script>
         function resizePrinterHistoryImages() {
             let width = $('#printers_history_table').width() - $('.printers_history_span').width();
-            $('.printers_history_img').each(function () {
-                this.src = this.dataset.src + `&y=50&x=${width}`;
-            })
+            if (width > 0) {
+                $('.printers_history_img').each(function () {
+                    this.src = this.dataset.src + `&y=50&x=${width}`;
+                })
+            }
         }
 
         resizePrinterHistoryImages();
         window.onresize = resizePrinterHistoryImages;
+        setPrinterInfoFor('1');
+
+        function setPrinterInfoFor(printer) {
+            let info = printersInfos[printer];
+            $('#printers_details_name').text(printer);
+            for (let property in info) {
+                $(`#printers_details_${property}`).text(info[property]);
+            }
+        }
+
+        $('.printer-info-card').click(function () {
+            setPrinterInfoFor($(this).data('name'));
+            $('ul.tabs').tabs('select_tab', 'printers_details');
+            $('#tabs_wrapper')[0].scrollIntoView();
+        });
     </script>
 {% endblock %}

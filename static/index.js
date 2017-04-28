@@ -243,7 +243,7 @@ $(function () {
             acceptIcon: '',
             sharedIcon: '',
             rejectIcon: ''
-        }
+        };
         row = Object.assign(rowDefault, row);
 
         let idAttribute = row.id === undefined ? '' : `id=${row.id}`;
