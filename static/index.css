@@ -228,11 +228,11 @@ label {
 }
 
 table.highlight > tbody > tr:hover {
-    background-color: #b2dfdb;
+    background-color: #80cbc4;
 }
 
 .task-with-preview {
-    background: #e0f2f1 !important;
+    background: #b2dfdb !important;
 }
 
 td {
