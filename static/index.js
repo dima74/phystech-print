@@ -83,12 +83,6 @@ $(function () {
         }
     }
 
-    function removeLoadingFrom(element) {
-        return function () {
-            element.removeClass('table-cell-loading');
-        };
-    }
-
     function changeElementContent(element, newHtml) {
         return function () {
             element.html(newHtml);
@@ -124,7 +118,7 @@ $(function () {
     // считает, что в ячейке находится ровно один элемент
     function setCellContentToLoading(cell) {
         let children = cell.children();
-        if (children.length == 1) {
+        if (children.length === 1) {
             // добавляем анимацию загрузки в ячейку
             cell.append(loadingAnimation);
         }
@@ -167,7 +161,7 @@ $(function () {
                 processData: false,
                 success: function (data) {
                     console.log('[Загрузка файла]', data);
-                    if (data != 'OK') {
+                    if (data !== 'OK') {
                         showError(data);
                         throw '';
                     }
@@ -196,7 +190,7 @@ $(function () {
             $('#file_dragged').toggleClass('multiple', event.originalEvent.dataTransfer.items.length > 1);
         }).on('dragleave dragend drop', function () {
             --counter;
-            if (counter == 0) {
+            if (counter === 0) {
                 $('body').removeClass('is-dragover');
             }
         }).on('drop', function (event) {
@@ -210,7 +204,7 @@ $(function () {
         for (let i = 0; i < 8; ++i) {
             for (let suffix of ['', 'b']) {
                 let printer = (i + 1) + suffix;
-                let selected = printer == selectedPrinter ? ' selected' : '';
+                let selected = printer === selectedPrinter ? ' selected' : '';
                 printersHtml += `<option${selected}>${printer}</option>`;
             }
         }
@@ -364,12 +358,12 @@ $(function () {
      */
     async function setPreview(id, page = 1) {
         let task = $('#' + id);
-        if (task.hasClass('task-with-preview') && $('#print_preview_image').data('page') == page) {
+        if (task.hasClass('task-with-preview') && $('#print_preview_image').data('page') === page) {
             return;
         }
 
         let numberPages = task.children().eq(2).text();
-        assert(numberPages != '');
+        assert(numberPages !== '');
         if (page < 1 || page > numberPages) {
             return;
         }
@@ -387,7 +381,7 @@ $(function () {
 
         await fetchJson('/query/job/preview/' + id);
         let textPage = $('#print_preview_image').data('page');
-        if (page == textPage) {
+        if (page === textPage) {
             $('#print_preview_image').attr('src', `/png/${id}/${pageUrl}`);
         }
     }
@@ -440,7 +434,7 @@ $(function () {
                 .children()
                 .slideUp(SLIDE_DURATION, function () {
                     row.remove();
-                    if ($('.task-with-preview').length == 0) {
+                    if ($('.task-with-preview').length === 0) {
                         setPreviewForLastTask();
                     }
                 });
@@ -460,18 +454,18 @@ $(function () {
                 .wrapInner('<div style="display: none;" />')
                 .children()
                 .slideDown(SLIDE_DURATION, function () {
-                    var $set = $(this);
+                    let $set = $(this);
                     $set.replaceWith($set.contents());
                 });
         }
 
         function convertRowToTask(row) {
-            let cells = []
+            let cells = [];
             row.children(':lt(3)').each(function () {
                 cells.push($(this).text());
             });
             let id = row.attr('id');
-            let shared = row.find('.task-action-share-remove').length == 0 ? 'NO' : 'YES';
+            let shared = row.find('.task-action-share-remove').length === 0 ? 'NO' : 'YES';
             return {
                 id: id,
                 time: cells[0], // TODO вместо cells[0] взять текущее время
@@ -645,7 +639,7 @@ $(function () {
             let mostUsedPrinter = -1;
             for (let printer of printers) {
                 let dormitory = printer[0];
-                if (mostUsedDormitory == -1 || frequenciesDormitories[dormitory] > frequenciesDormitories[mostUsedDormitory]) {
+                if (mostUsedDormitory === -1 || frequenciesDormitories[dormitory] > frequenciesDormitories[mostUsedDormitory]) {
                     mostUsedDormitory = dormitory;
                     let printerNeighbour = printersNeighbours[printer];
                     mostUsedPrinter = frequenciesPrinters[printer] >= frequenciesPrinters[printerNeighbour] ? printer : printerNeighbour;
@@ -656,7 +650,7 @@ $(function () {
 
         function initSocket() {
             function findRowAndUpdate(task) {
-                if (task.cost === undefined || task.cost == '0.00' && task.status != 'Invalid') {
+                if (task.cost === undefined || task.cost === '0.00' && task.status !== 'Invalid') {
                     return;
                 }
                 let id = task.id;
@@ -664,17 +658,17 @@ $(function () {
                 $($('#tasks_current_tbody').children().get().reverse()).each(function () {
                     let row = $(this);
                     if (row.attr('id') === undefined && row.children().eq(1).text() === task.filename) {
-                        if (row.data('state') == 'ready') {
+                        if (row.data('state') === 'ready') {
                             // понять, когда этот if срабатывает
                             row.attr('id', id);
                             row.find('.preloader-wrapper').replaceWith(task.cost);
-                        } else if (task.status == 'Invalid') {
+                        } else if (task.status === 'Invalid') {
                             row.replaceWith(getInvalidTaskRow(task));
                         } else {
-                            assert(task.status == 'Pending');
+                            assert(task.status === 'Pending');
                             row.replaceWith(getCurrentTaskRow(task, getLoadingAnimation('printer-select-loading')));
 
-                            if (task.status == 'Pending') {
+                            if (task.status === 'Pending') {
                                 row = $('#' + id);
                                 setPreviewForLastTask();
 
@@ -689,8 +683,8 @@ $(function () {
                                     promiseQueryPrintersAll.then(function (data) {
                                         queryPrintersAll = data.ans;
                                         let printerNeighbour = printersNeighbours[printer];
-                                        let printerEnabled = queryPrintersAll[printersIds[printer]].status == 'ENABLED';
-                                        let printerNeighbourEnabled = queryPrintersAll[printersIds[printerNeighbour]].status == 'ENABLED';
+                                        let printerEnabled = queryPrintersAll[printersIds[printer]].status === 'ENABLED';
+                                        let printerNeighbourEnabled = queryPrintersAll[printersIds[printerNeighbour]].status === 'ENABLED';
                                         if (!printerEnabled && printerNeighbourEnabled) {
                                             printer = printerNeighbour;
                                         }
@@ -736,12 +730,12 @@ $(function () {
                     for (let taskInfo of array) {
                         let task = decodeTask(taskInfo);
                         let row = $('#' + task.id);
-                        if (row.length == 0) {
+                        if (row.length === 0) {
                             findRowAndUpdate(task);
                         } else {
-                            if (task.status == 'Printing') {
+                            if (task.status === 'Printing') {
                                 row.find('.history-task-status').replaceWith(getHistoryTaskStatus(task.status));
-                            } else if (task.status == 'Success') {
+                            } else if (task.status === 'Success') {
                                 moveTaskToHistory(row, 'Success');
                                 if (isTabActive) {
                                     Materialize.toast(task.filename + ': Успешно напечатан', 10000);
