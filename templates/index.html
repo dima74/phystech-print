@@ -154,7 +154,7 @@
                     <a id="print_preview_link_to_pdf" target="_blank"><i class="material-icons waves-effect small icon" title="Скачать как pdf">picture_as_pdf</i></a>
                 </div>
                 <div id="print_preview_image_wrapper">
-                    <div id="print_preview_loader" class="preloader-wrapper active big hide-when-preview-present">
+                    <div id="print_preview_loader" class="preloader-wrapper active big hide-when-preview-present hide-when-preview-absent">
                         <div class="spinner-layer spinner-green-only">
                             <div class="circle-clipper left">
                                 <div class="circle"></div>
@@ -168,6 +168,12 @@
                         </div>
                     </div>
                     <img id="print_preview_image" class="hide-when-preview-absent hide-while-loading-first hide-while-loading">
+                </div>
+                <div id="print_preview_info" class="hide-when-preview-absent hide-while-loading-first">
+                    <p class="print_preview_info_p"><span id="print_preview_info_sides"></span>, А4</p>
+                    <p class="print_preview_info_p">Страниц: <span id="print_preview_info_numberPages"></span></p>
+                    <p class="print_preview_info_p">Заполнение: <span id="print_preview_info_filling"></span></p>
+                    <p class="print_preview_info_p">Стоимость: <span id="print_preview_info_cost"></span> руб.</p>
                 </div>
                 <div id="print_preview_navigation" class="hide-when-preview-absent hide-while-loading-first">
                     <i id="print_preview_navigate_before" class="material-icons waves-effect small print-preview-navigate icon" title="Предыдущая страница">navigate_before</i>

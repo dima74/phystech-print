@@ -98,7 +98,9 @@ $(function () {
             cost: task.Cost,
             printer: task.ShortName,
             status: task.Status,
-            shared: task.Shared
+            shared: task.Shared,
+            duplex: task.Duplex,
+            filling: task.FillPercent
         };
     }
 
@@ -243,13 +245,15 @@ $(function () {
         let idAttribute = row.id === undefined ? '' : `id=${row.id}`;
         let dataStateAttribute = row.state === undefined ? '' : `data-state="${row.state}"`;
         let dataAllowPreviewAttribute = row.allowPreview === undefined ? '' : `data-allow-preview="${row.allowPreview}"`;
+        let dataDuplexAttribute = row.duplex === undefined ? '' : `data-duplex="${row.duplex}"`;
+        let dataFillingAttribute = row.filling === undefined ? '' : `data-filling="${row.filling}"`;
 
         let lastThreeColumns = row.colspan === undefined ?
             `<td class="rowAcceptIcon">${row.acceptIcon}</td>
              <td class="rowSharedIcon">${row.sharedIcon}</td>
              <td class="rowRejectIcon">${row.rejectIcon}</td>`
             : `<td colspan="3" class="rowStatus">${row.colspan}</td>`;
-        return `<tr ${idAttribute} ${dataStateAttribute} ${dataAllowPreviewAttribute}>
+        return `<tr ${idAttribute} ${dataStateAttribute} ${dataAllowPreviewAttribute} ${dataDuplexAttribute} ${dataFillingAttribute}>
                     <td class="rowTime hide-on-med-and-down">${row.time}</td>
                     <td class="rowFilename">${row.filename}</td>
                     <td class="rowNumberPages hide-on-med-and-down">${row.numberPages}</td>
@@ -271,7 +275,9 @@ $(function () {
             sharedIcon: getSharedIcon(task),
             rejectIcon: rejectIcon,
             state: 'ready',
-            allowPreview: 'true'
+            allowPreview: 'true',
+            duplex: task.duplex,
+            filling: task.filling
         })
     }
 
@@ -297,7 +303,7 @@ $(function () {
     }
 
     function getHistoryTaskRow(task) {
-        return `<tr id="${task.id}" data-allow-preview="true">
+        return `<tr id="${task.id}" data-allow-preview="true" data-duplex="${task.duplex}" data-filling="${task.filling}">
                     <td class="rowTime hide-on-med-and-down">${task.time}</td>
                     <td class="rowFilename">${task.filename}</td>
                     <td class="rowNumberPages hide-on-med-and-down">${task.numberPages}</td>
@@ -373,8 +379,15 @@ $(function () {
         $('.task-with-preview').removeClass('task-with-preview');
         task.addClass('task-with-preview');
         $('#print_preview_image').data('page', page);
-        $('#print_preview_title').text($(`#${id}`).find(`.rowFilename`).text());
+
+        $('#print_preview_title').text(task.find(`.rowFilename`).text());
         $('#print_preview_link_to_pdf').attr('href', `/preview/${id}`);
+
+        $('#print_preview_info_sides').text(task.data('duplex') === 'YES' ? 'Двусторонняя печать' : 'Односторонняя печать');
+        $('#print_preview_info_numberPages').text(task.find('.rowNumberPages').text() || 'загрузка...');
+        $('#print_preview_info_filling').text(`${parseFloat(task.data('filling'))}%` || 'загрузка...');
+        $('#print_preview_info_cost').text(task.find('.rowCost').text() || '?');
+
         $('#print_preview_current_page').text(page + '/' + numberPages);
         $('#print_preview_navigate_before').toggleClass('print-preview-navigate-active', page > 1);
         $('#print_preview_navigate_next').toggleClass('print-preview-navigate-active', page < numberPages);

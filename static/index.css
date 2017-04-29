@@ -45,7 +45,7 @@
 
     #print_preview {
         grid-area: print_preview;
-        padding: 10px;
+        padding: 10px 10px 0 10px;
         overflow-y: auto;
     }
 }
@@ -221,10 +221,21 @@ label {
 }
 
 #print_preview_navigation {
+    align-self: center;
     display: flex;
     align-items: center;
-    justify-content: center;
-    min-height: 3rem;
+    min-height: 30px;
+}
+
+#print_preview_info {
+    margin-top: 10px;
+    align-self: center;
+    text-align: center;
+}
+
+.print_preview_info_p {
+    margin: 0;
+    line-height: 1;
 }
 
 table.highlight > tbody > tr:hover {
@@ -251,7 +262,8 @@ td {
 
 .print-preview-navigate:not(.print-preview-navigate-active) {
     opacity: 0;
-    transition: opacity 1s;
+    visibility: hidden;
+    transition: opacity 1s, visibility 1s;
     cursor: default;
 }
 
