@@ -368,7 +368,6 @@ $(function () {
             return;
         }
 
-        $('#print_preview').attr('data-state', 'loading');
         let numberPages = task.children().eq(2).text();
         assert(numberPages != '');
         if (page < 1 || page > numberPages) {
@@ -376,6 +375,7 @@ $(function () {
         }
         let pageUrl = ('000' + page).slice(-3);
 
+        $('#print_preview').attr('data-state', 'loading');
         $('.task-with-preview').removeClass('task-with-preview');
         task.addClass('task-with-preview');
         $('#print_preview_image').data('page', page);
