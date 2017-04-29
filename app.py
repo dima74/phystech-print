@@ -145,7 +145,7 @@ def about():
         return render_template('about.html')
 
 
-@app.route('/новое_предложение', methods=['POST'])
+@app.route('/suggest', methods=['POST'])
 def suggest():
     text = request.form['form_suggestion']
     if 'form_email' in request.form and request.form['form_email'] != '':
