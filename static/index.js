@@ -156,7 +156,7 @@ $(function () {
             }
 
             $.post({
-                url: "/загрузить",
+                url: "/upload",
                 data: formData,
                 cache: false,
                 contentType: false,

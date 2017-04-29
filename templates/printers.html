@@ -188,7 +188,7 @@
 
 {% block script %}
     {{ super() }}
-    <script src="/static/printersInfo.js"></script>
+    <script src="/static/printersInfo.js{{ version }}"></script>
     <script>
         function resizePrinterHistoryImages() {
             let width = $('#printers_history_table').width() - $('.printers_history_span').width();

@@ -161,7 +161,7 @@ def test():
     return render_template('test.html')
 
 
-@app.route('/загрузить', methods=['POST'])
+@app.route('/upload', methods=['POST'])
 @login_required_cookies_only
 def upload_file():
     files = [file for file in request.files.getlist('file') if file.filename != '']
