@@ -64,9 +64,9 @@
                 <br>Вот некоторые возможности, которых нет на оригинальном сайте:</p>
             {{ self.list_of_features() }}
             <p>Пожалуйста, пишите любые предложения и вопросы <a href="mailto:info@физтех-печать.рф">на почту</a>.
-                <br>Также можете оставить предложение в форме ниже:</p>
+                {#<br>Также можете оставить предложение в форме ниже:#}</p>
 
-            <div id="form_wrapper" class="form-form">
+            {#<div id="form_wrapper" class="form-form">
                 <form id="form" method="POST" action="/suggest">
                     <textarea id="form_suggestion" name="form_suggestion" placeholder="Ваше предложение" class="materialize-textarea" required></textarea>
                     <input id="form_email" name="form_email" placeholder="Email, на который придёт ответ (необязательно)">
@@ -88,7 +88,7 @@
                 </div>
 
                 <p id="form_result"></p>
-            </div>
+            </div>#}
         </div>
     </div>
 {% endblock %}
