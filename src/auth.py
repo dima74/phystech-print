@@ -88,7 +88,9 @@ def register():
     data = {
         'flogin': login,
         'fpass': password,
-        'fpassConfirm': request.form['register_password_confirm']
+        'fpassConfirm': request.form['register_password_confirm'],
+        'ffirstName': request.form['register_firstname'],
+        'flastName': request.form['register_lastname']
     }
     r = requests.post(HOST + '/query/register/', data=data).json()
     if r['error']:

@@ -62,7 +62,7 @@
 
             {% if g.user %}
                 <div id="nav_right" class="brand-logo right">
-                    <span id="nav_user_info"><span id="nav_user_login">{{ g.user.login }}</span><span id="nav_user_name" class="hide-on-med-and-down">, {{ g.user.first_name }} {{ g.user.last_name }}</span></span>
+                    <span id="nav_user_info"><span id="nav_user_login">{{ g.user.login }}</span><span id="nav_user_name" class="hide-on-med-and-down">{% if g.user.first_name != '' or g.user.last_name != '' %}, {{ g.user.first_name }} {{ g.user.last_name }}{% endif %}</span></span>
                     <span id="nav_account"><span id="nav_account_number">{{ g.user.account }}</span> руб.</span>
                     <span id="nav_button"><button id="button_logout" class="waves-effect waves-light btn">Выйти</button></span>
                 </div>

@@ -787,7 +787,9 @@ $(function () {
     async function updateUserInfo(firstTime) {
         let response = await (firstTime ? responseQueryUser : fetchJson(`/query/user/`));
         $('#nav_user_login').text(`${response.Nick}`);
-        $('#nav_user_name').text(`, ${response.FirstName} ${response.LastName}`);
+        if (response.FirstName !== '' || response.LastName !== '') {
+            $('#nav_user_name').text(`, ${response.FirstName} ${response.LastName}`);
+        }
         $('#nav_account_number').text(response.Account);
     }
 
