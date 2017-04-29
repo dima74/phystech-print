@@ -1,10 +1,14 @@
-if (window.matchMedia("only screen and (max-width: 992px)").matches) {
+function isMobile() {
+    return window.matchMedia("only screen and (max-width: 992px)").matches;
+}
+
+if (isMobile()) {
     $('.nav-content ul').addClass('tabs');
     $('ul.tabs').tabs();
 }
 
 $(window).resize(function () {
-    if (window.matchMedia("only screen and (max-width: 992px)").matches) {
+    if (isMobile()) {
         $('.nav-content ul').addClass('tabs');
         $('ul.tabs').tabs();
     } else {
@@ -172,6 +176,9 @@ $(function () {
             $formUpload.reset();
             $('#form_upload_checkbox_longedge').prop('disabled', true);
             promiseQueryPrintersAll = $.get('/query/printers/all/');
+            if (isMobile()) {
+                $('ul.tabs').tabs('select_tab', 'tasks_current_wrapper');
+            }
         }
 
         // загрузка файла сразу после выбора
