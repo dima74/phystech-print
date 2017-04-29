@@ -290,7 +290,7 @@ $(function () {
         });
     }
 
-    function getQueueTaskRow(task) {
+    function getQueueOrPrintingTaskRow(task, status) {
         return getTaskRow({
             id: task.id,
             time: task.time,
@@ -298,7 +298,7 @@ $(function () {
             numberPages: task.numberPages,
             cost: task.cost,
             printer: task.printer,
-            colspan: 'готовится к печати...'
+            colspan: status
         });
     }
 
@@ -343,7 +343,10 @@ $(function () {
                     line = getInvalidTaskRow(task);
                     break;
                 case 'Queue':
-                    line = getQueueTaskRow(task);
+                    line = getQueueOrPrintingTaskRow(task, 'готовится к печати...');
+                    break;
+                case 'Printing':
+                    line = getQueueOrPrintingTaskRow(task, 'печатается...');
                     break;
                 default:
                     showError('Заказы', 'Неизвестный статус заказа: ' + task.status);
