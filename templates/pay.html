@@ -30,12 +30,12 @@
     <div class="card">
         <div class="card-content">
             <span class="card-title">Пополнение счёта</span>
-            <form class="form-visa" action='https://ussp.server.paykeeper.ru/create/' method='POST'>
+            <form id="form" class="form-visa" action='https://ussp.server.paykeeper.ru/create/' method='POST'>
                 <input type='hidden' value='{{ g.user.login }}' name='clientid'/>
 
                 <div class="input-field">
-                    <input value="50" name="sum" id="sum" type="number" class="validate" autofocus>
-                    <label for="sum">Введите сумму для пополнения:</label>
+                    <input placeholder="50" id="sum0" name="sum0" type="number" class="validate" autofocus>
+                    <label for="sum0">Введите сумму для пополнения:</label>
                 </div>
                 <div class="input-field">
                     <select name="pstype" id="pstype">
@@ -81,7 +81,15 @@
                 let formState = $(this).find(':selected').data('form-state');
                 $('form').addClass(formState);
                 $('#client_phone').attr('type', formState === 'form-qiwi' ? 'tel' : 'hidden');
-            })
+            });
+
+            $('#form').submit(function () {
+                let value = $('#sum0').val();
+                if (value === '') {
+                    value = $('#sum0').attr('placeholder');
+                }
+                $('#form').append(`<input type="hidden" name="sum" value="${value}">`);
+            });
         });
     </script>
 {% endblock %}
