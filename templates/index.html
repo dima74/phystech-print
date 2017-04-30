@@ -223,6 +223,7 @@
 
 {% block script %}
     {{ super() }}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.11/socket.io.js"></script>
+    {# Единственное изменение --- убран блок "if ('undefined' != typeof window) { var swfobject=... }" #}
+    <script src="/static/socket.io.min.js?0.9.17"></script>
     <script src="/static/index.js?{{ version }}"></script>
 {% endblock %}
