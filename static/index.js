@@ -443,17 +443,13 @@ $(function () {
 
     async function downloadAndUpdateAllTasks(firstTime) {
         async function downloadAndUpdateTasks(which) {
-            updateTasks(which, await fetchJson(`/query/tasks/${which}?num=50`));
+            updateTasks(which, await (firstTime ? responseQueryTasks[which] : fetchJson(`/query/tasks/${which}?num=50`)));
+            if (which === 'current') {
+                setPreviewForLastTask();
+            }
         }
 
-        if (firstTime) {
-            for (let which of ['current', 'history']) {
-                updateTasks(which, await responseQueryTasks[which]);
-            }
-        } else {
-            await Promise.all([downloadAndUpdateTasks('current'), downloadAndUpdateTasks('history')]);
-        }
-        setPreviewForLastTask();
+        await Promise.all([downloadAndUpdateTasks('current'), downloadAndUpdateTasks('history')]);
     }
 
     // все обработчки являются делегатами (или как это называется)
