@@ -96,6 +96,10 @@
         ul {
             padding-left: 20px;
         }
+
+        .text-decoration-underline {
+            text-decoration: underline;
+        }
     </style>
 {% endblock %}
 
@@ -141,7 +145,7 @@
                 <div id="tabs_holder">
                     <ul class="tabs">
                         <li class="tab"><a href="#printers_history">История за день</a></li>
-                        <li class="tab"><a href="#printers_details">Подробная информация</a></li>
+                        <li class="tab"><a href="#printers_details" class="active">Подробная информация</a></li>
                     </ul>
 
                     <div id="printers_history" class="card">
@@ -160,19 +164,18 @@
                     <div id="printers_details">
                         <div class="card">
                             <div class="card-content">
-                                <span class="card-title">Принтер <span id="printers_details_name"></span></span>
-
+                                <span class="card-title">Принтер <span id="printers_details_name" class="text-decoration-underline"></span></span>
                                 <ul class="browser-default">
-                                    <li>Лазерный чёрно-белый принтер <span id="printers_details_model"></span></li>
-                                    <li id="printers_details_locationDescription"></li>
+                                    <li>Лазерный чёрно-белый принтер <span id="printers_details_model" class="text-decoration-underline"></span></li>
+                                    <li>Расположение: <span id="printers_details_locationDescription" class="text-decoration-underline"></span></li>
                                     <li>Формат бумаги: A4</li>
                                     <li>Поддерживается автоматическая двусторонняя печать</li>
-                                    <li>Скорость печати: до <span id="printers_details_pagesPerMinute"></span> страниц в минуту</li>
-                                    <li>Лоток подачи: <span id="printers_details_numberPagesMax"></span> страниц</li>
+                                    <li>Скорость печати: до <span id="printers_details_pagesPerMinute" class="text-decoration-underline"></span> страниц в минуту</li>
+                                    <li>Лоток подачи: <span id="printers_details_numberPagesMax" class="text-decoration-underline"></span> страниц</li>
                                     <li id="printers_details_price">Стоимость печати:
                                         <ul class="browser-default">
-                                            <li>Односторонняя: от <span id="printers_details_pageCostSingle"></span> руб.</li>
-                                            <li>Двусторонняя: от <span id="printers_details_pageCostDuplex"></span> руб.</li>
+                                            <li>Односторонняя: от <span id="printers_details_pageCostSingle" class="text-decoration-underline"></span> руб.</li>
+                                            <li>Двусторонняя: от <span id="printers_details_pageCostDuplex" class="text-decoration-underline"></span> руб.</li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -188,7 +191,7 @@
 
 {% block script %}
     {{ super() }}
-    <script src="/static/printersInfo.js{{ version }}"></script>
+    <script src="/static/printersInfo.js?{{ version }}"></script>
     <script>
         function resizePrinterHistoryImages() {
             let width = $('#printers_history_table').width() - $('.printers_history_span').width();
