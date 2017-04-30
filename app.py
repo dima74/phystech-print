@@ -1,6 +1,7 @@
 from threading import Thread
 from flask import Flask
 from flask_mail import Mail, Message
+from requests import ReadTimeout
 
 from src.wrapped import wrapped
 from src.auth import *
@@ -47,6 +48,11 @@ def custom404(error):
 def custom500(error):
     print('    [500] {}'.format(str(error)))
     return render_template('error.html', error_message='Внутренняя ошибка сервера', error404=False), 500
+
+
+@app.errorhandler(ReadTimeout)
+def handle_read_timeout(error):
+    return 'Ошибка при установлении соединения с сервером print.mipt.ru', 500
 
 
 def is_local():
@@ -101,7 +107,7 @@ def printers():
     printers_names = ['1', '1b', '2', '2b', '3', '3b', '4', '4b', '6', '6b', '7', '7b', '8', '8b']
     # printers_ids = [4, 23, 7, 22, 3, 21, 5, 25, 1, 24, 2, 20, 6, 19]
 
-    printers_info = requests.get(HOST + '/query/printers/all/').json()['ans']
+    printers_info = requests.get(HOST + '/query/printers/all/', timeout=TIMEOUT).json()['ans']
     printers = []
     for printer_name in printers_names:
         printer_id = printers_ids[printer_name]

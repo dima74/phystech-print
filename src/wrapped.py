@@ -5,7 +5,7 @@ wrapped = Blueprint('wrapped', __name__)
 
 def query_route_json():
     path = request.full_path
-    r = g.user.session.get(HOST + path)
+    r = g.user.session.get(HOST + path, timeout=TIMEOUT)
     print('route {}. request: {}'.format(path, r.text))
     json = r.json()
     if json['error']:

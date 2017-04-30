@@ -59,7 +59,7 @@ def try_login(login, password):
         return 'OK'
 
     session = requests.Session()
-    r = session.post(HOST + '/query/user/', {'login': login, 'pass': password}).json()
+    r = session.post(HOST + '/query/user/', {'login': login, 'pass': password}, timeout=TIMEOUT).json()
     if r['error']:
         g.user = None
         return r['msg']
@@ -92,7 +92,7 @@ def register():
         'ffirstName': request.form['register_firstname'],
         'flastName': request.form['register_lastname']
     }
-    r = requests.post(HOST + '/query/register/', data=data).json()
+    r = requests.post(HOST + '/query/register/', data=data, timeout=TIMEOUT).json()
     if r['error']:
         return r['msg']
 

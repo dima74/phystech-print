@@ -12,3 +12,4 @@ from flask import jsonify
 from flask import send_file
 
 HOST = 'http://print.mipt.ru'
+TIMEOUT = 10
