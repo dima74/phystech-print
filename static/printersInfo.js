@@ -1,7 +1,7 @@
 let printersInfos = {
     '1': {
         numberPagesMax: '250',
-        locationDescription: 'Принтер расположен на 2ем этаже 1го общежития',
+        locationDescription: 'второй этаж первого общежития',
         locationLatitude: '55.930873',
         locationLongitude: '37.521509',
         pagesPerMinute: '28',
@@ -11,7 +11,7 @@ let printersInfos = {
     },
     '1b': {
         numberPagesMax: '250',
-        locationDescription: 'Принтер расположен в 1-ом общежитии',
+        locationDescription: 'первое общежитие',
         locationLatitude: '0.000000',
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
@@ -21,7 +21,7 @@ let printersInfos = {
     },
     '2': {
         numberPagesMax: '250',
-        locationDescription: 'Принтер расположен на 1-ом этаже 2го общежития, рядом с проходной',
+        locationDescription: 'первый этаж второго общежития, рядом с проходной',
         locationLatitude: '55.930194',
         locationLongitude: '37.521832',
         pagesPerMinute: '28',
@@ -31,7 +31,7 @@ let printersInfos = {
     },
     '2b': {
         numberPagesMax: '250',
-        locationDescription: 'Принтер расположен на 1-ом этаже 2го общежития, рядом с проходной',
+        locationDescription: 'первый этаж второго общежития, рядом с проходной',
         locationLatitude: '55.930194',
         locationLongitude: '37.521832',
         pagesPerMinute: '28',
@@ -41,7 +41,7 @@ let printersInfos = {
     },
     '3': {
         numberPagesMax: '250',
-        locationDescription: 'Принтер расположен в холле 1-го этажа 3го общежития',
+        locationDescription: 'холл первого этажа третьего общежития',
         locationLatitude: '55.929337',
         locationLongitude: '37.522394',
         pagesPerMinute: '30',
@@ -51,7 +51,7 @@ let printersInfos = {
     },
     '3b': {
         numberPagesMax: '250',
-        locationDescription: '1-й этаж 3-ки',
+        locationDescription: 'первый этаж третьего общежития',
         locationLatitude: '0.000000',
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
@@ -61,7 +61,7 @@ let printersInfos = {
     },
     '4': {
         numberPagesMax: '250',
-        locationDescription: 'Принтер расположен на 3ем этаже 4го общежития',
+        locationDescription: 'третий этаж четвёртого общежития',
         locationLatitude: '55.931119',
         locationLongitude: '37.522923',
         pagesPerMinute: '28',
@@ -71,7 +71,7 @@ let printersInfos = {
     },
     '4b': {
         numberPagesMax: '250',
-        locationDescription: 'Принтер расположен на 3ем этаже 4го общежития',
+        locationDescription: 'третий этаж четвёртого общежития',
         locationLatitude: '55.931119',
         locationLongitude: '37.522923',
         pagesPerMinute: '28',
@@ -91,7 +91,7 @@ let printersInfos = {
     },
     '6b': {
         numberPagesMax: '250',
-        locationDescription: 'Принтер расположен в 6-ом общежитии',
+        locationDescription: 'шестое общежитие',
         locationLatitude: '0.000000',
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
@@ -101,7 +101,7 @@ let printersInfos = {
     },
     '7': {
         numberPagesMax: '250',
-        locationDescription: 'Принтер расположен на 3ем этаже 7го общежития',
+        locationDescription: 'третий этаж седьмого общежития',
         locationLatitude: '55.928962',
         locationLongitude: '37.523202',
         pagesPerMinute: '28',
@@ -111,7 +111,7 @@ let printersInfos = {
     },
     '7b': {
         numberPagesMax: '250',
-        locationDescription: '3-й этаж 7-ки',
+        locationDescription: 'третий этаж седьмого общежития',
         locationLatitude: '0.000000',
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
@@ -121,7 +121,7 @@ let printersInfos = {
     },
     '8': {
         numberPagesMax: '250',
-        locationDescription: 'Принтер расположен в холле 1-го этажа 8го общежития',
+        locationDescription: 'холл первого этажа восьмого общежития',
         locationLatitude: '55.928140',
         locationLongitude: '37.523312',
         pagesPerMinute: '30',
@@ -131,7 +131,7 @@ let printersInfos = {
     },
     '8b': {
         numberPagesMax: '250',
-        locationDescription: '1-й этаж 8-ки',
+        locationDescription: 'первый этажа восьмого общежития',
         locationLatitude: '0.000000',
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
