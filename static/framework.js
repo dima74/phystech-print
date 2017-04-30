@@ -1,5 +1,8 @@
 async function fetchJson(url) {
     let response = await fetch(`${url}`, {credentials: 'same-origin'});
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
     let json = await response.json();
     return json.ans;
 }
@@ -12,18 +15,18 @@ assert = function (condition, message) {
 
 function getLoadingAnimation(cssClass) {
     return `<div class="preloader-wrapper active tiny ${cssClass}">
-                    <div class="spinner-layer spinner-green-only">
-                        <div class="circle-clipper left">
-                            <div class="circle"></div>
-                        </div>
-                        <div class="gap-patch">
-                            <div class="circle"></div>
-                        </div>
-                        <div class="circle-clipper right">
-                            <div class="circle"></div>
-                        </div>
+                <div class="spinner-layer spinner-green-only">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
                     </div>
-                </div>`;
+                    <div class="gap-patch">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>`;
 }
 
 const loadingAnimation = getLoadingAnimation('');
@@ -40,3 +43,7 @@ function ajaxError(scope) {
         showError(scope, json.message);
     }
 }
+
+$.fn.exists = function () {
+    return this.length !== 0;
+};

@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Физтех.Печать</title>
+    <script>
+        window.addEventListener("unhandledrejection", function (event) {
+            let message = '[Непредвиденная ошибка] ' + event.reason;
+            if (typeof(Materialize) === 'undefined') {
+                alert(message);
+            } else {
+                Materialize.toast(message, 10000);
+            }
+        });
+    </script>
     {% block head_first %}{% endblock %}
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">

@@ -4,6 +4,9 @@
     <script>
         async function fetchJson(url) {
             let response = await fetch(`${url}`, {credentials: 'same-origin'});
+            if (!response.ok) {
+                throw Error(response.statusText);
+            }
             let json = await response.json();
             return json.ans;
         }
@@ -60,7 +63,21 @@
         <div id="main_container">
             <div class="hide-on-large-only"></div>
             <div id="tasks_current_wrapper">
-                <div id="tasks_current">
+                <div id="tasks_current" class="tasks_holder" data-state="loading">
+                    <div class="preloader-wrapper active big">
+                        <div class="spinner-layer spinner-green-only">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="gap-patch">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <table class="highlight striped">
                         <thead>
                         <tr>
@@ -77,6 +94,8 @@
 
                         <tbody id="tasks_current_tbody" class="tasks_tbody"></tbody>
                     </table>
+
+                    <p class="text-align-center">Список текущих заказов пуст</p>
                 </div>
             </div>
 
@@ -87,8 +106,8 @@
                         <form id="form_upload" method="POST">
                             <div id="form_upload_input_file">
                                 <div></div>
-                                <p class="hide-on-med-and-down">Перетащите файл в любое место</p>
-                                <p class="hide-on-med-and-down">или</p>
+                                <p class="text-align-center hide-on-med-and-down">Перетащите файл в любое место</p>
+                                <p class="text-align-center hide-on-med-and-down">или</p>
                                 <div id="form_upload_input_file_button">
                                     <input type="file" name="file" id="file" class="inputfile" autofocus multiple>
                                     <label id="form_upload_input_file_label" for="file" class="waves-effect waves-light btn">Выберите файл</label>
@@ -130,7 +149,21 @@
 
             <div id="tasks_history_wrapper">
                 <div id="tasks_history">
-                    <table class="highlight striped">
+                    <div class="preloader-wrapper active big">
+                        <div class="spinner-layer spinner-green-only">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="gap-patch">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="highlight striped" data-state="loading">
                         <thead>
                         <tr>
                             <th class="hide-on-med-and-down">Время</th>
@@ -145,6 +178,8 @@
 
                         <tbody id="tasks_history_tbody" class="tasks_tbody"></tbody>
                     </table>
+
+                    <p class="text-align-center">Здесь будут отображаться выполненные заказы</p>
                 </div>
             </div>
 
