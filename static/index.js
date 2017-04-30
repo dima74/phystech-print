@@ -330,8 +330,15 @@ $(function () {
         })
     }
 
+    function updateTasksState(which) {
+        assert($(`#tasks_${which}`).exists());
+        assert($(`#tasks_${which}_tbody`).exists());
+        $(`#tasks_${which}`).attr('data-state', $(`#tasks_${which}_tbody`).children().exists() ? 'active' : 'empty');
+    }
+
     function updateTasks(which, response) {
         let tasksEncoded = response.array;
+        let lines = '';
         for (let taskEncoded of tasksEncoded) {
             let task = decodeTask(taskEncoded);
             let line;
@@ -358,8 +365,10 @@ $(function () {
                 default:
                     showError('Заказы', 'Неизвестный статус заказа: ' + task.status);
             }
-            $(`#tasks_${which}_tbody`).append(line);
+            lines += line;
         }
+        $(`#tasks_${which}_tbody`).append(lines);
+        updateTasksState(which);  // нужно, ибо если lines==='', то observer не сработает
     }
 
     /*
@@ -512,7 +521,7 @@ $(function () {
             return task;
         }
 
-        function addRowToTable(rowOld, functionConvertRowOldToTask, functionGetRowNewFromTask, tableId, taskStatusNew, removeIdFromRowOld) {
+        function addRowToTable(rowOld, functionConvertRowOldToTask, functionGetRowNewFromTask, which, taskStatusNew, removeIdFromRowOld) {
             let task = functionConvertRowOldToTask(rowOld);
             task.status = taskStatusNew;
             if (removeIdFromRowOld) {
@@ -521,17 +530,19 @@ $(function () {
                 delete task.id;
             }
             let rowNew = functionGetRowNewFromTask(task);
+            let tableId = `#tasks_${which}_tbody`;
             $(tableId).prepend(rowNew);
+            updateTasksState(which);
             let newRow = $(tableId).children(':first');
             slideDownRow(newRow);
         }
 
         function addRowToHistory(row, taskStatusNew) {
-            addRowToTable(row, convertRowCurrentToTask, getHistoryTaskRow, '#tasks_history_tbody', taskStatusNew, true);
+            addRowToTable(row, convertRowCurrentToTask, getHistoryTaskRow, 'history', taskStatusNew, true);
         }
 
         function addRowToCurrent(row) {
-            addRowToTable(row, convertRowHistoryToTask, getCurrentTaskRow, '#tasks_current_tbody', 'Pending', false);
+            addRowToTable(row, convertRowHistoryToTask, getCurrentTaskRow, 'current', 'Pending', false);
         }
 
         $('.tasks_tbody').on('click', 'tr', function () {
@@ -641,7 +652,7 @@ $(function () {
         // socket
         function getLastThreeTimesMostUsedPrinter() {
             let printers = [];
-            $('#tasks_history_tbody .cell-printer:lt(3)').each(function () {
+            $('#tasks_history_tbody .rowPrinters:lt(3)').each(function () {
                 printers.push($(this).text());
             });
 
@@ -805,9 +816,20 @@ $(function () {
         }
     }
 
+    function setTablesObserver() {
+        for (let which of ['current', 'history']) {
+            let observer = new MutationObserver(function () {
+                console.log('observer');
+                updateTasksState(which);
+            });
+            observer.observe($(`#tasks_${which}_tbody`)[0], {childList: true, subtree: true});
+        }
+    }
+
     async function init() {
         console.log('init');
         $('#print_preview_image').on('load', checkIfPreviewLoads);
+        setTablesObserver();
         configureForm();
         await Promise.all([updateUserInfo(true), updateQueryPrintersAll(true)]);
         await updateAllTasks(true);

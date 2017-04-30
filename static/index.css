@@ -88,6 +88,25 @@ body {
     height: 100%;
 }
 
+.tasks_holder:not([data-state="active"]) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.tasks_holder:not([data-state="loading"]) > .preloader-wrapper {
+    display: none;
+}
+
+.tasks_holder:not([data-state="empty"]) > p {
+    display: none;
+}
+
+.tasks_holder:not([data-state="active"]) > table {
+    display: none;
+}
+
 #print_preview {
     display: flex;
     flex-direction: column;
