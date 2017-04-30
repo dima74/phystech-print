@@ -39,7 +39,7 @@
 {% endblock %}
 
 {% block body %}
-    {% if not local %}
+    {% if not local and show_loader %}
         <div id="loader-wrapper" class="hide-on-med-and-down">
             <div id="loader"></div>
             <div class="loader-section section-left"></div>

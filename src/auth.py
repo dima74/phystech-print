@@ -76,6 +76,7 @@ def login():
         return redirect('/')
     if request.method == 'GET':
         return render_template('login.html')
+    session['show_loader'] = True
     return try_login_from_form()
 
 
@@ -98,6 +99,7 @@ def register():
 
     session['login'] = login
     session['password'] = password
+    session['show_loader'] = True
     return 'OK'
 
 

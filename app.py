@@ -62,7 +62,9 @@ def is_local():
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html')
+    show_loader = session['show_loader'] if 'show_loader' in session else False
+    session['show_loader'] = False
+    return render_template('index.html', show_loader=show_loader)
 
 
 @app.route('/новости')
