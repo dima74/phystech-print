@@ -1,0 +1,15 @@
+[Unit]
+Description=gunicorn daemon for Phystech.Print
+After=network.target
+
+[Service]
+User=dima
+Group=dima
+WorkingDirectory=/home/dima/phystech-print
+ExecStart=/usr/bin/gunicorn --config gunicorn-config.py app:app
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
