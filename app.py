@@ -2,13 +2,14 @@ from threading import Thread
 from flask import Flask
 from flask_mail import Mail, Message
 from requests import ReadTimeout
+from raven.contrib.flask import Sentry
+import socket
+import time
+import sys
 
 from src.wrapped import wrapped
 from src.auth import *
 from src.instructions import instructions
-import socket
-import time
-import sys
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
@@ -16,6 +17,7 @@ app.register_blueprint(wrapped)
 app.register_blueprint(auth)
 app.register_blueprint(instructions)
 mail = Mail(app)
+sentry = Sentry(app, dsn=app.config['SENTRY_DSN'])
 
 
 @app.context_processor
