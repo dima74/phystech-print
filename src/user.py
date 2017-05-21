@@ -60,5 +60,8 @@ class Users:
         print('[Users] get_user', login, user)
         return user
 
+    def remove_user(self, login):
+        self.cache[login] = None
+
 
 users = Users()

@@ -17,5 +17,11 @@ def query_route_json():
 @login_required_cookies_only
 def query_route_user():
     user_info = query_route_json()
-    g.user.update_user_info(user_info['ans'])
+    if 'ans' not in user_info or user_info['ans'] == 0:
+        # этот if может произойти, если пользователь заходил давно и его session объект имеет старые cookie
+        print('[Предупреждение] route /query/user/ не удался')
+        users.remove_user(g.user.login)
+        assert try_login_from_cookies() == 'OK'
+    else:
+        g.user.update_user_info(user_info['ans'])
     return jsonify(user_info)
