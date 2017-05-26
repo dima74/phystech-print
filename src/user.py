@@ -42,7 +42,10 @@ class User:
         request = self.session.post('http://print.mipt.ru/printfile.php', files=files, auth=lambda prepared_request: rewrite_request(prepared_request, filename))
         if request.status_code != 200:
             raise Exception()
-        request_info = request.text.split(';')
+        match = re.match(r"<span id='result'>(.*)</span>", request.text)
+        if not match:
+            return 'ERROR_MATCH'
+        request_info = match.group(1).split(';')
         return 'OK' if request_info[0] == 'SUCCESS' else 'print.mipt.ru: ' + base64.b64decode(request_info[1]).decode('UTF-8')
 
 
