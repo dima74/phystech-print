@@ -4,14 +4,25 @@
     <meta charset="UTF-8">
     <title>Физтех.Печать</title>
     <script>
-        window.addEventListener("unhandledrejection", function (event) {
-            let message = '[Непредвиденная ошибка] ' + event.reason;
+        function alertError(message) {
             if (typeof(Materialize) === 'undefined') {
                 alert(message);
             } else {
                 Materialize.toast(message, 10000);
             }
+        }
+        window.addEventListener("unhandledrejection", function (event) {
+            alertError('[Непредвиденная ошибка] ' + event.reason.toString().replace('Error: ', ''));
         });
+
+        async function fetchJson(url) {
+            let response = await fetch(`${url}`, {credentials: 'same-origin'});
+            if (!response.ok) {
+                throw Error(response.statusText);
+            }
+            let json = await response.json();
+            return json.ans;
+        }
     </script>
     {% block head_first %}{% endblock %}
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">

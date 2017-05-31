@@ -1,12 +1,3 @@
-async function fetchJson(url) {
-    let response = await fetch(`${url}`, {credentials: 'same-origin'});
-    if (!response.ok) {
-        throw Error(response.statusText);
-    }
-    let json = await response.json();
-    return json.ans;
-}
-
 assert = function (condition, message) {
     if (!condition) {
         throw message || "Assertion failed";

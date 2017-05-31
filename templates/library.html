@@ -4,15 +4,6 @@
 
 {% block head_first %}
     <script>
-        async function fetchJson(url) {
-            let response = await fetch(`${url}`, {credentials: 'same-origin'});
-            if (!response.ok) {
-                throw Error(response.statusText);
-            }
-            let json = await response.json();
-            return json.ans;
-        }
-
         let responseQueryLibAll = fetchJson('/query/lib/all/?num=100&from=0');
     </script>
 {% endblock %}

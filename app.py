@@ -11,13 +11,19 @@ from src.wrapped import wrapped
 from src.auth import *
 from src.instructions import instructions
 
+
+def is_local():
+    return socket.gethostname() == 'idea'
+
+
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
 app.register_blueprint(wrapped)
 app.register_blueprint(auth)
 app.register_blueprint(instructions)
 mail = Mail(app)
-sentry = Sentry(app, dsn=app.config['SENTRY_DSN'])
+if not is_local():
+    sentry = Sentry(app, dsn=app.config['SENTRY_DSN'])
 
 
 @app.context_processor
@@ -55,10 +61,6 @@ def custom500(error):
 @app.errorhandler(ReadTimeout)
 def handle_read_timeout(error):
     return 'Ошибка при установлении соединения с сервером print.mipt.ru', 500
-
-
-def is_local():
-    return socket.gethostname() == 'idea'
 
 
 @app.route('/')
