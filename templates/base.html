@@ -103,6 +103,14 @@
             background: #c1c1c1;
             border-left: solid 4px #fff;
         }
+
+        img, .user-select-none {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            cursor: default;
+        }
     </style>
     {% block head %}{% endblock %}
 </head>
