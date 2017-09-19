@@ -77,6 +77,10 @@
         .card {
             width: 100%;
         }
+
+        #login_error {
+            margin-top: 0;
+        }
     </style>
 {% endblock %}
 
@@ -167,12 +171,17 @@
                 },
                 success: function (data) {
                     $('#login_loading').hide();
-                    if (data == 'OK') {
+                    if (data === 'OK') {
                         goToNextPage();
                     } else {
                         $('#login_error').text(data);
                         $('#login_error').show();
                     }
+                },
+                error: function () {
+                    $('#login_loading').hide();
+                    $('#login_error').text('Не удалось войти :(');
+                    $('#login_error').show();
                 }
             });
 
@@ -185,7 +194,7 @@
                         }
                     },
                     register_password: {
-                        required: true,
+                        required: true
                     },
                     register_password_confirm: {
                         required: true,

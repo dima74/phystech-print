@@ -37,11 +37,11 @@ def try_login_from_cookies():
         g.user = None
         return 'No cookies'
     else:
-        return try_login(login, password)
+        return try_login(login.lower(), password)
 
 
 def try_login_from_form():
-    login = request.form['login_login']
+    login = request.form['login_login'].lower()
     password = request.form['login_password']
     status = try_login(login, password)
 
@@ -64,6 +64,7 @@ def try_login(login, password):
         g.user = None
         return r['msg']
     user_info = r['ans']
+    user_info['Nick'] = user_info['Nick'].lower()
     assert login == user_info['Nick']
     user_info['password'] = password
     g.user = users.add_user(session, user_info)
