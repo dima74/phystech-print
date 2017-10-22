@@ -107,7 +107,8 @@ def printers():
         'PAPERJAM': 'red',
         'PAPERFEEDOUT': 'red',
         'CONNECTIONERROR': 'red',
-        'ADMINSTOP': 'red'
+        'ADMINSTOP': 'red',
+        'TONERLOW': 'red'
     }
 
     printers_names = ['1', '1b', '2', '2b', '3', '3b', '4', '4b', '6', '6b', '7', '7b', '8', '8b']
@@ -121,7 +122,7 @@ def printers():
         printer['name'] = printer_name
         printer['id'] = printer_id
         if printer['action'] not in status_colors:
-            abort(500, 'Неизвестный статус принтера: {}'.format(printer['action']))
+            print('Неизвестный статус принтера: {}'.format(printer['action']))
         printer['status_color'] = status_colors.get(printer['action'], '#4a148c')
         printers.append(printer)
     return render_template('printers.html', printers=printers)
