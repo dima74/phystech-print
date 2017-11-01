@@ -1,6 +1,6 @@
 assert = function (condition, message) {
     if (!condition) {
-        throw message || "Assertion failed";
+        throw new Error(message || 'Assertion failed');
     }
 };
 
@@ -22,17 +22,19 @@ function getLoadingAnimation(cssClass) {
 
 const loadingAnimation = getLoadingAnimation('');
 
-function showError(scope, message) {
+function showError(scope, message, throwError = true) {
     let text = message === undefined ? scope : `[${scope}] ${message}`;
     Materialize.toast(text, 40000);
-    throw text;
+    if (throwError) {
+        throw new Error(text);
+    }
 }
 
 function ajaxError(scope) {
     return function (response) {
         json = JSON.parse(response.responseText);
         showError(scope, json.message);
-    }
+    };
 }
 
 $.fn.exists = function () {

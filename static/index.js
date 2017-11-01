@@ -1,5 +1,5 @@
 function isMobile() {
-    return window.matchMedia("only screen and (max-width: 992px)").matches;
+    return window.matchMedia('only screen and (max-width: 992px)').matches;
 }
 
 if (isMobile()) {
@@ -114,10 +114,11 @@ $(function () {
             'Canceled': ['red', 'отменён'],
             'Queue': ['teal', 'готовится к печати...'],
             'Printing': ['green', 'печатается...'],
+            'Failed': ['red', 'не удалось']
         };
 
         let [color, text] = historyTaskStatuses[statusText];
-        return `<span class="history-task-status ${color}-text">${text}</span>`
+        return `<span class="history-task-status ${color}-text">${text}</span>`;
     }
 
     // получает ячейку таблицы, скрывает весь её контент, вместо него показыавется анимация загрузки
@@ -160,7 +161,7 @@ $(function () {
             }
 
             $.post({
-                url: "/upload",
+                url: '/upload',
                 data: formData,
                 cache: false,
                 contentType: false,
@@ -285,7 +286,7 @@ $(function () {
             allowPreview: 'true',
             duplex: task.duplex,
             filling: task.filling
-        })
+        });
     }
 
     function getProcessTaskRow(task) {
@@ -327,7 +328,7 @@ $(function () {
             time: task.time,
             filename: task.filename,
             colspan: 'не обработан'
-        })
+        });
     }
 
     function updateTasksState(which) {
@@ -351,6 +352,7 @@ $(function () {
                     break;
                 case 'Canceled':
                 case 'Success':
+                case 'Failed':
                     line = getHistoryTaskRow(task);
                     break;
                 case 'Invalid':
@@ -363,7 +365,7 @@ $(function () {
                     line = getQueueOrPrintingTaskRow(task, 'печатается...');
                     break;
                 default:
-                    showError('Заказы', 'Неизвестный статус заказа: ' + task.status);
+                    showError('Заказы', 'Неизвестный статус заказа: ' + task.status, false);
             }
             lines += line;
         }
@@ -500,7 +502,7 @@ $(function () {
                 filename: cells[1],
                 numberPages: cells[2],
                 shared: shared
-            }
+            };
         }
 
         function convertRowCurrentToTask(row) {
@@ -587,7 +589,7 @@ $(function () {
         function callbackMoveTaskToHistory(taskStatusNew) {
             return function (cell) {
                 moveTaskToHistory(cell.parent(), taskStatusNew);
-            }
+            };
         }
 
         function callbackReturnTaskFromHistory(cell) {
@@ -708,7 +710,7 @@ $(function () {
                                     printer = task.printer;
                                 }
                                 if (task.printer === printer) {
-                                    row.find('.printer-select-loading').replaceWith(getPrintersHtml(task.printer))
+                                    row.find('.printer-select-loading').replaceWith(getPrintersHtml(task.printer));
                                 } else {
                                     promiseQueryPrintersAll.then(function (data) {
                                         queryPrintersAll = data.ans;
