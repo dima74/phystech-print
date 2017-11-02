@@ -108,22 +108,21 @@ $(function () {
         };
     }
 
-    function getHistoryTaskStatus(statusText) {
-        const historyTaskStatuses = {
+    function getTaskStatusSpan(statusText) {
+        const taskStatuses = {
             'Success': ['green', 'напечатан'],
             'Canceled': ['red', 'отменён'],
             'Queue': ['teal', 'готовится к печати...'],
             'Printing': ['green', 'печатается...'],
-            'Pending': ['green', 'ожидает печати...'],
             'Failed': ['red', 'не удалось']
         };
 
-        if (!(statusText in historyTaskStatuses)) {
+        if (!(statusText in taskStatuses)) {
             console.error(`неизвестный статус заказа: ${statusText}`);
         }
 
-        let [color, text] = historyTaskStatuses[statusText];
-        return `<span class="history-task-status ${color}-text">${text}</span>`;
+        let [color, text] = taskStatuses[statusText];
+        return `<span class="task-status ${color}-text">${text}</span>`;
     }
 
     // получает ячейку таблицы, скрывает весь её контент, вместо него показыавется анимация загрузки
@@ -303,7 +302,7 @@ $(function () {
         });
     }
 
-    function getQueueOrPrintingTaskRow(task, status) {
+    function getQueueOrPrintingTaskRow(task) {
         return getTaskRow({
             id: task.id,
             time: task.time,
@@ -311,7 +310,7 @@ $(function () {
             numberPages: task.numberPages,
             cost: task.cost,
             printer: task.printer,
-            colspan: status
+            colspan: getTaskStatusSpan(task.status)
         });
     }
 
@@ -321,7 +320,7 @@ $(function () {
                     <td class="rowFilename">${task.filename}</td>
                     <td class="rowNumberPages hide-on-med-and-down">${task.numberPages}</td>
                     <td class="rowPrinters hide-on-med-and-down">${task.printer}</td>
-                    <td class="rowStatus">${getHistoryTaskStatus(task.status)}</td>
+                    <td class="rowStatus">${getTaskStatusSpan(task.status)}</td>
                     <td class="rowSharedIcon">${getSharedIcon(task)}</td>
                     <td class="rowReplayIcon">${replayIcon}</td>
                 </tr>`;
@@ -364,10 +363,8 @@ $(function () {
                     line = getInvalidTaskRow(task);
                     break;
                 case 'Queue':
-                    line = getQueueOrPrintingTaskRow(task, 'готовится к печати...');
-                    break;
                 case 'Printing':
-                    line = getQueueOrPrintingTaskRow(task, 'печатается...');
+                    line = getQueueOrPrintingTaskRow(task);
                     break;
                 default:
                     showError('Заказы', 'Неизвестный статус заказа: ' + task.status, false);
@@ -614,7 +611,7 @@ $(function () {
         function callbackAcceptTask(cell) {
             cell.next().remove();
             cell.next().remove();
-            cell.replaceWith(`<td colspan="3">${getHistoryTaskStatus('Queue')}</td>`);
+            cell.replaceWith(`<td colspan="3">${getTaskStatusSpan('Queue')}</td>`);
         }
 
         addActionOnClickWithAjax('.task-action-accept.waves-effect', 'print', 'Отправка на печать', [callbackAcceptTask, function () { Notification.requestPermission(); }], replaceSelectWithText);
@@ -747,7 +744,7 @@ $(function () {
                     }
                 });
                 if (!success) {
-                    showError('WebSocket', 'Неизвестный заказ ' + id);
+                    showError('WebSocket', 'Неизвестный заказ ' + id, false);
                 }
             }
 
@@ -771,7 +768,7 @@ $(function () {
                             findRowAndUpdate(task);
                         } else {
                             if (task.status === 'Printing') {
-                                row.find('.history-task-status').replaceWith(getHistoryTaskStatus(task.status));
+                                row.find('.task-status').replaceWith(getTaskStatusSpan(task.status));
                             } else if (task.status === 'Success') {
                                 moveTaskToHistory(row, 'Success');
                                 if (isTabActive) {
@@ -822,7 +819,7 @@ $(function () {
     function setTablesObserver() {
         for (let which of ['current', 'history']) {
             let observer = new MutationObserver(function () {
-                console.log('observer');
+                // console.log('observer');
                 updateTasksState(which);
             });
             observer.observe($(`#tasks_${which}_tbody`)[0], {childList: true, subtree: true});
