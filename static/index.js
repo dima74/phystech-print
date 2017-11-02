@@ -114,8 +114,13 @@ $(function () {
             'Canceled': ['red', 'отменён'],
             'Queue': ['teal', 'готовится к печати...'],
             'Printing': ['green', 'печатается...'],
+            'Pending': ['green', 'ожидает печати...'],
             'Failed': ['red', 'не удалось']
         };
+
+        if (!(statusText in historyTaskStatuses)) {
+            console.error(`неизвестный статус заказа: ${statusText}`);
+        }
 
         let [color, text] = historyTaskStatuses[statusText];
         return `<span class="history-task-status ${color}-text">${text}</span>`;
