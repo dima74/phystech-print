@@ -1,3 +1,4 @@
+from datetime import timedelta
 from threading import Thread
 from flask import Flask
 from flask_mail import Mail, Message
@@ -21,6 +22,7 @@ app.config.from_pyfile('config.cfg')
 app.register_blueprint(wrapped)
 app.register_blueprint(auth)
 app.register_blueprint(instructions)
+app.permanent_session_lifetime = timedelta(weeks=100)
 mail = Mail(app)
 if not is_local():
     sentry = Sentry(app, dsn=app.config['SENTRY_DSN'])

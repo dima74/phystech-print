@@ -49,6 +49,7 @@ def try_login_from_form():
     if status == 'OK':
         session['login'] = login
         session['password'] = password
+        session.permanent = True
     return response
 
 
