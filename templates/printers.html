@@ -28,9 +28,32 @@
                 right: 0;
             }
 
+            #tabs_wrapper .card {
+                margin: 10px;
+            }
+
             #printers_info_wrapper, #tabs {
                 height: 100%;
                 overflow-y: auto;
+            }
+        }
+
+        @media only screen and (max-width: 992px) {
+            #main {
+                display: flex;
+                flex-direction: column;
+            }
+
+            #printers_info {
+                order: 2;
+            }
+
+            #tabs_wrapper {
+                order: 1;
+            }
+
+            #printers_history {
+                margin-bottom: 0;
             }
         }
 
@@ -87,10 +110,6 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-        }
-
-        #tabs_wrapper .card {
-            margin: 10px;
         }
 
         ul {
@@ -198,7 +217,7 @@
             if (width > 0) {
                 $('.printers_history_img').each(function () {
                     this.src = this.dataset.src + `&y=50&x=${width}`;
-                })
+                });
             }
         }
 
