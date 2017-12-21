@@ -4,9 +4,9 @@ set -x
 # cd && git clone git@github.com:dima74/phystech-print.git
 mkdir -p /home/dima/logs
 
+yaour -S --needed python-sentry python-cachetools
 sudo -s <<EOF
-pacman -S gunicorn python-gevent python-flask python-raven python-blinker
-yaour -S python-sentry python-cachetools
+pacman -S --needed gunicorn python-gevent python-flask python-raven python-blinker
 ln -s /home/dima/phystech-print/gunicorn-phystech-print.service /etc/systemd/system/
 systemctl enable gunicorn-phystech-print.service
 systemctl start gunicorn-phystech-print.service
