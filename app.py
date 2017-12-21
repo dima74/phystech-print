@@ -1,7 +1,5 @@
 from datetime import timedelta
-from threading import Thread
 from flask import Flask
-from flask_mail import Mail, Message
 from requests import ReadTimeout
 from raven.contrib.flask import Sentry
 import socket
@@ -23,7 +21,6 @@ app.register_blueprint(wrapped)
 app.register_blueprint(auth)
 app.register_blueprint(instructions)
 app.permanent_session_lifetime = timedelta(weeks=100)
-mail = Mail(app)
 if not is_local():
     sentry = Sentry(app, dsn=app.config['SENTRY_DSN'])
 
@@ -140,35 +137,10 @@ def library():
     return render_template('library.html')
 
 
-def async(f):
-    def wrapper(*args, **kwargs):
-        thread = Thread(target=f, args=args, kwargs=kwargs)
-        thread.start()
-
-    return wrapper
-
-
-@async
-def send_email_async(message):
-    with app.app_context():
-        mail.send(message)
-
-
 @app.route('/о_сайте')
 def about():
     if request.method == 'GET':
         return render_template('about.html')
-
-
-@app.route('/suggest', methods=['POST'])
-def suggest():
-    text = request.form['form_suggestion']
-    if 'form_email' in request.form and request.form['form_email'] != '':
-        text = 'От {}\n\n{}'.format(request.form['form_email'], text)
-
-    message = Message("Физтех.Печать --- предложение", recipients=['info@физтех-печать.рф'], body=text)
-    send_email_async(message)
-    return 'OK'
 
 
 @app.route('/test')
