@@ -5,7 +5,8 @@ set -x
 mkdir -p /home/dima/logs
 
 sudo -s <<EOF
-pacman -S gunicorn
+pacman -S gunicorn python-gevent python-flask python-raven python-blinker
+yaour -S python-sentry python-cachetools
 ln -s /home/dima/phystech-print/gunicorn-phystech-print.service /etc/systemd/system/
 systemctl enable gunicorn-phystech-print.service
 systemctl start gunicorn-phystech-print.service
