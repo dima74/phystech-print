@@ -12,7 +12,7 @@ systemctl start gunicorn-phystech-print.service
 ln -s /home/dima/phystech-print/nginx /etc/nginx/phystech-print
 ln -s /etc/nginx/phystech-print/server-without-ssl.conf /etc/nginx/sites-enabled/phystech-print.conf
 nginx -s reload
-/home/dima/arch-install-digitalocean/nginx-ssl.sh xn----8sbnbhf6cvaflp1a1e.xn--p1ai
+sudo certbot certonly --nginx --email diraria+ssl@yandex.ru -d xn----8sbnbhf6cvaflp1a1e.xn--p1ai
 
 ln -sf /etc/nginx/phystech-print/server.conf /etc/nginx/sites-enabled/phystech-print.conf
 nginx -s reload
