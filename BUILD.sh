@@ -14,6 +14,5 @@ ln -s /etc/nginx/phystech-print/server-without-ssl.conf /etc/nginx/sites-enabled
 nginx -s reload
 /home/dima/arch-install-digitalocean/nginx-ssl.sh xn----8sbnbhf6cvaflp1a1e.xn--p1ai
 
-rm /etc/nginx/sites-enabled/phystech-print.conf
-ln -s /etc/nginx/phystech-print/server.conf /etc/nginx/sites-enabled/phystech-print.conf
+ln -sf /etc/nginx/phystech-print/server.conf /etc/nginx/sites-enabled/phystech-print.conf
 nginx -s reload
