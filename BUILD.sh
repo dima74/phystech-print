@@ -1,7 +1,8 @@
 #!/bin/sh -e
 set -x
 
-# cd && git clone git@github.com:dima74/phystech-print.git && ./phystech-print/BUILD.sh
+# client: ~/phystech-print/deployment/rsync.sh
+# server: ~/phystech-print/BUILD.sh
 mkdir -p /home/dima/logs
 
 yaourt -S --needed python-sentry python-cachetools
