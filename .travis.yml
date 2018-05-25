@@ -1,0 +1,11 @@
+language: generic
+sudo: required
+services:
+- docker
+script:
+# - docker login -u _ -p "$HEROKU_TOKEN"  registry.heroku.com
+# - heroku container:push web
+- ./build_script.sh
+after_success:
+  # for local testing, needs to be set on travis, too:
+  # export HEROKU_TOKEN=$(heroku auth:token)
