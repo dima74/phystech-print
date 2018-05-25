@@ -40,13 +40,21 @@ $(function () {
         '7': 2,
         '7b': 20,
         '8': 6,
-        '8b': 19
+        '8b': 19,
+        '12': 45,
+        '12b': 46,
+        '11-1': 43,
+        '11-2': 44,
+        '11-3': 47,
     };
 
     let dormitoriesAll = [];
     let printersAll = [];
     let printersNeighbours = {};
-    for (let i = 1; i <= 8; ++i) {
+    for (let i = 1; i <= 12; ++i) {
+        if (i === 5 || 9 <= i && i <= 11) {
+            continue;
+        }
         dormitoriesAll.push(i);
 
         let printer0 = i;
@@ -214,14 +222,23 @@ $(function () {
     }
 
     function getPrintersHtml(selectedPrinter) {
+        function addOption(printer) {
+            let selected = printer === selectedPrinter ? ' selected' : '';
+            printersHtml += `<option${selected}>${printer}</option>`;
+        }
+
         printersHtml = '';
-        for (let i = 0; i < 8; ++i) {
-            for (let suffix of ['', 'b']) {
-                let printer = (i + 1) + suffix;
-                let selected = printer === selectedPrinter ? ' selected' : '';
-                printersHtml += `<option${selected}>${printer}</option>`;
+        for (let i = 1; i <= 8; ++i) {
+            if (i !== 5) {
+                addOption(i + '');
+                addOption(i + 'b');
             }
         }
+        addOption('12');
+        addOption('12b');
+        addOption('11-1');
+        addOption('11-2');
+        addOption('11-3');
         return `<select class="browser-default select-printer">
                     ${printersHtml}
                 </select>`;
@@ -614,11 +631,17 @@ $(function () {
             cell.replaceWith(`<td colspan="3">${getTaskStatusSpan('Queue')}</td>`);
         }
 
-        addActionOnClickWithAjax('.task-action-accept.waves-effect', 'print', 'Отправка на печать', [callbackAcceptTask, function () { Notification.requestPermission(); }], replaceSelectWithText);
+        addActionOnClickWithAjax('.task-action-accept.waves-effect', 'print', 'Отправка на печать', [callbackAcceptTask, function () {
+            Notification.requestPermission();
+        }], replaceSelectWithText);
         addActionOnClickWithAjax('.task-action-reject', 'cancel', 'Отмена заказа', callbackMoveTaskToHistory('Canceled'), replaceSelectWithText);
         addActionOnClickWithAjax('.task-action-replay', 'reprint', 'Повторная отправка на печать', callbackReturnTaskFromHistory);
-        addActionOnClickWithAjax('.task-action-share-add', 'share', 'Добавление заказа в общий доступ', function (cell) { cell.html(removeFromSharedIcon); });
-        addActionOnClickWithAjax('.task-action-share-remove', 'unshare', 'Удаление заказа из общего доступа', function (cell) { cell.html(addToSharedIcon); });
+        addActionOnClickWithAjax('.task-action-share-add', 'share', 'Добавление заказа в общий доступ', function (cell) {
+            cell.html(removeFromSharedIcon);
+        });
+        addActionOnClickWithAjax('.task-action-share-remove', 'unshare', 'Удаление заказа из общего доступа', function (cell) {
+            cell.html(addToSharedIcon);
+        });
 
         function setTaskAcceptIcon(row, printer) {
             let cost = row.children().eq(3).text();
@@ -646,8 +669,12 @@ $(function () {
             });
         });
 
-        $('#print_preview_navigate_before').click(function () { changePreviewPage(-1); });
-        $('#print_preview_navigate_next').click(function () { changePreviewPage(+1); });
+        $('#print_preview_navigate_before').click(function () {
+            changePreviewPage(-1);
+        });
+        $('#print_preview_navigate_next').click(function () {
+            changePreviewPage(+1);
+        });
 
         // socket
         function getLastThreeTimesMostUsedPrinter() {
@@ -733,7 +760,9 @@ $(function () {
                                                     showError('Автовыбор принтера', 'К сожалению, оба принтера в вашем общежитии недоступны');
                                                 }
                                             },
-                                            error: [function () { row.find('.printer-select-loading').replaceWith(getPrintersHtml(task.printer)); }, ajaxError('Автовыбор принтера')]
+                                            error: [function () {
+                                                row.find('.printer-select-loading').replaceWith(getPrintersHtml(task.printer));
+                                            }, ajaxError('Автовыбор принтера')]
                                         });
                                     });
                                 }

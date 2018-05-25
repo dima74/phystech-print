@@ -91,7 +91,12 @@ def printers():
         '7': 2,
         '7b': 20,
         '8': 6,
-        '8b': 19
+        '8b': 19,
+        '12': 45,
+        '12b': 46,
+        '11-1': 43,
+        '11-2': 44,
+        '11-3': 47,
     }
 
     status_colors = {
@@ -104,7 +109,7 @@ def printers():
         'TONERLOW': 'red'
     }
 
-    printers_names = ['1', '1b', '2', '2b', '3', '3b', '4', '4b', '6', '6b', '7', '7b', '8', '8b']
+    printers_names = ['1', '1b', '2', '2b', '3', '3b', '4', '4b', '6', '6b', '7', '7b', '8', '8b', '12', '12b', '11-1', '11-2', '11-3']
     # printers_ids = [4, 23, 7, 22, 3, 21, 5, 25, 1, 24, 2, 20, 6, 19]
 
     printers_info = requests.get(HOST + '/query/printers/all/', timeout=TIMEOUT).json()['ans']
