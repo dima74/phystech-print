@@ -4,7 +4,7 @@ from requests import ReadTimeout
 from raven.contrib.flask import Sentry
 import socket
 import time
-import sys
+import os
 
 from src.wrapped import wrapped
 from src.auth import *
@@ -16,7 +16,8 @@ def is_local():
 
 
 app = Flask(__name__)
-app.config.from_pyfile('config.cfg')
+for environment_variable in ['SECRET_KEY', 'SENTRY_DSN', 'VERSION']:
+    app.config[environment_variable] = os.environ[environment_variable]
 app.register_blueprint(wrapped)
 app.register_blueprint(auth)
 app.register_blueprint(instructions)
@@ -32,13 +33,6 @@ def inject():
         version=time.time() if is_local() else app.config['VERSION'],
         current_time=time.time()
     )
-
-
-@app.before_request
-def open_stdout():
-    if not is_local():
-        sys.stdout = open('/home/dima/logs/flask.log', 'a')
-        print()
 
 
 @app.errorhandler(400)
