@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/dima74/phystech-print.svg?branch=master)](https://travis-ci.com/dima74/phystech-print)
+
 # Физтех.Печать
 Сервис печати для студентов МФТИ. Находится по адресу [phystech-print.herokuapp.com](https://phystech-print.herokuapp.com).
 
