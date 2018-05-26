@@ -4,7 +4,6 @@ from requests import ReadTimeout
 from raven.contrib.flask import Sentry
 import socket
 import time
-import os
 
 from src.wrapped import wrapped
 from src.auth import *
