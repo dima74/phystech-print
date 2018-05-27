@@ -1,5 +1,6 @@
 from datetime import timedelta
 from flask import Flask
+from flask_sslify import SSLify
 from requests import ReadTimeout
 from raven.contrib.flask import Sentry
 import socket
@@ -24,6 +25,7 @@ app.register_blueprint(instructions)
 app.permanent_session_lifetime = timedelta(weeks=100)
 if not is_local():
     sentry = Sentry(app, dsn=app.config['SENTRY_DSN'])
+    sslify = SSLify(app, permanent=True)
 
 
 @app.context_processor

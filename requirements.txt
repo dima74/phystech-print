@@ -5,3 +5,4 @@ flask
 raven
 blinker
 requests
+Flask-SSLify
