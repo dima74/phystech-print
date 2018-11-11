@@ -87,7 +87,7 @@ $(function () {
             filename: task.FileName,
             numberPages: task.NumberOfPages,
             cost: task.Cost,
-            printer: task.ShortName,
+            printer: task.ShortName.trim(),
             status: task.Status,
             shared: task.Shared,
             duplex: task.Duplex,
