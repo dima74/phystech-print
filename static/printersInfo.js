@@ -6,8 +6,8 @@ let printersInfos = {
         locationLongitude: '37.523569',
         pagesPerMinute: '35',
         model: 'Kyocera 2020D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '7': {
         numberPagesMax: '250',
@@ -16,8 +16,8 @@ let printersInfos = {
         locationLongitude: '37.523202',
         pagesPerMinute: '28',
         model: 'Kyocera 1120D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '3': {
         numberPagesMax: '250',
@@ -26,8 +26,8 @@ let printersInfos = {
         locationLongitude: '37.522394',
         pagesPerMinute: '30',
         model: 'Kyocera 1120D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '1': {
         numberPagesMax: '250',
@@ -36,8 +36,8 @@ let printersInfos = {
         locationLongitude: '37.521509',
         pagesPerMinute: '28',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '4': {
         numberPagesMax: '250',
@@ -46,8 +46,8 @@ let printersInfos = {
         locationLongitude: '37.522923',
         pagesPerMinute: '28',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '8': {
         numberPagesMax: '250',
@@ -56,8 +56,8 @@ let printersInfos = {
         locationLongitude: '37.523312',
         pagesPerMinute: '30',
         model: 'Kyocera 1320D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '2': {
         numberPagesMax: '250',
@@ -67,8 +67,19 @@ let printersInfos = {
         locationLongitude: '37.521832',
         pagesPerMinute: '28',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
+    },
+    '3ц': {
+        numberPagesMax: '500',
+        locationDescription:
+            'Принтер расположен на 1 этаже 3го общежития напротив клуба.',
+        locationLatitude: '55.929256',
+        locationLongitude: '37.523780',
+        pagesPerMinute: '35',
+        model: 'Kyocera P6235cdn',
+        pageCostSingle: '4.00',
+        pageCostDuplex: '2.50'
     },
     '8b': {
         numberPagesMax: '250',
@@ -77,8 +88,8 @@ let printersInfos = {
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '7b': {
         numberPagesMax: '250',
@@ -87,8 +98,8 @@ let printersInfos = {
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '3b': {
         numberPagesMax: '250',
@@ -97,8 +108,8 @@ let printersInfos = {
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '2b': {
         numberPagesMax: '250',
@@ -108,8 +119,8 @@ let printersInfos = {
         locationLongitude: '37.521832',
         pagesPerMinute: '28',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '1b': {
         numberPagesMax: '250',
@@ -118,8 +129,8 @@ let printersInfos = {
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '6b': {
         numberPagesMax: '250',
@@ -128,38 +139,28 @@ let printersInfos = {
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
-    '4b': {
-        numberPagesMax: '250',
-        locationDescription: 'Принтер расположен на 3ем этаже 4го общежития.',
-        locationLatitude: '55.931119',
-        locationLongitude: '37.522923',
-        pagesPerMinute: '28',
-        model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
-    },
-    ' 11-1': {
+    '11-1': {
         numberPagesMax: '250',
         locationDescription: 'Принтер расположен в 11 общежитии, 1ый подъезд',
         locationLatitude: '0.000000',
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
-    ' 11-2': {
+    '11-2': {
         numberPagesMax: '250',
         locationDescription: 'Принтер расположен в 11 общежитии, второй подъезд',
         locationLatitude: '0.000000',
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '12': {
         numberPagesMax: '250',
@@ -168,8 +169,8 @@ let printersInfos = {
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '12b': {
         numberPagesMax: '250',
@@ -178,8 +179,8 @@ let printersInfos = {
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
     '11-3': {
         numberPagesMax: '250',
@@ -188,7 +189,7 @@ let printersInfos = {
         locationLongitude: '0.000000',
         pagesPerMinute: '20',
         model: 'Kyocera 1300D',
-        pageCostSingle: '1.50',
-        pageCostDuplex: '1.35'
+        pageCostSingle: '2.40',
+        pageCostDuplex: '1.70'
     },
 };

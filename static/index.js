@@ -26,27 +26,6 @@ $(function () {
     const removeFromSharedIcon = `<i class="material-icons waves-effect pink-text task-action-share-remove" title="Убрать заказ из общего доступа">share</i>`;
     const lockedIcon = `<i class="material-icons deep-orange-text task-action-locked icon cursor-default" title="Заказ добавлен в библиотеку другим пользователем">lock</i>`;
     const replayIcon = `<i class="material-icons waves-effect blue-text task-action-replay" title="Добавить в очередь документов">replay</i>`;
-    const printersIds = {
-        '1': 4,
-        '1b': 23,
-        '2': 7,
-        '2b': 22,
-        '3': 3,
-        '3b': 21,
-        '4': 5,
-        '4b': 25,
-        '6': 1,
-        '6b': 24,
-        '7': 2,
-        '7b': 20,
-        '8': 6,
-        '8b': 19,
-        '12': 45,
-        '12b': 46,
-        '11-1': 43,
-        '11-2': 44,
-        '11-3': 47,
-    };
 
     let dormitoriesAll = [];
     let printersAll = [];

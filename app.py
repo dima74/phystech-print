@@ -27,6 +27,29 @@ if not is_local():
     sentry = Sentry(app, dsn=app.config['SENTRY_DSN'])
     sslify = SSLify(app, permanent=True)
 
+printers_entries = [
+    ('1', 4),
+    ('1b', 23),
+    ('2', 7),
+    ('2b', 22),
+    ('3', 3),
+    ('3b', 21),
+    ('3ц', 13),
+    ('4', 5),
+    # ('4b', 25),
+    ('6', 1),
+    ('6b', 24),
+    ('7', 2),
+    ('7b', 20),
+    ('8', 6),
+    ('8b', 19),
+    ('12', 45),
+    ('12b', 46),
+    ('11-1', 43),
+    ('11-2', 44),
+    ('11-3', 47),
+]
+
 
 @app.context_processor
 def inject():
@@ -63,7 +86,8 @@ def handle_read_timeout(error):
 def index():
     show_loader = session['show_loader'] if 'show_loader' in session else False
     session['show_loader'] = False
-    return render_template('index.html', show_loader=show_loader)
+    printersIds = {printerName: printerId for printerName, printerId in printers_entries}
+    return render_template('index.html', show_loader=show_loader, printersIds=printersIds)
 
 
 @app.route('/новости')
@@ -79,28 +103,6 @@ def pay():
 
 @app.route('/принтеры')
 def printers():
-    printers_ids = {
-        '1': 4,
-        '1b': 23,
-        '2': 7,
-        '2b': 22,
-        '3': 3,
-        '3b': 21,
-        '4': 5,
-        '4b': 25,
-        '6': 1,
-        '6b': 24,
-        '7': 2,
-        '7b': 20,
-        '8': 6,
-        '8b': 19,
-        '12': 45,
-        '12b': 46,
-        '11-1': 43,
-        '11-2': 44,
-        '11-3': 47,
-    }
-
     status_colors = {
         'READY': 'green',
         'PROCESSING': 'green',
@@ -111,13 +113,9 @@ def printers():
         'TONERLOW': 'red'
     }
 
-    printers_names = ['1', '1b', '2', '2b', '3', '3b', '4', '4b', '6', '6b', '7', '7b', '8', '8b', '12', '12b', '11-1', '11-2', '11-3']
-    # printers_ids = [4, 23, 7, 22, 3, 21, 5, 25, 1, 24, 2, 20, 6, 19]
-
     printers_info = requests.get(HOST + '/query/printers/all/', timeout=TIMEOUT).json()['ans']
     printers = []
-    for printer_name in printers_names:
-        printer_id = printers_ids[printer_name]
+    for printer_name, printer_id in printers_entries:
         printer = printers_info[str(printer_id)]
         printer['name'] = printer_name
         printer['id'] = printer_id
