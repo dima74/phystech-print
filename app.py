@@ -87,7 +87,7 @@ def index():
     show_loader = session['show_loader'] if 'show_loader' in session else False
     session['show_loader'] = False
     printersIds = {printerName: printerId for printerName, printerId in printers_entries}
-    return render_template('index.html', show_loader=show_loader, printersIds=printersIds)
+    return render_template('index.html', show_loader=show_loader, printersIds=printersIds, printers_entries=printers_entries)
 
 
 @app.route('/новости')

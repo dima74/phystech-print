@@ -8,7 +8,8 @@
             current: fetchJson(`/query/tasks/current?num=50`),
             history: fetchJson(`/query/tasks/history?num=50`)
         };
-        var printersIds = JSON.parse('{{ printersIds | tojson}}');;
+        var printersIds = JSON.parse('{{ printersIds | tojson}}');
+        var printersEntries = JSON.parse('{{ printers_entries | tojson}}');
     </script>
 {% endblock %}
 

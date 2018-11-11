@@ -207,17 +207,9 @@ $(function () {
         }
 
         printersHtml = '';
-        for (let i = 1; i <= 8; ++i) {
-            if (i !== 5) {
-                addOption(i + '');
-                addOption(i + 'b');
-            }
+        for (printerEntry of printersEntries) {
+            addOption(printerEntry[0]);
         }
-        addOption('12');
-        addOption('12b');
-        addOption('11-1');
-        addOption('11-2');
-        addOption('11-3');
         return `<select class="browser-default select-printer">
                     ${printersHtml}
                 </select>`;
