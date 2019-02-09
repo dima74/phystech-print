@@ -1,10 +1,11 @@
 #!/bin/sh -e
 set -x
 
-sed -i '/ru_RU.UTF-8/s/^#//w /dev/stdout' /etc/locale.gen | read
-locale-gen
-echo LANG=ru_RU.UTF-8 >/etc/locale.conf
-export LANG=ru_RU.UTF-8
+# TODO: remove
+# sed -i '/ru_RU.UTF-8/s/^#//w /dev/stdout' /etc/locale.gen | read
+# locale-gen
+# echo LANG=ru_RU.UTF-8 >/etc/locale.conf
+# export LANG=ru_RU.UTF-8
 
 pacman -Sy --noconfirm glibc  # bug with libnsl
 pacman -Sy --noconfirm python python-pip gunicorn nginx-mainline
