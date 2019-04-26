@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Физтех.Печать</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-139156219-1"></script>
     <script>
         function alertError(message) {
             if (typeof(Materialize) === 'undefined') {
@@ -23,6 +24,11 @@
             let json = await response.json();
             return json.ans;
         }
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-139156219-1');
     </script>
     {% block head_first %}{% endblock %}
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
